@@ -1,7 +1,8 @@
-import { LayoutDashboard, Inbox, NotepadText, SquareChartGantt, Users } from "lucide-react"
+import { type LucideIcon, LayoutDashboard, Inbox, NotepadText, SquareChartGantt, Users } from "lucide-react"
 import Link from "next/link"
 import Friends from "./Friends"
-import Setting from "./Setting"
+import Account from "./Account"
+import LogoContent from "./LogoContent";
 
 import {
   Sidebar,
@@ -14,7 +15,13 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-const applicationItems = [
+type MenuItemType = {
+  title: string;
+  url: string;
+  icon: LucideIcon;
+}
+
+const applicationItems: MenuItemType[] = [
   {
     title: "Dashboard",
     url: "#",
@@ -47,7 +54,8 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Pages</SidebarGroupLabel>
+          <LogoContent />
+          <SidebarGroupLabel className="text-base font-bold uppercase text-blue-950 dark:text-slate-100 tracking-wider">Pages</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {applicationItems.map((item) => (
@@ -64,7 +72,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
         <Friends />
-        <Setting />
+        <Account />
       </SidebarContent>
     </Sidebar>
   )

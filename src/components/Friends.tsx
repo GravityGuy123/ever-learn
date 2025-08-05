@@ -1,35 +1,58 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+} from "@/components/ui/sidebar";
+import Link from "next/link";
+
+// A data array makes the component scalable and easier to manage.
+const friendsData = [
+  {
+    name: "Sparkles",
+    status: "friend",
+    avatarUrl: "/Woman1.jpg", 
+    fallback: "EB",
+    profileUrl: "#",
+  },
+  {
+    name: "CodeKnight",
+    status: "friend",
+    avatarUrl: "/man1.jpg", 
+    fallback: "EB",
+    profileUrl: "#",
+  },
+  {
+    name: "BugHunter",
+    status: "friend",
+    avatarUrl: "/man2.jpg", // Using a different avatar for variety
+    fallback: "PX",
+    profileUrl: "#",
+  },
+];
 
 export default function Friends() {
   return (
-    <div className="p-4">
-      <h1 className="mb-4 text-2xl font-bold">Friends</h1>
-      <section>
-        <div id="friends-list" className="friend-1 space-y-4">
-          <div className="flex items-center gap-4">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png"alt="Edu Brazil" />
-              <AvatarFallback>Edu</AvatarFallback>
-            </Avatar>
-            <div className="font-medium">
-              <span>Edu Brazil</span>
-              <span>friend</span>
-            </div>
-          </div>
+    <SidebarGroup className="mt-1">
+      <SidebarGroupLabel className="text-base font-bold uppercase text-blue-950 dark:text-slate-100 tracking-wider">
+        Friends
+      </SidebarGroupLabel>
+      <SidebarGroupContent>
+        <div className="flex flex-col gap-2">
+          {friendsData.map((friend) => (
+            <Link href={friend.profileUrl} key={friend.name} className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground">
+              <Avatar className="h-8 w-8 border">
+                <AvatarImage src={friend.avatarUrl} alt={friend.name} />
+                <AvatarFallback>{friend.fallback}</AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col leading-tight">
+                <span className="font-medium text-foreground">{friend.name}</span>
+                <span className="text-xs text-muted-foreground">{friend.status}</span>
+              </div>
+            </Link>
+          ))}
         </div>
-        <div id="friends-list" className="friend-2 space-y-4">
-          <div className="flex items-center gap-4">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png"alt="Edu Brazil" />
-              <AvatarFallback>PhenomX</AvatarFallback>
-            </Avatar>
-            <div className="font-medium">
-              <span>Phenom-X</span>
-              <span>friend</span>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
+      </SidebarGroupContent>
+    </SidebarGroup>
   );
 }

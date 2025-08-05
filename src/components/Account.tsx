@@ -1,4 +1,4 @@
-import { Settings, LogOut } from "lucide-react"
+import { type LucideIcon, Settings, LogOut } from "lucide-react"
 import Link from "next/link"
 
 import {
@@ -10,7 +10,13 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-const userItems = [
+type MenuItemType = {
+  title: string;
+  url: string;
+  icon: LucideIcon;
+}
+
+const userItems: MenuItemType[] = [
   {
     title: "Setting",
     url: "#",
@@ -23,11 +29,13 @@ const userItems = [
   },
 ]
 
-export default function Setting() {
+export default function Account() {
 
   return (
-    <SidebarGroup>
-      <SidebarGroupLabel>Setting</SidebarGroupLabel>
+    <SidebarGroup className="mt-6">
+      <SidebarGroupLabel className="text-base font-bold uppercase text-blue-950 dark:text-slate-100 tracking-wider">
+        Account
+      </SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
           {userItems.map((item) => (
@@ -35,7 +43,7 @@ export default function Setting() {
               <SidebarMenuButton asChild>
                 <Link href={item.url}>
                   <item.icon />
-                  <span>{item.title}</span>
+                  <span className={`font-medium ${item.title === "Logout" ? "text-red-600 dark:text-red-500" : "text-foreground"}`}>{item.title}</span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>

@@ -1,6 +1,23 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Custom styles */
+.text-deep-blue {
+  color: rgb(19,51,93);
+}
+
+/* body {
+  background-color: rgb(245, 246, 251);
+} */
+
+/* Dark mode */
+/* @media (prefers-color-scheme: dark) {
+  body {
+    background-color: rgb(245, 246, 251);
+  }
+} */
+
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

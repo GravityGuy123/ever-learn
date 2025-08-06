@@ -32,7 +32,7 @@ const userItems: MenuItemType[] = [
 export default function Account() {
 
   return (
-    <SidebarGroup className="mt-6">
+    <SidebarGroup className="mt-1">
       <SidebarGroupLabel className="text-base font-bold uppercase text-blue-950 dark:text-slate-100 tracking-wider">
         Account
       </SidebarGroupLabel>

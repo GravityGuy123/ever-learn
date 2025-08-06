@@ -11,7 +11,7 @@ const friendsData = [
   {
     name: "Sparkles",
     status: "friend",
-    avatarUrl: "/Woman1.jpg", 
+    avatarUrl: "/woman1.jpg", 
     fallback: "EB",
     profileUrl: "#",
   },
@@ -25,7 +25,14 @@ const friendsData = [
   {
     name: "BugHunter",
     status: "friend",
-    avatarUrl: "/man2.jpg", // Using a different avatar for variety
+    avatarUrl: "/man2.jpg",
+    fallback: "PX",
+    profileUrl: "#",
+  },
+  {
+    name: "DevDiva",
+    status: "friend",
+    avatarUrl: "/woman2.jpg",
     fallback: "PX",
     profileUrl: "#",
   },
@@ -33,12 +40,12 @@ const friendsData = [
 
 export default function Friends() {
   return (
-    <SidebarGroup className="mt-1">
+    <SidebarGroup className="">
       <SidebarGroupLabel className="text-base font-bold uppercase text-blue-950 dark:text-slate-100 tracking-wider">
         Friends
       </SidebarGroupLabel>
       <SidebarGroupContent>
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-1">
           {friendsData.map((friend) => (
             <Link href={friend.profileUrl} key={friend.name} className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:bg-accent hover:text-accent-foreground">
               <Avatar className="h-8 w-8 border">

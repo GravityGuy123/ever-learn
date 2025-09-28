@@ -1,10 +1,12 @@
+import { ReactNode } from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "next-themes";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/app-sidebar";
 import Header from "@/components/Header";
-import StatisticCard from "@/components/StatisticCard";
+import StatisticsCard from "@/components/StatisticsCard";
 import MentorList from "@/components/MentorList";
 import Footer from "@/components/Footer";
 
@@ -23,47 +25,47 @@ export const metadata: Metadata = {
   description: "A digital learning platform",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#F8F9FC] dark:bg-[#1B1C30]`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-gray-50 dark:bg-gray-900`}
       >
-        <SidebarProvider>
-          <div className="flex min-h-screen w-full">
-            {/* Sidebar (desktop) */}
-            <aside className="hidden md:block md:fixed md:top-0 md:left-0 md:h-screen md:w-[260px] md:bg-[#F8F9FC] md:dark:bg-[#1E1E2D] md:shadow-lg md:z-30 md:overflow-y-auto">
-              <AppSidebar />
-            </aside>
+        <ThemeProvider attribute="class">
+          <SidebarProvider>
+            <div className="flex min-h-screen w-full">
+              {/* Left Sidebar (desktop) - Fixed and pushed off-screen on small screens */}
+              <aside className="hidden md:block md:fixed md:top-0 md:left-0 md:h-screen md:w-[260px] md:bg-gray-50 md:dark:bg-gray-900 md:shadow-lg md:z-30 md:overflow-y-auto">
+                <AppSidebar />
+              </aside>
 
-            {/* Main Content */}
-            <div className="flex flex-col flex-1 w-full md:ml-[260px] min-w-0">
-              <div className="w-full px-6 mt-4">
-                <Header />
+              {/* Main Content Area: Header, Main Body, Right Sidebar, Footer */}
+              <div className="flex flex-col flex-1 w-full md:ml-[260px] min-w-0">
+                <div className="bg-gray-50 dark:bg-gray-900 w-full sticky top-0 z-50 shadow- px-6 mt-4">
+                  <Header /> 
+                </div>
+                <div className="flex flex-col lg:flex-row flex-1 min-w-0">
+                  <main className="flex-1 overflow-y-auto px-6 py-8">
+                    {children}
+                  </main>
+                  <aside className="w-full lg:w-[320px] lg:max-w-sm bg-transparent">
+                    <div className="px-6 py-8 lg:py-8 lg:px-0 lg:pl-0 lg:pr-6">
+                      <div className="mb-4">
+                        <StatisticsCard />
+                      </div>
+                      <MentorList />
+                    </div>
+                  </aside>
+                </div>
+                
+                {/* 3. Footer Always at the bottom */}
+                <footer className="w-full px-6">
+                  <Footer />
+                </footer>
               </div>
-
-              <div className="flex flex-1 min-w-0">
-                <main className="flex-1 overflow-y-auto px-6 py-8">{children}</main>
-
-                {/* Right sidebar desktop */}
-                <aside className="hidden lg:block w-full max-w-sm overflow-y-auto px-6 py-8 bg-transparent">
-                  <StatisticCard />
-                  <MentorList />
-                </aside>
-              </div>
-
-              <footer className="w-full px-6">
-                <Footer />
-              </footer>
             </div>
-          </div>
-
-          {/* Right sidebar on mobile (below main) */}
-          <div className="lg:hidden px-6 py-8">
-            <StatisticCard />
-            <MentorList />
-          </div>
-        </SidebarProvider>
+          </SidebarProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

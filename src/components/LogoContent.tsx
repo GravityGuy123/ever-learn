@@ -22,14 +22,7 @@ export default function LogoContent() {
         className="rounded-md"
       />
       <span
-        className="
-          text-2xl 
-          uppercase 
-          font-bold 
-          text-violet-400 
-          dark:text-gray-200
-        "
-      >
+        className=" text-2xl uppercase font-bold   text-violet-400 dark:text-indigo-200" >
         Ever-Learn
       </span>
     </section>

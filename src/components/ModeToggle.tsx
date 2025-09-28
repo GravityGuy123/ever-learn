@@ -2,7 +2,6 @@
 
 import { Moon, Sun } from "lucide-react"
 import { useTheme } from "next-themes"
-
 import { Button } from "@/components/ui/button"
 
 export function ModeToggle() {
@@ -11,6 +10,7 @@ export function ModeToggle() {
   return (
     <Button
     onClick={() => setTheme(theme === "dark"? "light" :"dark" ) }
+    className="hover:cursor-pointer"
     >
       {theme === "light"
       ? (<Moon />)

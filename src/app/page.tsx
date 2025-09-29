@@ -44,28 +44,20 @@ export default function HomePage() {
           </h2>
           <div className="space-y-3 text-gray-700 dark:text-gray-300">
             <div className="flex justify-between items-center">
-              <span>Completed "Variables and Data Types"</span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                2 hours ago
-              </span>
+              <span>Completed &quot;Variables and Data Types&quot;</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">2 hours ago</span>
             </div>
             <div className="flex justify-between items-center">
-              <span>Started "Functions and Scope"</span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                5 hours ago
-              </span>
+              <span>Started &quot;Functions and Scope&quot;</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">5 hours ago</span>
             </div>
             <div className="flex justify-between items-center">
-              <span>Joined study group "JavaScript Basics"</span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                1 day ago
-              </span>
+              <span>Joined study group &quot;JavaScript Basics&quot;</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">1 day ago</span>
             </div>
             <div className="flex justify-between items-center">
-              <span>Submitted assignment "Build a Calculator"</span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                2 days ago
-              </span>
+              <span>Submitted assignment &quot;Build a Calculator&quot;</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400">2 days ago</span>
             </div>
           </div>
         </div>

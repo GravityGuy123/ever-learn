@@ -13,11 +13,11 @@ export function AppSidebar() {
 
   return (
     <>
-      {/* Hamburger button only on mobile */}
+      {/* Mobile Hamburger */}
       <div className="md:hidden p-4">
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 rounded text-violet-400 dark:text-gray-200"
+          className="p-2 rounded text-violet-400 dark:text-indigo-200"
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
         >
           {isMobileMenuOpen ? (
@@ -48,7 +48,7 @@ export function AppSidebar() {
 
       {/* Desktop Sidebar */}
       <div className="hidden md:block">
-        <Sidebar className="bg-gray-50 overflow-y-auto">
+        <Sidebar className="bg-gray-50 dark:bg-gray-800 overflow-y-auto">
           <SidebarContent className="dark:bg-gray-800">
             <LogoContent />
             <Pages />
@@ -58,20 +58,17 @@ export function AppSidebar() {
         </Sidebar>
       </div>
 
-      {/* Mobile Half-Width Drawer */}
+      {/* Mobile Drawer */}
       {isMobileMenuOpen && (
         <>
-          {/* Backdrop */}
           <div
             className="fixed inset-0 bg-black/40 z-40 md:hidden"
             onClick={() => setIsMobileMenuOpen(false)}
           />
-          <div className="fixed top-0 left-0 h-full w-1/2 bg-[#F8F9FC] dark:bg-[#1E1E2D] z-50 shadow-xl md:hidden transition-transform duration-300 overflow-y-auto">
-            
-            {/* Close button fixed at top-right */}
+          <div className="fixed top-0 left-0 h-full w-1/2 bg-gray-50 dark:bg-gray-800 z-50 shadow-xl md:hidden transition-transform duration-300 overflow-y-auto">
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-              className="absolute top-4 right-4 text-violet-400 dark:text-gray-200 z-10"
+              className="absolute top-4 right-4 text-violet-400 dark:text-indigo-200 z-10"
               aria-label="Close menu"
             >
               <svg

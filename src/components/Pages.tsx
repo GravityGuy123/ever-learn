@@ -2,19 +2,21 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type LucideIcon, LayoutDashboard, Inbox, NotepadText, SquareChartGantt, Users } from "lucide-react";
+import { type IconType } from "react-icons";
+import { type LucideIcon, LayoutDashboard, Inbox, Users } from "lucide-react";
+import { FiBookOpen, FiCheckSquare } from "react-icons/fi";
 
 type MenuItemType = {
   title: string;
   url: string;
-  icon: LucideIcon;
+  icon: LucideIcon | IconType;
 };
 
 const navigation: MenuItemType[] = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Inbox", url: "/inbox", icon: Inbox },
-  { title: "Lessons", url: "/lessons", icon: NotepadText },
-  { title: "Tasks", url: "/tasks", icon: SquareChartGantt },
+  { title: "Lessons", url: "/lessons", icon: FiBookOpen },
+  { title: "Tasks", url: "/tasks", icon: FiCheckSquare },
   { title: "Groups", url: "/groups", icon: Users },
 ];
 
@@ -23,12 +25,10 @@ export default function Pages() {
 
   return (
     <div className="flex flex-col">
-      {/* PAGES label */}
       <span className="text-base font-bold uppercase text-violet-400 dark:text-indigo-200 tracking-wider px-3 mt-4 mb-2">
         Pages
       </span>
 
-      {/* Navigation links */}
       <nav className="flex flex-col space-y-1 px-3">
         {navigation.map((item) => {
           const isActive = pathname === item.url;

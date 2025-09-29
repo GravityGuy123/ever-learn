@@ -34,20 +34,18 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <ThemeProvider attribute="class">
           <SidebarProvider>
             <div className="flex min-h-screen w-full">
-              {/* Left Sidebar (desktop) - Fixed and pushed off-screen on small screens */}
-              <aside className="hidden md:block md:fixed md:top-0 md:left-0 md:h-screen md:w-[260px] md:bg-gray-50 md:dark:bg-gray-900 md:shadow-lg md:z-30 md:overflow-y-auto">
+              {/* Left Sidebar */}
+              <aside className="hidden md:block md:fixed md:top-0 md:left-0 md:h-screen md:w-[260px] bg-gray-100 dark:bg-gray-850 md:shadow-lg md:z-30 md:overflow-y-auto">
                 <AppSidebar />
               </aside>
 
-              {/* Main Content Area: Header, Main Body, Right Sidebar, Footer */}
+              {/* Main Content */}
               <div className="flex flex-col flex-1 w-full md:ml-[260px] min-w-0">
-                <div className="bg-gray-50 dark:bg-gray-900 w-full sticky top-0 z-50 shadow- px-6 mt-4">
-                  <Header /> 
+                <div className="bg-gray-50 dark:bg-gray-900 w-full sticky top-0 z-50 shadow px-6 mt-4">
+                  <Header />
                 </div>
                 <div className="flex flex-col lg:flex-row flex-1 min-w-0">
-                  <main className="flex-1 px-6 py-8 lg:pr-8">
-                    {children}
-                  </main>
+                  <main className="flex-1 px-6 py-8 lg:pr-8">{children}</main>
                   <aside className="w-full lg:w-[320px] lg:flex-shrink-0 bg-transparent order-first lg:order-last">
                     <div className="px-6 py-8 lg:py-8 lg:px-0 lg:pl-6 lg:pr-6 lg:sticky lg:top-24">
                       <div className="mb-4">
@@ -57,8 +55,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     </div>
                   </aside>
                 </div>
-                
-                {/* Footer Always at the bottom */}
+
                 <footer className="w-full px-6">
                   <Footer />
                 </footer>

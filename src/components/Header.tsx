@@ -9,13 +9,12 @@ export default function Header() {
   const { toggleSidebar } = useSidebar();
 
   return (
-  <header className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 py-4 bg-white dark:bg-gray-900 shadow rounded-xl mb-6 gap-4 sm:gap-0 w-full max-w-full overflow-x-auto">
-      
+    <header className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 py-4 bg-white dark:bg-gray-800 dark:border dark:border-gray-700 shadow rounded-xl mb-6 gap-4 sm:gap-0 w-full max-w-full overflow-x-auto">
       {/* Top row for mobile hamburger + search */}
-  <div className="flex w-full sm:w-auto items-center justify-between sm:justify-start gap-4 min-w-0">
+      <div className="flex w-full sm:w-auto items-center justify-between sm:justify-start gap-4 min-w-0">
         {/* Mobile hamburger */}
         <button
-          className="sm:hidden text-violet-400 dark:text-gray-200"
+          className="sm:hidden text-violet-600 dark:text-indigo-300 hover:text-violet-700 dark:hover:text-indigo-400 transition-colors"
           onClick={toggleSidebar}
           aria-label="Toggle menu"
         >
@@ -34,12 +33,12 @@ export default function Header() {
         <input
           type="text"
           placeholder="Search your course..."
-          className="flex-1 min-w-0 sm:w-64 md:w-1/3 lg:w-96 xl:w-[500px] px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-violet-400 dark:bg-gray-800 dark:text-white dark:border-gray-700"
+          className="flex-1 min-w-0 sm:w-64 md:w-1/3 lg:w-96 xl:w-[500px] px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:focus:ring-indigo-400 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
         />
       </div>
 
       {/* Right section: toggle + profile */}
-  <div className="flex items-center gap-4 min-w-0">
+      <div className="flex items-center gap-4 min-w-0">
         <ModeToggle />
         <div className="flex items-center gap-2">
           <Image
@@ -52,7 +51,9 @@ export default function Header() {
             height={160}
             sizes="100vw"
           />
-          <span className="font-semibold text-gray-800 dark:text-white whitespace-nowrap">GravityGuy</span>
+          <span className="font-semibold text-gray-800 dark:text-gray-200 whitespace-nowrap">
+            GravityGuy
+          </span>
         </div>
       </div>
     </header>

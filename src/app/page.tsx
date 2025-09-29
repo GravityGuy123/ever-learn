@@ -1,7 +1,6 @@
 "use client";
 
 import HomeHero from "@/components/HomeHero";
-import MentorList from "@/components/MentorList";
 
 export default function HomePage() {
   return (
@@ -41,19 +40,19 @@ export default function HomePage() {
           <h2 className="text-xl font-semibold mb-4">Recent Activity</h2>
           <div className="space-y-3">
             <div className="flex justify-between items-center">
-              <span>Completed "Variables and Data Types"</span>
+              <span>{`Completed "Variables and Data Types"`}</span>
               <span className="text-sm text-gray-500">2 hours ago</span>
             </div>
             <div className="flex justify-between items-center">
-              <span>Started "Functions and Scope"</span>
+              <span>{`Started "Functions and Scope"`}</span>
               <span className="text-sm text-gray-500">5 hours ago</span>
             </div>
             <div className="flex justify-between items-center">
-              <span>Joined study group "JavaScript Basics"</span>
+              <span>{`Joined study group "JavaScript Basics"`}</span>
               <span className="text-sm text-gray-500">1 day ago</span>
             </div>
             <div className="flex justify-between items-center">
-              <span>Submitted assignment "Build a Calculator"</span>
+              <span>{`Submitted assignment "Build a Calculator"`}</span>
               <span className="text-sm text-gray-500">2 days ago</span>
             </div>
           </div>
@@ -96,7 +95,7 @@ export default function HomePage() {
         <div className="bg-gradient-to-r from-purple-500 to-blue-600 rounded-lg p-8 text-white">
           <h2 className="text-2xl font-bold mb-4">This Content Should Flow Under Sidebar</h2>
           <p className="mb-4">
-            This section and all content below should now expand to full width once it flows under the floated right sidebar. 
+            This section and all content below should now expand to full width once it flows under the floated right sidebar.
           </p>
           <p>
             If you see this content extending to full width (not just the left column), then the float-based layout is working correctly!

@@ -52,7 +52,7 @@ export default function Header() {
             height={160}
             sizes="100vw"
           />
-          <span className="font-semibold text-gray-800 dark:text-white whitespace-nowrap">Gravity</span>
+          <span className="font-semibold text-gray-800 dark:text-white whitespace-nowrap">GravityGuy</span>
         </div>
       </div>
     </header>

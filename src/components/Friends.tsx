@@ -42,15 +42,8 @@ export default function Friends() {
   return (
     <SidebarGroup>
       <SidebarGroupLabel
-        className="
-          text-base 
-          font-bold 
-          uppercase 
-          text-violet-400 
-          dark:text-gray-200 
-          tracking-wider
-        "
-      >
+        className=" text-base font-bold uppercase text-violet-400  dark:text-indigo-200 tracking-wider
+        ">
         Friends
       </SidebarGroupLabel>
       <SidebarGroupContent>

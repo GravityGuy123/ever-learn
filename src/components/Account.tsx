@@ -33,7 +33,7 @@ export default function Account() {
 
   return (
     <SidebarGroup className="mt-1">
-      <SidebarGroupLabel className="text-base font-bold uppercase text-violet-400 dark:text-slate-100 tracking-wider">
+      <SidebarGroupLabel className="text-base font-bold uppercase text-violet-400 dark:text-indigo-200 tracking-wider">
         Account
       </SidebarGroupLabel>
       <SidebarGroupContent>

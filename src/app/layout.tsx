@@ -45,11 +45,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   <Header /> 
                 </div>
                 <div className="flex flex-col lg:flex-row flex-1 min-w-0">
-                  <main className="flex-1 overflow-y-auto px-6 py-8">
+                  <main className="flex-1 px-6 py-8 lg:pr-8">
                     {children}
                   </main>
-                  <aside className="w-full lg:w-[320px] lg:max-w-sm bg-transparent">
-                    <div className="px-6 py-8 lg:py-8 lg:px-0 lg:pl-0 lg:pr-6">
+                  <aside className="w-full lg:w-[320px] lg:flex-shrink-0 bg-transparent order-first lg:order-last">
+                    <div className="px-6 py-8 lg:py-8 lg:px-0 lg:pl-6 lg:pr-6 lg:sticky lg:top-24">
                       <div className="mb-4">
                         <StatisticsCard />
                       </div>
@@ -58,7 +58,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   </aside>
                 </div>
                 
-                {/* 3. Footer Always at the bottom */}
+                {/* Footer Always at the bottom */}
                 <footer className="w-full px-6">
                   <Footer />
                 </footer>

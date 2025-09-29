@@ -13,9 +13,9 @@ type MenuItemType = {
 const navigation: MenuItemType[] = [
   { title: "Dashboard", url: "/", icon: LayoutDashboard },
   { title: "Inbox", url: "/inbox", icon: Inbox },
-  { title: "Lesson", url: "/lesson", icon: NotepadText },
-  { title: "Task", url: "/task", icon: SquareChartGantt },
-  { title: "Group", url: "/group", icon: Users },
+  { title: "Lessons", url: "/lessons", icon: NotepadText },
+  { title: "Tasks", url: "/tasks", icon: SquareChartGantt },
+  { title: "Groups", url: "/groups", icon: Users },
 ];
 
 export default function Pages() {

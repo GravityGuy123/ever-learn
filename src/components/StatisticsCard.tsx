@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useEffect, useState } from "react";
 import { MoreVertical } from "lucide-react";
 import { Bar, BarChart, XAxis } from "recharts";
 
@@ -27,37 +28,45 @@ const chartData = [
   { month: "Sep", value: 350 },
 ];
 
-// Tailwind palette hex values for chart bars
 const colorPalette = [
-  "#bfdbfe", // blue-200
-  "#93c5fd", // blue-300
-  "#60a5fa", // blue-400
-  "#8b5cf6", // violet-500
-  "#3b82f6", // blue-500
-  "#60a5fa", // blue-400
-  "#93c5fd", // blue-300
-  "#bfdbfe", // blue-200
-  "#dbeafe", // blue-100
+  "#bfdbfe",
+  "#93c5fd",
+  "#60a5fa",
+  "#8b5cf6",
+  "#3b82f6",
+  "#60a5fa",
+  "#93c5fd",
+  "#bfdbfe",
+  "#dbeafe",
 ];
 
-// Chart config (can stay as reference)
 const chartConfig = {
-  value: { label: "Value", color: "#bfdbfe" }, // blue-200
+  value: { label: "Value", color: "#bfdbfe" },
 } satisfies ChartConfig;
 
-// --- Component ---
 export default function StatisticsCard() {
-  const peakValue = Math.max(...chartData.map(d => d.value));
+  const [greeting, setGreeting] = useState("");
+
+  useEffect(() => {
+    const hour = new Date().getHours();
+    if (hour >= 5 && hour < 12) setGreeting("Good Morning");
+    else if (hour >= 12 && hour < 17) setGreeting("Good Afternoon");
+    else if (hour >= 17 && hour < 21) setGreeting("Good Evening");
+    else setGreeting("Good Night");
+  }, []);
+
+  const peakValue = Math.max(...chartData.map((d) => d.value));
 
   const dataWithColor = chartData.map((item, index) => ({
     ...item,
-    fill: item.value === peakValue
-      ? "#7c3aed" // violet-600
-      : colorPalette[index % colorPalette.length],
+    fill:
+      item.value === peakValue
+        ? "#7c3aed"
+        : colorPalette[index % colorPalette.length],
   }));
 
   return (
-  <Card className="w-[300px] dark:bg-gray-800">
+    <Card className="w-full dark:bg-gray-800">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4">
         <CardTitle className="text-lg font-semibold text-gray-800 dark:text-gray-100">
           Statistics
@@ -81,13 +90,11 @@ export default function StatisticsCard() {
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
-            <Badge
-              className="w-fit text-sm font-bold bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-700 dark:text-green-100"
-            >
+            <Badge className="w-fit text-sm font-bold bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-700 dark:text-green-100">
               890
             </Badge>
             <p className="text-lg font-medium text-gray-800 dark:text-gray-100">
-              Good Morning Gravity <span role="img" aria-label="fire">🔥</span>
+              {greeting} GravityGuy <span role="img" aria-label="fire">🔥</span>
             </p>
           </div>
         </div>
@@ -105,12 +112,7 @@ export default function StatisticsCard() {
               tickMargin={6}
               className="text-xs"
             />
-            <Bar
-              dataKey="value"
-              barSize={30}
-              radius={4}
-              // Recharts automatically uses the 'fill' from each data item
-            />
+            <Bar dataKey="value" barSize={30} radius={4} />
           </BarChart>
         </ChartContainer>
       </CardContent>

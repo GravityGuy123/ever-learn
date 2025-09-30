@@ -16,7 +16,7 @@ export default function HomeHero() {
           Sharpen Your Skills with Professional Online Courses.
         </h1>
 
-        <button className="inline-flex items-center gap-2 bg-white text-violet-700 hover:text-white hover:bg-violet-700 rounded-lg px-6 py-3 text-sm font-medium transition">
+        <button className="inline-flex items-center gap-2 bg-white text-violet-700 hover:text-white hover:bg-violet-700 dark:hover:bg-violet-600 rounded-lg px-6 py-3 text-sm font-medium transition">
           <FaPlay className="w-4 h-4" />
           Join Now
         </button>

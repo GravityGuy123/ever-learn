@@ -45,19 +45,19 @@ export default function HomePage() {
           <div className="space-y-3 text-gray-700 dark:text-gray-300">
             <div className="flex justify-between items-center">
               <span>Completed &quot;Variables and Data Types&quot;</span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">2 hours ago</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400 text-right">2 hours ago</span>
             </div>
             <div className="flex justify-between items-center">
               <span>Started &quot;Functions and Scope&quot;</span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">5 hours ago</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400 text-right">5 hours ago</span>
             </div>
             <div className="flex justify-between items-center">
               <span>Joined study group &quot;JavaScript Basics&quot;</span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">1 day ago</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400 text-right">1 day ago</span>
             </div>
             <div className="flex justify-between items-center">
               <span>Submitted assignment &quot;Build a Calculator&quot;</span>
-              <span className="text-sm text-gray-500 dark:text-gray-400">2 days ago</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400 text-right">2 days ago</span>
             </div>
           </div>
         </div>

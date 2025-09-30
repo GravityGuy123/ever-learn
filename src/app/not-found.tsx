@@ -2,20 +2,41 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
-// import { notFound } from "next/navigation";
+import Image from "next/image";
 
 export default function NotFoundPage() {
-  // Optional: Redirect or handle side effects
+  // Optional side effect
   useEffect(() => {
     console.log("Page not found!");
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen text-center">
-      <h1 className="text-6xl font-bold mb-4">404</h1>
-      <p className="text-xl mb-6">Sorry, the page you are looking for does not exist.</p>
-      <Link href="/"
-        className="px-4 py-2 bg-violet-400 dark:bg-violet-900 text-white rounded hover:bg-purple-400 dark:hover:bg-violet-700 transition" >
+    <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-white dark:bg-gray-800 text-center">
+      {/* Illustration */}
+      <div className="w-full max-w-md mb-6">
+        <Image
+          src="/page-not-found-illustration.webp"
+          alt="404 Illustration"
+          width={600}
+          height={450}
+          className="mx-auto h-auto w-full"
+          priority
+        />
+      </div>
+
+      {/* Error Text */}
+      <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-violet-800 dark:text-white mb-3">
+        ERROR 404
+      </h1>
+      <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 mb-8">
+        Page not found...
+      </p>
+
+      {/* Button */}
+      <Link
+        href="/"
+        className="px-6 py-3 bg-violet-500 hover:bg-violet-600 dark:bg-violet-800 dark:hover:bg-violet-700 text-white font-semibold rounded-2xl shadow-md transition"
+      >
         Go Home
       </Link>
     </div>

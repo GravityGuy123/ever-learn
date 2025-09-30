@@ -67,7 +67,7 @@ export default function Footer() {
         {/* Contact Info */}
         <div className="flex flex-col items-center md:items-end text-sm text-white/80 gap-2">
           <div className="flex items-center gap-2">
-            <FaEnvelope className="text-violet-400 dark:text-violet-300" />
+            <FaEnvelope className="text-violet-700 dark:text-violet-300" />
             <Link
               href="mailto:info@gravityconcepts.com"
               className="text-white block break-all hover:text-violet-700 transition-all duration-300"
@@ -76,7 +76,7 @@ export default function Footer() {
             </Link>
           </div>
           <div className="flex items-center gap-2">
-            <FaPhone className="text-violet-400 dark:text-violet-300" />
+            <FaPhone className="text-violet-700 dark:text-violet-300" />
             <Link
               href="tel:+2349032192949"
               className="text-white block hover:text-violet-700 transition-all duration-300"

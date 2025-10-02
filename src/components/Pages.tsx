@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type IconType } from "react-icons";
-import { type LucideIcon, LayoutDashboard, Inbox, Users } from "lucide-react";
+import { type LucideIcon, Home, LayoutDashboard, Inbox, Users } from "lucide-react";
 import { FiBookOpen, FiCheckSquare } from "react-icons/fi";
 
 type MenuItemType = {
@@ -13,7 +13,8 @@ type MenuItemType = {
 };
 
 const navigation: MenuItemType[] = [
-  { title: "Dashboard", url: "/", icon: LayoutDashboard },
+  { title: "Home", url: "/", icon: Home },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Inbox", url: "/inbox", icon: Inbox },
   { title: "Lessons", url: "/lessons", icon: FiBookOpen },
   { title: "Tasks", url: "/tasks", icon: FiCheckSquare },

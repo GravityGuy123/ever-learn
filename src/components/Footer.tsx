@@ -41,7 +41,7 @@ export default function Footer() {
               <Link
                 key={link}
                 href={`/${link.toLowerCase()}`}
-                className="hover:text-violet-700 transition-colors"
+                className="hover:text-indigo-200 dark:hover:text-violet-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded transition-colors"
               >
                 {link}
               </Link>
@@ -56,7 +56,7 @@ export default function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 title={label}
-                className="text-white hover:text-violet-700 p-2 rounded-full transition-colors duration-300"
+                className="text-white hover:text-indigo-200 dark:hover:text-violet-300 p-2 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 transition-colors duration-300"
               >
                 <Icon size={18} />
               </a>
@@ -67,19 +67,19 @@ export default function Footer() {
         {/* Contact Info */}
         <div className="flex flex-col items-center md:items-end text-sm text-white/80 gap-2">
           <div className="flex items-center gap-2">
-            <FaEnvelope className="text-violet-700 dark:text-violet-300" />
+            <FaEnvelope className="text-indigo-200 dark:text-violet-300" />
             <Link
-              href="mailto:info@gravityconcepts.com"
-              className="text-white block break-all hover:text-violet-700 transition-all duration-300"
+              href="mailto:info@ever-learn.com"
+              className="text-white block break-all hover:text-indigo-200 dark:hover:text-violet-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded transition-all duration-300"
             >
               info@ever-learn.com
             </Link>
           </div>
           <div className="flex items-center gap-2">
-            <FaPhone className="text-violet-700 dark:text-violet-300" />
+            <FaPhone className="text-indigo-200 dark:text-violet-300" />
             <Link
               href="tel:+2349032192949"
-              className="text-white block hover:text-violet-700 transition-all duration-300"
+              className="text-white block hover:text-indigo-200 dark:hover:text-violet-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded transition-all duration-300"
             >
               +234 903 219 2949
             </Link>

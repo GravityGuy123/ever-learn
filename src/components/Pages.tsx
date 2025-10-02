@@ -3,18 +3,26 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type IconType } from "react-icons";
-import { type LucideIcon, Home, GraduationCap, LayoutDashboard, Inbox, Users } from "lucide-react";
+import { type LucideIcon, Home, GraduationCap, LayoutDashboard, Inbox, Users, Info, Mail } from "lucide-react";
 import { FiBookOpen, FiCheckSquare } from "react-icons/fi";
 
+// Navigation types
 type MenuItemType = {
   title: string;
   url: string;
   icon: LucideIcon | IconType;
 };
 
-const navigation: MenuItemType[] = [
+// Guest navigation
+const guestNavigation: MenuItemType[] = [
   { title: "Home", url: "/", icon: Home },
   { title: "Courses", url: "/courses", icon: GraduationCap },
+  { title: "About", url: "/about", icon: Info },
+  { title: "Contact", url: "/contact", icon: Mail },
+];
+
+// Authenticated navigation
+const authNavigation: MenuItemType[] = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Inbox", url: "/inbox", icon: Inbox },
   { title: "Lessons", url: "/lessons", icon: FiBookOpen },
@@ -24,6 +32,11 @@ const navigation: MenuItemType[] = [
 
 export default function Pages() {
   const pathname = usePathname();
+
+  // 🔹 Replace this with real auth logic (e.g., from context or NextAuth)
+  const isAuthenticated = false; 
+
+  const navigation = isAuthenticated ? authNavigation : guestNavigation;
 
   return (
     <div className="flex flex-col">

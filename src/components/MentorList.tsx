@@ -57,7 +57,7 @@ export default function MentorList() {
           </button>
         </div>
       </div>
-      <button className="bg-gray-50 text-[#6C63FF] rounded w-full py-2 font-semibold mt-4">
+      <button className="bg-violet-600 dark:bg-gray-700 text-white dark:text-white hover:bg-violet-700 transition rounded w-full py-2 font-semibold mt-4">
         See All
       </button>
     </section>

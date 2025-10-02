@@ -29,9 +29,9 @@ export default function LessonTable () {
             </td>
             <td className="py-3">21/8/2024</td>
             {/* text-violet-400 dark:text-indigo-200 */}
-            <td className="py-3"><span className="bg-gray-50 dark:bg-violet-700 dark:text-white text-violet-400 rounded px-2 py-1 font-semibold text-xs">UI/UX DESIGN</span></td>
+            <td className="py-3"><span className="bg-gray-200 dark:bg-violet-700 dark:text-white text-violet-400 rounded px-2 py-1 font-semibold text-xs">UI/UX DESIGN</span></td>
             <td className="py-3">Understand Of UI/UX Design</td>
-            <td className="py-3"><button className="bg-violet-400 text-white dark:bg-indigo-200 dark:text-white rounded px-4 py-1 font-semibold">See</button></td>
+            <td className="py-3"><button className="bg-violet-600 dark:bg-indigo-400 text-white hover:bg-violet-700 dark:hover:bg-indigo-500 rounded px-4 py-1 font-semibold">See</button></td>
           </tr>
         </tbody>
       </table>

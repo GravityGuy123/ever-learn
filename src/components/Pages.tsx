@@ -3,17 +3,28 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { type IconType } from "react-icons";
-import { type LucideIcon, Home, GraduationCap, LayoutDashboard, Inbox, Users, Info, Mail } from "lucide-react";
+import {
+  type LucideIcon,
+  Home,
+  GraduationCap,
+  LayoutDashboard,
+  Inbox,
+  Users,
+  Info,
+  Mail,
+} from "lucide-react";
 import { FiBookOpen, FiCheckSquare } from "react-icons/fi";
 
-// Navigation types
 type MenuItemType = {
   title: string;
   url: string;
   icon: LucideIcon | IconType;
 };
 
-// Guest navigation
+interface PagesProps {
+  onLinkClick?: () => void;
+}
+
 const guestNavigation: MenuItemType[] = [
   { title: "Home", url: "/", icon: Home },
   { title: "Courses", url: "/courses", icon: GraduationCap },
@@ -21,7 +32,6 @@ const guestNavigation: MenuItemType[] = [
   { title: "Contact", url: "/contact", icon: Mail },
 ];
 
-// Authenticated navigation
 const authNavigation: MenuItemType[] = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
   { title: "Inbox", url: "/inbox", icon: Inbox },
@@ -30,12 +40,9 @@ const authNavigation: MenuItemType[] = [
   { title: "Groups", url: "/groups", icon: Users },
 ];
 
-export default function Pages() {
+export default function Pages({ onLinkClick }: PagesProps) {
   const pathname = usePathname();
-
-  // 🔹 Replace this with real auth logic (e.g., from context or NextAuth)
-  const isAuthenticated = false; 
-
+  const isAuthenticated = false;
   const navigation = isAuthenticated ? authNavigation : guestNavigation;
 
   return (
@@ -51,14 +58,17 @@ export default function Pages() {
             <Link
               key={item.title}
               href={item.url}
-              className={`flex items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors
-                ${isActive
+              onClick={onLinkClick}
+              className={`flex items-center gap-3 rounded-lg px-2 py-2 text-sm transition-colors ${
+                isActive
                   ? "bg-violet-400 text-white dark:bg-violet-600 dark:text-white"
                   : "text-violet-400 hover:bg-violet-100 dark:text-gray-300 dark:hover:bg-violet-700"
-                }`}
+              }`}
             >
               <item.icon
-                className={`h-5 w-5 ${isActive ? "text-white" : "text-violet-400 dark:text-gray-300"}`}
+                className={`h-5 w-5 ${
+                  isActive ? "text-white" : "text-violet-400 dark:text-gray-300"
+                }`}
               />
               <span className="font-medium">{item.title}</span>
             </Link>

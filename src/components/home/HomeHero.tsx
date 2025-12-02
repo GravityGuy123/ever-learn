@@ -1,8 +1,8 @@
 import React from "react";
 import { FaPlay } from "react-icons/fa";
 import Link from "next/link";
-import ContinueWatching from "./ContinueWatching";
-import LessonTable from "./LessonTable";
+import ContinueWatching from "../others/ContinueWatching";
+import LessonTable from "../lessons/LessonTable";
 
 export default function HomeHero() {
   return (

@@ -1,4 +1,4 @@
-import InboxHero from "@/components/InboxHero";
+import InboxHero from "@/components/inbox/InboxHero";
 
 export default function InboxPage() {
   return (

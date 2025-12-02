@@ -1,21 +1,27 @@
 "use client";
 
 import { useState } from "react";
-import Friends from "./Friends";
 import Account from "./Account";
 import LogoContent from "./LogoContent";
 import Pages from "./Pages";
 import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
+// import { useAuth } from "@/hooks/useAuth"; // ✅ added
+import ConditionalFriendsCard from "./ConditionalFriendsCard";
 
 export function AppSidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const handleCloseMenu = () => setIsMobileMenuOpen(false);
 
+  // const { loading } = useAuth(); // ✅ added
+
+  // // Prevent sidebar from flashing before user loads
+  // if (loading) return null; // ✅ added
+
   return (
     <>
       {/* 🌐 Mobile Hamburger */}
       <div className="md:hidden p-4 z-50 relative">
-        <button
+        <button type="button"
           onClick={() => setIsMobileMenuOpen(true)}
           className="p-2 rounded text-violet-500 dark:text-indigo-300 hover:bg-violet-100 dark:hover:bg-violet-700 transition"
           aria-label="Open menu"
@@ -39,7 +45,7 @@ export function AppSidebar() {
           <SidebarContent className="dark:bg-gray-800">
             <LogoContent />
             <Pages />
-            <Friends />
+            <ConditionalFriendsCard />
             <Account />
           </SidebarContent>
         </Sidebar>
@@ -71,10 +77,11 @@ export function AppSidebar() {
 
         {/* 🧭 Sidebar Content */}
         <div className="flex flex-col min-h-full p-6 pt-20 space-y-6 overflow-y-auto w-full">
-          <LogoContent />
+          <LogoContent /> {/* optional, safe */}
           <Pages onLinkClick={handleCloseMenu} />
           <div className="mt-4 space-y-4">
-            <Friends />
+            {/* <Friends /> */}
+            <ConditionalFriendsCard />
             <Account />
           </div>
         </div>

@@ -1,4 +1,4 @@
-import GroupsHero from "@/components/GroupsHero";
+import GroupsHero from "@/components/others/GroupsHero";
 
 export default function GroupPage() {
   return (

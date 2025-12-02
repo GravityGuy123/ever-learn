@@ -17,6 +17,26 @@
   }
 } */
 
+/* Remove Chrome/Edge built-in password reveal icon */
+input::-ms-reveal,
+input::-ms-clear {
+  display: none !important;
+}
+
+input[type="password"]::-webkit-textfield-decoration-container {
+  display: none !important;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  display: none !important;
+  visibility: hidden !important;
+}
+
+/* This is the one you are missing: removes the NEW Chrome eye icon */
+input::-webkit-password-reveal {
+  display: none !important;
+  visibility: hidden !important;
+}
 
 @custom-variant dark (&:is(.dark *));
 

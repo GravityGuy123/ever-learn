@@ -1,12 +1,12 @@
 "use client";
 
 import React from "react";
-import CategoryFilter from "@/components/CategoryFilter";
-import CurrentLessonHighlight from "@/components/CurrentLessonHighlight";
-import LessonsHeader from "@/components/LessonsHeader";
-import LessonsList from "@/components/LessonsList";
-import LessonsSearchFilter from "@/components/LessonsSearchFilter";
-import ProgressOverview from "@/components/ProgressOverview";
+import CategoryFilter from "@/components/others/CategoryFilter";
+import CurrentLessonHighlight from "@/components/others/CurrentLessonHighlight";
+import LessonsHeader from "@/components/lessons/LessonsHeader";
+import LessonsList from "@/components/lessons/LessonsList";
+import LessonsSearchFilter from "@/components/lessons/LessonsSearchFilter";
+import ProgressOverview from "@/components/others/ProgressOverview";
 
 // Define Lesson type
 export interface Lesson {

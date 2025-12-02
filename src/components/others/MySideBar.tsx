@@ -1,7 +1,7 @@
-import Account from "./Account";
-import Friends from "./Friends";
-import Pages from "./Pages";
-import LogoContent from "./LogoContent";
+import Account from "../shared/Account";
+import Friends from "../shared/Friends";
+import Pages from "../shared/Pages";
+import LogoContent from "../shared/LogoContent";
 
 
 export default function MySideBar() {

@@ -1,8 +1,8 @@
 import { type LucideIcon, LayoutDashboard, Inbox, NotepadText, SquareChartGantt, Users } from "lucide-react"
 import Link from "next/link"
-import Friends from "./Friends"
-import Account from "./Account"
-import LogoContent from "./LogoContent";
+import Friends from "../shared/Friends"
+import Account from "../shared/Account"
+import LogoContent from "../shared/LogoContent";
 
 import {
   Sidebar,

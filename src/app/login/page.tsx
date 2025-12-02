@@ -3,113 +3,98 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { Eye, EyeOff } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { LoginSchema } from "@/lib/schema";
+import { loginSchema } from "@/lib/schema";
+import { Spinner } from "@/components/ui/spinner";
+
 
 export default function LoginPage() {
-  const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
+  const { login } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrorMessage("");
-    setSuccessMessage("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginSchema>({ resolver: zodResolver(loginSchema) });
+  
 
-    const form = e.currentTarget;
-    const emailOrName = (form["emailorname"] as HTMLInputElement).value.trim();
-    const password = (form["password"] as HTMLInputElement).value.trim();
-
-    // Validation
-    if (!emailOrName) {
-      setErrorMessage("Please enter your email or username.");
-      return;
+  const onSubmit = async (data: LoginSchema) => {
+    try {
+      await login(data); // sets cookies and updates user state
+      toast.success("Login successful", { position: "top-right" });
+      router.push("/");
+    } catch {
+      toast.error("Login failed", { position: "top-center" });
     }
-
-    if (emailOrName.includes("@")) {
-      if (!emailOrName.includes("."))
-        return setErrorMessage("Please enter a valid email address.");
-    } else {
-      if (emailOrName.length < 3)
-        return setErrorMessage("Username must be at least 3 characters long.");
-    }
-
-    if (!password) {
-      setErrorMessage("Please enter your password.");
-      return;
-    }
-
-    if (password.length < 8) {
-      setErrorMessage("Password must be at least 8 characters long.");
-      return;
-    }
-
-    // Success
-    setSuccessMessage("Login successful! Redirecting to dashboard...");
-    setTimeout(() => {
-      router.push("/dashboard");
-    }, 2000); // small delay so user sees the message
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="flex items-center justify-center py-8 bg-gray-100 dark:bg-gray-900">
       <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8">
         <h2 className="text-2xl font-bold text-center mb-6 text-gray-800 dark:text-white">
           Login
         </h2>
 
-        <form className="space-y-4" onSubmit={handleSubmit}>
+        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">
               Email or Username
             </label>
             <input
               type="text"
-              name="emailorname"
+              id="emailorname"
               placeholder="Enter your email or username"
-              required
+              disabled={isSubmitting}
+              {...register("identifier")}
               className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 
                 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:focus:ring-indigo-400 
-                bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200"
-            />
+                bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200" />
+              {errors.identifier && (
+              <p className="text-sm text-red-600 mt-1">{errors.identifier.message}</p>
+            )}
           </div>
 
+          {/* Password */}
           <div>
             <label className="block text-sm mb-1 text-gray-600 dark:text-gray-300">
               Password
             </label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              required
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 
-                focus:outline-none focus:ring-2 focus:ring-violet-500 dark:focus:ring-indigo-400 
-                bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                placeholder="Enter your password"
+                disabled={isSubmitting}
+                {...register("password")}
+                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-violet-500 dark:focus:ring-indigo-400 bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-200" />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-cyan-600" >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+              {errors.password && (
+              <p className="text-sm text-red-600 mt-1">{errors.password.message}</p>
+            )}
           </div>
-
-          {/* Error Message */}
-          {errorMessage && (
-            <p className="text-red-500 text-sm">{errorMessage}</p>
-          )}
-
-          {/* Success Message */}
-          {successMessage && (
-            <p className="text-violet-600 dark:text-indigo-400 text-sm">
-              {successMessage}
-            </p>
-          )}
 
           <button
             type="submit"
-            className="w-full py-2 rounded-lg bg-violet-600 text-white font-medium 
-              hover:bg-violet-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 transition"
-          >
-            Login
+            className="w-full py-2 rounded-lg bg-violet-600 text-white font-medium hover:bg-violet-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 transition flex items-center justify-center" >
+            {isSubmitting ? <Spinner /> : "Login"}
           </button>
         </form>
 
         <p className="text-sm text-center mt-4 text-gray-600 dark:text-gray-400">
-          Don’t have an account?{" "}
+          {`Don’t have an account?`} {" "}
           <Link
             href="/signup"
             className="text-violet-600 dark:text-indigo-400 font-semibold hover:underline"

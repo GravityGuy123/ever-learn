@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function MentorList() {
   return (
-    <div className="px-6 py-8 lg:py-8 lg:px-0 lg:pl-6 lg:pr-6 lg:sticky lg:top-24">
+    // <div className="px-6 py-8 lg:py-8 lg:px-0 lg:pl-6 lg:pr-6 lg:sticky lg:top-24">
       <section className="mb-6">
         <div className="font-bold text-xl mb-4 dark:text-white">Your mentor</div>
         <div className="flex flex-col gap-4">
@@ -62,6 +62,6 @@ export default function MentorList() {
           See All
         </button>
       </section>  
-    </div>
+    // </div>
   );
 }

@@ -13,6 +13,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 type MenuItemType = {
   title: string;
@@ -34,14 +35,15 @@ const userItems: MenuItemType[] = [
 
 export default function Account() {
   const { isLoggedIn, logout } = useAuth();
+  const router = useRouter();
 
   if (!isLoggedIn) return null; // 🔥 Only show account items if logged in
 
   const handleLogout = async () => {
     try {
       await logout();
-      toast.success("You have logged out successfully",
-        { position: "top-right"});
+      toast.success("You have logged out successfully", { position: "top-right"});
+      router.push("/");
     } catch (err) {
       console.error("Logout failed:", err);
       toast.error("Logout failed. Please try again.", { position: "top-center" });

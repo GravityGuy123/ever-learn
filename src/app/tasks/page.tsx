@@ -1,4 +1,4 @@
-import TaskHero from "@/components/tasks/TaskHero";
+import TaskHero from "@/components/others/TaskHero";
 
 export default function TaskPage() {
   return (

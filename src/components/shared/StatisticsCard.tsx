@@ -68,7 +68,7 @@ export default function StatisticsCard() {
   }));
 
   return (
-    <div className="px-6 py-8 lg:py-8 lg:px-0 lg:pl-6 lg:pr-6 lg:sticky lg:top-24">
+    // <div className="px-6 py-8 lg:py-8 lg:px-0 lg:pl-6 lg:pr-6 lg:sticky lg:top-24">
       <div className="mb-4">
         <Card className="w-full dark:bg-gray-800">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 p-4">
@@ -123,6 +123,6 @@ export default function StatisticsCard() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    // </div>
   );
 }

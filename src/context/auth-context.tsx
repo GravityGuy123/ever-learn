@@ -28,12 +28,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Fetch CSRF cookie from backend
   const getCsrfCookie = async () => {
+    // Debug: show resolved URL
+    try {
+      const base = axiosInstance.defaults.baseURL || "";
+      console.log(`[AUTH DEBUG] Requesting CSRF cookie from: ${base}/csrf/`);
+    } catch {}
     await axiosInstance.get("/csrf/");
   };
 
   const checkAuth = useCallback(async () => {
     try {
       await getCsrfCookie();
+      console.log(
+        `[AUTH DEBUG] Checking auth at: ${axiosInstance.defaults.baseURL || ""}/user`
+      );
       const response = await axiosInstance.get("/user");
       setUser(response.data);
     } catch {
@@ -51,6 +59,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (data: LoginSchema) => {
     try {
       await getCsrfCookie();
+      console.log(
+        `[AUTH DEBUG] Logging in via: ${axiosInstance.defaults.baseURL || ""}/login`,
+        data
+      );
       await axiosInstance.post("/login", data);
       await new Promise((resolve) => setTimeout(resolve, 50));
       await checkAuth();

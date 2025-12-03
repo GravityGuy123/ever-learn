@@ -7,6 +7,7 @@ export const registerFormSchema = z
   .object({
     username: z
       .string()
+      .trim() // ✅ automatically removes spaces at start and end
       .min(3, "Username must be at least 3 characters long")
       .max(20, "Username must be at most 20 characters long")
       .regex(/^[a-zA-Z0-9_]+$/, "Username can only contain letters, numbers, and underscores")

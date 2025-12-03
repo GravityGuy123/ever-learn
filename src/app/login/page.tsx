@@ -29,7 +29,7 @@ export default function LoginPage() {
     try {
       await login(data); // sets cookies and updates user state
       toast.success("Login successful", { position: "top-right" });
-      router.push("/");
+      router.push("/dashboard");
     } catch {
       toast.error("Login failed", { position: "top-center" });
     }

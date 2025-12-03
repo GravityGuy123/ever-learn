@@ -1,13 +1,13 @@
 "use client";
 
-import HomeHero from "@/components/home/HomeHero";
+import DashboardHero from "@/components/dashboard/DashboardHero";
 
 export default function HomePage() {
   return (
     <div>
       {/* Hero Section */}
       <div className="content-item mb-8">
-        <HomeHero />
+        <DashboardHero />
       </div>
 
       {/* Cards Section */}

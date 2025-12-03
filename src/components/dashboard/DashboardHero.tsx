@@ -4,7 +4,7 @@ import Link from "next/link";
 import ContinueWatching from "../others/ContinueWatching";
 import LessonTable from "../lessons/LessonTable";
 
-export default function HomeHero() {
+export default function DashboardHero() {
   return (
     <section>
       <div className="bg-gradient-to-r from-violet-500 to-indigo-600 dark:from-violet-700 dark:to-indigo-900 text-white rounded-2xl p-10 shadow-xl text-center md:text-left">

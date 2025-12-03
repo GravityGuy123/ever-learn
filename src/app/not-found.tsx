@@ -35,7 +35,7 @@ export default function NotFoundPage() {
       {/* Button */}
       <Link
         href="/"
-        className="px-6 py-3 bg-violet-500 hover:bg-violet-600 dark:bg-violet-800 dark:hover:bg-violet-700 text-white font-semibold rounded-2xl shadow-md transition "
+        className="px-6 py-3 bg-violet-500 hover:bg-violet-600 dark:bg-violet-800 dark:hover:bg-violet-700 text-white font-semibold rounded-2xl shadow-md transition"
       >
         Go Home
       </Link>

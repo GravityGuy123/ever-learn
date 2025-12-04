@@ -33,7 +33,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const base = axiosInstance.defaults.baseURL || "";
       console.log(`[AUTH DEBUG] Requesting CSRF cookie from: ${base}/csrf/`);
     } catch {}
-    await axiosInstance.get("/csrf/");
+    try {
+      const res = await axiosInstance.get("/csrf/");
+      // If server returns a csrfToken in the JSON body (helpful for cross-origin), set it
+      if (res?.data?.csrfToken) {
+        axiosInstance.defaults.headers["X-CSRFToken"] = res.data.csrfToken;
+      }
+    } catch (e) {
+      console.warn("Failed to fetch CSRF token", e);
+    }
   };
 
   const checkAuth = useCallback(async () => {

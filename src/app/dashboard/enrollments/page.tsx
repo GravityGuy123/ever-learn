@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { axiosInstance } from '@/lib/axios.config';
+import { Enrollment } from '@/lib/types';
 
 export default function MyEnrollmentsPage() {
-  const [enrollments, setEnrollments] = useState<any[]>([]);
+const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

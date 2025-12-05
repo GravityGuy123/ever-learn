@@ -6,16 +6,17 @@ import EmailVerificationForm from "@/components/auth/EmailVerificationForm";
 import { useEffect, useState } from "react";
 
 export default function ProfilePage() {
-  const auth = useContext(AuthContext);
+    const auth = useContext(AuthContext);
 
-  if (auth.loading) {
-    return <div className="p-4">Loading...</div>;
-  }
+    if (!auth) {
+    throw new Error("AuthContext is missing. Wrap your component in <AuthContext.Provider>");
+    }
 
-  if (!auth.user) {
-    return <div className="p-4">Please sign in to view your profile.</div>;
-  }
-  const user = auth.user as { id: number; username: string; email: string; is_email_verified?: boolean };
+    const user = auth.user as { id: number; username: string; email: string; is_email_verified?: boolean };
+
+    if (auth.loading) return <div className="p-4">Loading...</div>;
+    if (!auth.user) return <div className="p-4">Please sign in to view your profile.</div>;
+
 
   return (
     <div className="max-w-xl mx-auto p-4">

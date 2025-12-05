@@ -1,10 +1,16 @@
 "use client";
 
+import { AnalyticsRow } from '@/lib/types';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
-export default function AnalyticsChart({ rows }: { rows: any[] }) {
-  // rows: [{ date, new_users, new_courses, new_enrollments }]
-  const data = rows.map(r => ({ date: r.date, users: r.new_users, courses: r.new_courses, enrollments: r.new_enrollments }));
+export default function AnalyticsChart({ rows }: { rows: AnalyticsRow[] }) {
+    // rows: [{ date, new_users, new_courses, new_enrollments }]
+    const data = rows.map(r => ({
+        date: r.date,
+        users: r.new_users,
+        courses: r.new_courses,
+        enrollments: r.new_enrollments,
+    }));
 
   return (
     <div className="w-full h-60">

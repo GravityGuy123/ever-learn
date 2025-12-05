@@ -3,12 +3,13 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { axiosInstance } from '@/lib/axios.config';
+import { Lesson } from '@/lib/types';
 
 export default function LessonPage() {
   const params = useParams();
   const courseId = params?.id;
   const lessonId = params?.lesson;
-  const [lesson, setLesson] = useState<any | null>(null);
+  const [lesson, setLesson] = useState<Lesson | null>(null);
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState<string | null>(null);
 

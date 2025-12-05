@@ -100,3 +100,50 @@ export interface Payment {
   created_at: string;
   updated_at: string;
 }
+
+export type Lesson = {
+  id: string;
+  title: string;
+  content: string;
+  video_url?: string | null;
+  created_at?: string;
+  updated_at?: string;
+  course?: string;
+};
+
+export type Course = {
+  id: string;
+  title: string;
+  description: string;
+  is_published?: boolean;
+  created_at?: string;
+  updated_at?: string;
+  lessons?: Lesson[];
+  instructor?: {
+    id: string;
+    full_name?: string;
+    email?: string;
+  };
+};
+
+export type Enrollment = {
+  id: string;
+  course: Course;
+  progress: number;
+};
+
+export type AnalyticsRow = {
+  id: string;
+  date: string;
+  new_users: number;
+  new_courses: number;
+  new_enrollments: number;
+};
+
+export type Application = {
+  id: string;
+  role: string;
+  applicant: { email: string } | string;
+  bio?: string;
+  status?: 'approved' | 'rejected' | 'pending';
+};

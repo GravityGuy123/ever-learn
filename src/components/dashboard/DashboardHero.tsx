@@ -50,6 +50,11 @@ export default function DashboardHero() {
             title: "Featured Mentors",
             text: "Explore our list of experienced mentors.",
           },
+          {
+            href: "/dashboard/admin",
+            title: "Admin",
+            text: "Site admin dashboard (requires admin privileges).",
+          },
         ].map((item) => (
           <Link
             key={item.title}

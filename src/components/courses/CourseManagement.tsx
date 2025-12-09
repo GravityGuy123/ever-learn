@@ -135,7 +135,7 @@ export default function CourseManagement({ params }: { params: { id: string } })
           <input placeholder="Lesson title" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full p-2 border rounded" />
           <textarea placeholder="Lesson content" value={content} onChange={(e) => setContent(e.target.value)} className="w-full p-2 border rounded" rows={4}></textarea>
           <label className="block">
-            <input type="file" accept="video/*" onChange={(e) => setVideo(e.target.files?.[0] || null)} />
+            <input type="file" accept="video/*" aria-label="Upload lesson video" onChange={(e) => setVideo(e.target.files?.[0] || null)} />
           </label>
           <div>
             <button onClick={addLesson} className="px-4 py-2 bg-violet-600 text-white rounded">Add Lesson</button>
@@ -151,7 +151,7 @@ export default function CourseManagement({ params }: { params: { id: string } })
             <input placeholder="Lesson title" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} className="w-full p-2 border rounded" />
             <textarea placeholder="Lesson content" value={editContent} onChange={(e) => setEditContent(e.target.value)} className="w-full p-2 border rounded" rows={4}></textarea>
             <label className="block">
-              <input type="file" accept="video/*" onChange={(e) => setEditVideo(e.target.files?.[0] || null)} />
+              <input type="file" accept="video/*" aria-label="Upload lesson video" onChange={(e) => setEditVideo(e.target.files?.[0] || null)} />
             </label>
             <div className="space-x-2">
               <button onClick={saveEdit} className="px-4 py-2 bg-violet-600 text-white rounded">Save</button>

@@ -17,7 +17,13 @@ type Course = {
   lessons?: Lesson[];
 };
 
-export default function CourseManagement({ params }: { params: { id: string } }) {
+interface CourseManagementProps {
+  params: {
+    id: string;
+  };
+}
+
+export default function CourseManagement({ params }: CourseManagementProps) {
   const courseId = params.id;
   const [course, setCourse] = useState<Course | null>(null);
   const [title, setTitle] = useState("");

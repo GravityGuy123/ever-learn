@@ -6,7 +6,7 @@ import EmailVerificationForm from "@/components/auth/EmailVerificationForm";
 import { AuthContext } from "@/context/auth-context";
 
 export default function ApplyPage() {
-  const [role, setRole] = useState("instructor");
+  const [role, setRole] = useState("tutor");
   const [bio, setBio] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const auth = useContext(AuthContext);
@@ -62,7 +62,7 @@ export default function ApplyPage() {
       <div className="mb-3">
         <label className="block mb-1">Role</label>
         <select aria-label="role" value={role} onChange={(e) => setRole(e.target.value)} className="w-full p-2 border rounded">
-          <option value="instructor">Instructor</option>
+          <option value="tutor">Tutor</option>
           <option value="admin">Admin</option>
         </select>
       </div>

@@ -36,7 +36,7 @@ export default function ContinueWatching() {
           <div className="font-semibold my-2">
             {`Beginner's Guide to Becoming a Professional Front-End Developer`}
           </div>
-          {/* Instructor + Rating */}
+          {/* Tutor + Rating */}
           <div className="flex items-center gap-2 mb-2">
             <Image
               src="/woman1.jpg"
@@ -76,7 +76,7 @@ export default function ContinueWatching() {
           <div className="font-semibold my-2">
             {`Optimizing User Experience with the Best UI/UX Design`}
           </div>
-          {/* Instructor + Rating */}
+          {/* Tutor + Rating */}
           <div className="flex items-center gap-2 mb-2">
             <Image
               src="/man2.jpg"
@@ -116,7 +116,7 @@ export default function ContinueWatching() {
           <div className="font-semibold my-2">
             {`Reviving and Refresh Company Image`}
           </div>
-          {/* Instructor + Rating */}
+          {/* Tutor + Rating */}
           <div className="flex items-center gap-2 mb-2">
             <Image
               src="/woman2.jpg"

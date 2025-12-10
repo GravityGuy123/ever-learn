@@ -28,7 +28,7 @@ export default function DashboardHero() {
           {
             href: "/inbox",
             title: "Inbox",
-            text: "Stay connected with your instructors and peers.",
+            text: "Stay connected with your tutors and peers.",
           },
           {
             href: "/lessons",

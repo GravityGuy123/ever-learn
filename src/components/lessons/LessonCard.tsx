@@ -70,10 +70,10 @@ export default function LessonCard({ lesson, index }: { lesson: Lesson; index: n
           <div className="flex items-center gap-4 mb-3">
             <div className="flex items-center gap-2">
               <Avatar className="w-6 h-6">
-                <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${lesson.instructor}`} />
-                <AvatarFallback>{lesson.instructor?.charAt(0) || "?"}</AvatarFallback>
+                <AvatarImage src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${(lesson as any).tutor || lesson.instructor}`} />
+                <AvatarFallback>{((lesson as any).tutor || lesson.instructor)?.charAt(0) || "?"}</AvatarFallback>
               </Avatar>
-              <span className="text-sm text-muted-foreground">{lesson.instructor}</span>
+              <span className="text-sm text-muted-foreground">{(lesson as any).tutor || lesson.instructor}</span>
             </div>
 
             <div className="flex items-center gap-1 text-muted-foreground">

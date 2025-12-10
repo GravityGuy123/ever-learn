@@ -8,6 +8,7 @@ import { AppSidebar } from "@/components/shared/app-sidebar";
 import Header from "@/components/shared/Header";
 import Footer from "@/components/shared/Footer";
 import { AuthProvider } from "@/context/auth-context";
+import { Analytics } from '@vercel/analytics/react';
 import { Toaster } from "@/components/ui/sonner";
 import RightSidebar from "@/components/shared/RightSidebar";
 
@@ -141,6 +142,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                 </div>
               </div>
               <Toaster />
+              <Analytics />
             </SidebarProvider>
           </AuthProvider>
         </ThemeProvider>

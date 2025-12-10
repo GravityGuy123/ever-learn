@@ -9,6 +9,11 @@ interface User {
   username: string;
   email: string;
   avatar?: string;
+  // Optional role flags returned by the backend
+  is_student?: boolean;
+  is_tutor?: boolean;
+  is_moderator?: boolean;
+  is_admin?: boolean;
 }
 
 interface AuthContextType {

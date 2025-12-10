@@ -29,7 +29,21 @@ export default function LoginPage() {
     try {
       await login(data); // sets cookies and updates user state
       toast.success("Login successful", { position: "top-right" });
-      router.push("/dashboard");
+
+      // Determine destination based on roles provided by backend via user object
+      // Priority: admin > moderator > tutor > student > general
+      const u = (await import('@/context/auth-context')).useAuth().user as any;
+      const dest = u?.is_admin || u?.is_staff
+        ? '/dashboard/admin'
+        : u?.is_moderator
+        ? '/dashboard/moderator'
+        : u?.is_tutor
+        ? '/dashboard/tutor'
+        : u?.is_student
+        ? '/dashboard/student'
+        : '/dashboard';
+
+      router.push(dest);
     } catch {
       toast.error("Login failed", { position: "top-center" });
     }

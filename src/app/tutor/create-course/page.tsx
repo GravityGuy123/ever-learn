@@ -12,11 +12,11 @@ export default function CreateCoursePage() {
 
   const submit = async () => {
     try {
-      const res = await axiosInstance.post('/instructor/courses/create', { title, description });
+      const res = await axiosInstance.post('/tutor/courses/create', { title, description });
       setMessage('Course created');
       setTitle(''); setDescription('');
       const courseId = res.data.id;
-      if (courseId) router.push(`/instructor/course/${courseId}`);
+      if (courseId) router.push(`/tutor/course/${courseId}`);
     } catch (err) {
       setMessage('Failed to create course');
     }

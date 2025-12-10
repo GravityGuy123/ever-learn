@@ -15,7 +15,7 @@ export default function HomePage() {
               Unlock Your Potential with Online Learning 🚀
             </h1>
             <p className="text-lg mb-8 text-white/90">
-              Learn from top instructors, earn certifications, and take your skills to the next level.
+              Learn from top tutors, earn certifications, and take your skills to the next level.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link

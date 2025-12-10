@@ -23,8 +23,6 @@ export interface ShippingAddress {
 
 export interface Vendor {
   id: string;
-  user?: User;
-  email: string;
   brand_name: string;
   avatar: string;
   is_activated: boolean;
@@ -109,6 +107,7 @@ export type Lesson = {
   created_at?: string;
   updated_at?: string;
   course?: string;
+  instructor?: string; // legacy field, often holds tutor name
 };
 
 export type Course = {
@@ -119,7 +118,7 @@ export type Course = {
   created_at?: string;
   updated_at?: string;
   lessons?: Lesson[];
-  instructor?: {
+  tutor?: {
     id: string;
     full_name?: string;
     email?: string;

@@ -18,9 +18,6 @@ import {
   CheckCircle,
   XCircle,
   Eye,
-  TrendingUp,
-  Activity,
-  AlertTriangle,
   Clock,
 } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/shared/StatsCard";
@@ -49,7 +46,7 @@ const mockActivityStats = [
   { metric: "Support Tickets", today: 12, thisWeek: 78, trend: -15 },
 ];
 
-const ModeratorDashboard = () => {
+export default function ModeratorDashboard () {
   const [activeTab, setActiveTab] = useState("overview");
 
   const pendingApplications = mockApplications.filter(a => a.status === "pending").length;

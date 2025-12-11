@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { TrendingUp, Clock, DollarSign } from "lucide-react";
-import { mockCourses } from "./TutorDashboardPage";
+import { mockCourses } from "@/app/dashboard/tutor/mockData";
 
 export function TutorDashboardEarningsTab() {
   return (

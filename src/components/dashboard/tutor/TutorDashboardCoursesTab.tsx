@@ -1,11 +1,14 @@
 "use client";
 
-import { Card, CardContent, Badge } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { TutorDashboardCourse } from "@/lib/types";
 import { BookOpen, Users, BarChart3, MoreHorizontal, Eye, Edit } from "lucide-react";
 
-export function TutorDashboardCoursesTab({ courses }: { courses: typeof import("./TutorDashboardPage").mockCourses }) {
+export function TutorDashboardCoursesTab({ courses }: { courses: TutorDashboardCourse[] }) {
+
   return (
     <div className="grid gap-4">
       {courses.map((course) => (

@@ -260,3 +260,13 @@ export interface LessonsPageLesson {
   thumbnail: string;
   category: string;
 }
+
+export type TutorDashboardCourse = {
+  id: string;
+  title: string;
+  status: "published" | "draft"; 
+  students: number;
+  completionRate: number;
+  rating: number;
+  revenue: number;
+};

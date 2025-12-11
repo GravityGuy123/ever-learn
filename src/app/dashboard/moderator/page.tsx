@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { DashboardLayout } from "@/components/dashboard/shared/DashboardLayout";
-// import { StatsCard } from "@/components/dashboard/shared/StatsCard";
-// import { DataTable } from "@/components/dashboard/shared/DataTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";

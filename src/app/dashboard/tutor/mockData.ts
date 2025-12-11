@@ -1,3 +1,5 @@
+import { TutorDashboardCourse } from "@/lib/types";
+
 // mockData.ts
 export interface Application {
   id: number;
@@ -10,12 +12,13 @@ export interface Application {
 }
 
 // Mock Courses
-export const mockCourses = [
-  { id: 1, title: "Complete React Masterclass", students: 2450, completionRate: 68, revenue: 24500, status: "published", rating: 4.8 },
-  { id: 2, title: "Advanced TypeScript Patterns", students: 1280, completionRate: 45, revenue: 12800, status: "published", rating: 4.7 },
-  { id: 3, title: "Node.js Backend Development", students: 980, completionRate: 52, revenue: 9800, status: "draft", rating: 0 },
-  { id: 4, title: "GraphQL Fundamentals", students: 650, completionRate: 72, revenue: 6500, status: "published", rating: 4.9 },
+export const mockCourses: TutorDashboardCourse[] = [
+  { id: "1", title: "Complete React Masterclass", students: 2450, completionRate: 68, revenue: 24500, status: "published", rating: 4.8 },
+  { id: "2", title: "Advanced TypeScript Patterns", students: 1280, completionRate: 45, revenue: 12800, status: "published", rating: 4.7 },
+  { id: "3", title: "Node.js Backend Development", students: 980, completionRate: 52, revenue: 9800, status: "draft", rating: 0 },
+  { id: "4", title: "GraphQL Fundamentals", students: 650, completionRate: 72, revenue: 6500, status: "published", rating: 4.9 },
 ];
+
 
 // Mock Students
 export const mockStudents = [

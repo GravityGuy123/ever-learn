@@ -2,7 +2,7 @@
 
 import React from "react";
 import DashboardsList from "./DashboardsList";
-import { Account } from "@/components/shared/Account";
+import Account from "@/components/shared/Account";
 
 export function DashboardLayout({ children, currentRole } : { children: React.ReactNode; currentRole?: string }) {
   return (

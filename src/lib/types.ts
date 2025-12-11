@@ -1,3 +1,6 @@
+import type { ReactNode } from "react";
+import { LucideIcon } from "lucide-react";
+
 export interface User {
   id: string;
   email: string;
@@ -107,7 +110,7 @@ export type Lesson = {
   created_at?: string;
   updated_at?: string;
   course?: string;
-  instructor?: string; // legacy field, often holds tutor name
+  tutor?: string; // legacy field, often holds tutor name
 };
 
 export type Course = {
@@ -124,6 +127,7 @@ export type Course = {
     email?: string;
   };
 };
+
 
 export type Enrollment = {
   id: string;
@@ -146,3 +150,113 @@ export type Application = {
   bio?: string;
   status?: 'approved' | 'rejected' | 'pending';
 };
+
+export type UserRole = {
+  is_student?: boolean;
+  is_tutor?: boolean;
+  is_moderator?: boolean;
+  is_admin?: boolean;
+  is_staff?: boolean;
+};
+
+export interface DashboardCourse {
+  id: string;
+  title: string;
+  description: string;
+  tutor: string;
+  level: string;
+  duration: string;
+  category_id: string | null;
+  thumbnail_url: string | null;
+  price: number;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  description: string | null;
+}
+
+export interface CourseCardProps {
+  title: string;
+  description?: string;
+  tutor: string;
+  thumbnail?: string | ReactNode;
+  category: string;
+  level: "Beginner" | "Intermediate" | "Advanced";
+  duration: string;
+  studentCount?: number;
+  rating?: number;
+  price?: number;
+  featured?: boolean;
+  onEnroll?: () => void;
+  onView?: () => void;
+  className?: string;
+}
+
+export interface StatsCardProps {
+  title: string;
+  value: string | number;
+  subtitle?: string;
+  icon: LucideIcon;
+  trend?: {
+    value: number;
+    isPositive: boolean;
+  };
+  className?: string;
+}
+
+export interface CourseProgressCardProps {
+  title: string;
+  instructor: string;
+  thumbnail?: string | null;
+  progress: number;
+  lessonsCompleted: number;
+  totalLessons: number;
+  duration: string;
+  category: string;
+  onContinue?: () => void;
+}
+
+export interface RecommendedCourse {
+  id: number;
+  title: string;
+  category: string;
+  duration: string;
+  rating: number;
+  tutor?: {
+    full_name: string;
+  };
+}
+
+export interface ScheduleEvent {
+  id: number;
+  title: string;
+  type: string;
+  time: string;
+  date: string;
+  tutor: string;
+}
+
+export interface Student {
+  id: number;
+  name: string;
+  email: string;
+  course: string;
+  progress: number;
+  enrolledDate: string;
+}
+
+export interface LessonsPageLesson {
+  id: number;
+  title: string;
+  description: string;
+  instructor: string;
+  duration: string;
+  difficulty: "Beginner" | "Intermediate" | "Advanced";
+  progress: number;
+  completed: boolean;
+  rating: number;
+  thumbnail: string;
+  category: string;
+}

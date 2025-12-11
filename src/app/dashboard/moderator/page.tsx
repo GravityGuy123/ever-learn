@@ -3,12 +3,11 @@
 import { useState } from "react";
 import Image from "next/image";
 import { DashboardLayout } from "@/components/dashboard/shared/DashboardLayout";
-import { StatsCard } from "@/components/dashboard/shared/StatsCard";
-import { DataTable } from "@/components/dashboard/shared/DataTable";
+// import { StatsCard } from "@/components/dashboard/shared/StatsCard";
+// import { DataTable } from "@/components/dashboard/shared/DataTable";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -24,6 +23,8 @@ import {
   AlertTriangle,
   Clock,
 } from "lucide-react";
+import { StatsCard } from "@/components/dashboard/shared/StatsCard";
+import { DataTable } from "@/components/dashboard/shared/DataTable";
 
 // Mock Data
 const mockApplications = [
@@ -196,5 +197,3 @@ const ModeratorDashboard = () => {
     </DashboardLayout>
   );
 };
-
-export default ModeratorDashboard;

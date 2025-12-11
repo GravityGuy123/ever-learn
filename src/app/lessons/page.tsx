@@ -7,24 +7,11 @@ import LessonsHeader from "@/components/lessons/LessonsHeader";
 import LessonsList from "@/components/lessons/LessonsList";
 import LessonsSearchFilter from "@/components/lessons/LessonsSearchFilter";
 import ProgressOverview from "@/components/others/ProgressOverview";
+import { LessonsPageLesson } from "@/lib/types";
 
-// Define Lesson type
-export interface Lesson {
-  id: number;
-  title: string;
-  description: string;
-  instructor: string;
-  duration: string;
-  difficulty: "Beginner" | "Intermediate" | "Advanced";
-  progress: number;
-  completed: boolean;
-  rating: number;
-  thumbnail: string;
-  category: string;
-}
 
 // Lessons data
-const lessons: Lesson[] = [
+const lessons: LessonsPageLesson[] = [
   {
     id: 1,
     title: "Introduction to React Components",

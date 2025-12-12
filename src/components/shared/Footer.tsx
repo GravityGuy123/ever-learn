@@ -1,157 +1,139 @@
 "use client";
 
 import Link from "next/link";
-import {
-  FaFacebookF,
-  FaTwitter,
-  FaLinkedinIn,
-  FaWhatsapp,
-  FaGithub,
-  FaEnvelope,
-  FaPhone,
-} from "react-icons/fa";
+import { FaFacebookF, FaTwitter, FaLinkedinIn, FaGithub, FaWhatsapp, FaEnvelope, FaPhone } from "react-icons/fa";
+import { GraduationCap } from "lucide-react";
 
 export default function Footer() {
   const socialLinks = [
-    { Icon: FaFacebookF, href: "https://web.facebook.com/billy.rex.7334", label: "Facebook" },
-    { Icon: FaTwitter, href: "https://x.com/Galaxies_Grafx", label: "Twitter" },
-    { Icon: FaWhatsapp, href: "https://wa.link/k9dm3u", label: "WhatsApp" },
-    { Icon: FaLinkedinIn, href: "https://www.linkedin.com/in/ifeanyi-ejidike-310029357", label: "LinkedIn" },
-    { Icon: FaGithub, href: "https://github.com/gravityguy123", label: "GitHub" },
+    { href: "https://web.facebook.com/billy.rex.7334", Icon: FaFacebookF, hoverColor: "violet" },
+    { href: "https://x.com/Galaxies_Grafx", Icon: FaTwitter, hoverColor: "violet" },
+    { href: "https://wa.link/k9dm3u", Icon: FaWhatsapp, hoverColor: "green" },
+    { href: "https://www.linkedin.com/in/ifeanyi-ejidike-310029357", Icon: FaLinkedinIn, hoverColor: "violet" },
+    { href: "https://github.com/gravityguy123", Icon: FaGithub, hoverColor: "violet" },
   ];
 
   return (
-    <footer className="w-full bg-gradient-to-r from-violet-400 to-purple-400 dark:from-violet-800 dark:to-purple-900 text-white py-12 border-t border-white/10">
-      {/* GRID STRATEGY: 
-        - Mobile: grid-cols-2 (Allows side-by-side links)
-        - Desktop: grid-cols-4
-      */}
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 lg:grid-cols-4 gap-y-12 gap-x-8">
-        
-        {/* Branding Section 
-           - Mobile: col-span-2 (Takes full width at the top)
-           - Desktop: col-span-1
-        */}
-        <div className="col-span-2 lg:col-span-1 flex flex-col gap-4">
-          <div className="flex flex-col">
-            <span className="font-bold text-2xl uppercase tracking-wide">
-              EverLearn
-            </span>
-            <span className="text-sm text-white/80 mt-1">
-              Empowering Minds, Shaping Futures
+    <footer className="bg-white dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 py-16 mt-20">
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12">
+
+        {/* BRAND */}
+        <div className="space-y-4">
+          <div className="flex items-center space-x-3">
+            <div className="bg-gradient-to-tr from-violet-600 to-indigo-600 p-2 rounded-lg">
+              <GraduationCap className="h-6 w-6 text-white" />
+            </div>
+            <span className="font-heading font-bold text-2xl text-gray-900 dark:text-white">
+              Ever-Learn
             </span>
           </div>
-          
-          <div className="flex gap-3 mt-2">
-            {socialLinks.map(({ Icon, href, label }, idx) => (
+
+          <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+            Empowering minds through expert-led online learning. Study anywhere, anytime.
+          </p>
+
+          {/* SOCIAL ICONS */}
+          <div className="flex gap-3 pt-2">
+            {socialLinks.map(({ href, Icon, hoverColor }, i) => (
               <a
-                key={idx}
+                key={i}
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                title={label}
-                className="p-2 rounded-full bg-white/10 hover:bg-white/20 hover:scale-110 transition-all duration-300"
+                className={`
+                  p-2 rounded-full bg-gray-100 dark:bg-gray-800 transition 
+                  hover:scale-110
+                  ${hoverColor === "green" 
+                    ? "hover:bg-green-500 hover:text-white" 
+                    : "hover:bg-violet-600 hover:text-white dark:hover:bg-violet-600"}
+                `}
               >
-                <Icon size={16} />
+                <Icon className="h-5 w-5" />
               </a>
             ))}
           </div>
         </div>
 
-        {/* About Links 
-           - Mobile: col-span-1 (Sits on the left)
-        */}
-        <div className="flex flex-col gap-4">
-          <h3 className="font-semibold text-lg text-white/90 relative inline-block">
-            About
-            {/* Optional decorative underline */}
-            <span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-indigo-200 rounded-full opacity-50"></span>
+        {/* QUICK LINKS */}
+        <div>
+          <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-lg">
+            Quick Links
           </h3>
-          <ul className="space-y-3 text-sm text-white/80">
-            {['About Us', 'Courses', 'Mentorship', 'Contact'].map((item, i) => (
+
+          <ul className="space-y-3 text-gray-600 dark:text-gray-400 text-sm">
+            {[
+              ["Home", "/"],
+              ["Courses", "/courses"],
+              ["About Us", "/about"],
+              ["Contact", "/contact"],
+              ["Mentorship", "/mentorship"],
+            ].map(([label, href], i) => (
               <li key={i}>
-                <Link 
-                  href={`/${item.toLowerCase().replace(' ', '-')}`} 
-                  className="hover:text-white hover:pl-1 transition-all duration-300 flex items-center"
-                >
-                  {item}
+                <Link href={href} className="hover:text-violet-600 dark:hover:text-violet-400 transition">
+                  {label}
                 </Link>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Legal Links 
-           - Mobile: col-span-1 (Sits on the right, next to About)
-        */}
-        <div className="flex flex-col gap-4">
-          <h3 className="font-semibold text-lg text-white/90 relative inline-block">
-            Legal
-            <span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-indigo-200 rounded-full opacity-50"></span>
+        {/* RESOURCES */}
+        <div>
+          <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-lg">
+            Resources
           </h3>
-          <ul className="space-y-3 text-sm text-white/80">
-             {[
-               { name: 'Privacy Policy', path: '/privacy' },
-               { name: 'Terms of Service', path: '/terms' },
-               { name: 'Cookie Policy', path: '/cookies' },
-               { name: 'Security', path: '/security' }
-             ].map((item, i) => (
+
+          <ul className="space-y-3 text-gray-600 dark:text-gray-400 text-sm">
+            {[
+              ["Privacy Policy", "/privacy"],
+              ["Terms of Service", "/terms"],
+              ["Cookie Policy", "/cookies"],
+              ["Security", "/security"],
+              ["FAQs", "/faqs"],
+            ].map(([label, href], i) => (
               <li key={i}>
-                <Link 
-                  href={item.path}
-                  className="hover:text-white hover:pl-1 transition-all duration-300 flex items-center"
-                >
-                  {item.name}
+                <Link href={href} className="hover:text-violet-600 dark:hover:text-violet-400 transition">
+                  {label}
                 </Link>
               </li>
             ))}
           </ul>
         </div>
 
-        {/* Contact Info 
-           - Mobile: col-span-2 (Takes full width at the bottom for better readability)
-           - Desktop: col-span-1
-        */}
-        <div className="col-span-2 lg:col-span-1 flex flex-col gap-4">
-          <h3 className="font-semibold text-lg text-white/90 relative inline-block">
+        {/* CONTACT */}
+        <div>
+          <h3 className="font-semibold text-gray-900 dark:text-white mb-4 text-lg">
             Get in Touch
-            <span className="absolute -bottom-1 left-0 w-8 h-0.5 bg-indigo-200 rounded-full opacity-50"></span>
           </h3>
-          <div className="flex flex-col gap-3 text-sm text-white/80">
-            <p className="leading-relaxed">
-              Have questions? We are here to help you achieve your learning goals.
-            </p>
-            <div className="flex items-center gap-3 mt-2 group">
-              <div className="p-2 bg-white/10 rounded-full shrink-0 group-hover:bg-white/20 transition-colors">
-                 <FaEnvelope className="text-indigo-100" size={14} />
-              </div>
-              <Link
-                href="mailto:info@ever-learn.com"
-                className="hover:text-white transition-colors"
-              >
-                info@ever-learn.com
-              </Link>
+
+          <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
+            Have questions? We’re here to support your learning journey.
+          </p>
+
+          <div className="flex items-center gap-3 mb-3 group">
+            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg group-hover:bg-violet-600 transition group-hover:text-white">
+              <FaEnvelope className="h-5 w-5" />
             </div>
-            <div className="flex items-center gap-3 group">
-              <div className="p-2 bg-white/10 rounded-full shrink-0 group-hover:bg-white/20 transition-colors">
-                <FaPhone className="text-indigo-100" size={14} />
-              </div>
-              <Link
-                href="tel:+2349032192949"
-                className="hover:text-white transition-colors"
-              >
-                +234 903 219 2949
-              </Link>
+            <Link href="mailto:info@ever-learn.com" className="hover:text-violet-600 dark:hover:text-violet-400 transition">
+              info@ever-learn.com
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-3 group">
+            <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg group-hover:bg-violet-600 transition group-hover:text-white">
+              <FaPhone className="h-5 w-5" />
             </div>
+            <Link href="tel:+2349032192949" className="hover:text-violet-600 dark:hover:text-violet-400 transition">
+              +234 903 219 2949
+            </Link>
           </div>
         </div>
-
       </div>
 
-      {/* Divider & Copyright */}
-      <div className="mt-16 pt-8 border-t border-white/20 text-center">
-        <p className="text-xs text-white/60">
-          &copy; {new Date().getFullYear()} EverLearn. All rights reserved.
+      {/* COPYRIGHT */}
+      <div className="mt-16 pt-8 border-t border-gray-200 dark:border-gray-800 text-center">
+        <p className="text-xs text-gray-500 dark:text-gray-500">
+          © {new Date().getFullYear()} Ever-Learn. All rights reserved.
         </p>
       </div>
     </footer>

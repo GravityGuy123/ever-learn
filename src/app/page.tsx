@@ -3,48 +3,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { FaBookOpen, FaCertificate, FaUsers, FaPlay } from "react-icons/fa";
+import HomeHero from "@/components/home/HomeHero";
 
 export default function HomePage() {
   return (
     <div>
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-violet-500 to-indigo-600 dark:from-violet-700 dark:to-indigo-900 text-white py-20 px-6 text-center md:text-left">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between">
-          <div className="md:w-1/2">
-            <h1 className="text-3xl md:text-5xl font-bold leading-tight mb-6">
-              Unlock Your Potential with Online Learning 🚀
-            </h1>
-            <p className="text-lg mb-8 text-white/90">
-              Learn from top tutors, earn certifications, and take your skills to the next level.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                href="/signup"
-                className="inline-flex items-center gap-2 bg-white text-violet-700 hover:bg-violet-700 hover:text-white rounded-lg px-6 py-3 font-medium transition"
-              >
-                <FaPlay className="w-4 h-4" /> Get Started
-              </Link>
-              <Link
-                href="/courses"
-                className="inline-flex items-center gap-2 border border-white/80 text-white hover:bg-white hover:text-violet-700 rounded-lg px-6 py-3 font-medium transition"
-              >
-                Browse Courses
-              </Link>
-            </div>
-          </div>
-
-          <div className="md:w-1/2 mt-10 md:mt-0 flex justify-center">
-            <Image
-              src="/assets/react2.jpg"
-              alt="React Illustration"
-              width={500}
-              height={400}
-              className="rounded-2xl shadow-lg object-cover"
-              priority
-            />
-          </div>
-        </div>
-      </section>
+      <HomeHero />
 
       {/* Featured Courses */}
       <section className="max-w-6xl mx-auto px-6 py-16">

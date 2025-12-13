@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { DashboardLayout } from "@/components/dashboard/shared/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,6 +11,7 @@ import StudentDashboardRecommendations from "@/components/dashboard/student/Stud
 import StudentDashboardCertificates from "@/components/dashboard/student/StudentDashboardCertificates";
 import StudentDashboardNotifications from "@/components/dashboard/student/StudentDashboardNotifications";
 import StudentDashboardSchedule from "@/components/dashboard/student/StudentDashboardSchedule";
+import DashboardLayout from "@/components/dashboard/shared/DashboardLayout";
 
 
 // --- Mock Data ---

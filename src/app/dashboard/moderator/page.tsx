@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { DashboardLayout } from "@/components/dashboard/shared/DashboardLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,6 +18,7 @@ import {
 } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/shared/StatsCard";
 import { DataTable } from "@/components/dashboard/shared/DataTable";
+import DashboardLayout from "@/components/dashboard/shared/DashboardLayout";
 
 // Mock Data
 const mockApplications = [

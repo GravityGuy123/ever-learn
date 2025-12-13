@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { DashboardLayout } from "@/components/dashboard/shared/DashboardLayout";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { mockCourses, mockStudents, mockApplications } from "./mockData";
 import { TutorDashboardHeader } from "@/components/dashboard/tutor/TutorDashboardHeader";
@@ -10,6 +9,7 @@ import { TutorDashboardApplicationsTab } from "@/components/dashboard/tutor/Tuto
 import { TutorDashboardEarningsTab } from "@/components/dashboard/tutor/TutorDashboardEarningsTab";
 import { TutorDashboardStudentsTab } from "@/components/dashboard/tutor/TutorDashboardStudentsTab";
 import { TutorDashboardCoursesTab } from "@/components/dashboard/tutor/TutorDashboardCoursesTab";
+import DashboardLayout from "@/components/dashboard/shared/DashboardLayout";
 
 export default function TutorDashboardPage() {
   const [activeTab, setActiveTab] = useState("courses");

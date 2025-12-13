@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
-import DashboardLayout from "@/components/dashboard/shared/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, BookOpen } from "lucide-react";
@@ -24,6 +22,7 @@ const manualCourses: DashboardCourse[] = [
     duration: "20 weeks",
     price: 135000,
     thumbnail_url: "/assets/full-stack-web-1.jpeg",
+    category_id: "1", // Technology
   },
   {
     id: "2",
@@ -34,6 +33,7 @@ const manualCourses: DashboardCourse[] = [
     duration: "10 weeks",
     price: 90000,
     thumbnail_url: "/assets/python-data-science-1.jpeg",
+    category_id: "2", // Data Science
   },
   {
     id: "3",
@@ -44,6 +44,7 @@ const manualCourses: DashboardCourse[] = [
     duration: "14 weeks",
     price: 120000,
     thumbnail_url: "/assets/ios-app-dev-1.jpeg",
+    category_id: "1",
   },
   {
     id: "4",
@@ -54,6 +55,7 @@ const manualCourses: DashboardCourse[] = [
     duration: "8 weeks",
     price: 60000,
     thumbnail_url: "/assets/ui-ux-design-1.jpeg",
+    category_id: "3", // Design
   },
   {
     id: "5",
@@ -64,6 +66,7 @@ const manualCourses: DashboardCourse[] = [
     duration: "16 weeks",
     price: 150000,
     thumbnail_url: "/assets/machine-learning-1.jpeg",
+    category_id: "2",
   },
   {
     id: "6",
@@ -74,19 +77,52 @@ const manualCourses: DashboardCourse[] = [
     duration: "12 weeks",
     price: 75000,
     thumbnail_url: "/assets/complete-react-development-1.jpeg",
+    category_id: "1",
   },
 ];
 
 // Manual category list
 const manualCategories: Category[] = [
-  { id: "1", name: "Technology" },
-  { id: "2", name: "Data Science" },
-  { id: "3", name: "Design" },
-  { id: "4", name: "Business" },
-  { id: "5", name: "Marketing" },
-  { id: "6", name: "Personal Development" },
-  { id: "7", name: "Photography" },
-  { id: "8", name: "Health & Fitness" },
+  {
+    id: "1",
+    name: "Technology",
+    description: "Programming, software development, and IT-related courses",
+  },
+  {
+    id: "2",
+    name: "Data Science",
+    description: "Data analysis, machine learning, and AI-focused courses",
+  },
+  {
+    id: "3",
+    name: "Design",
+    description: "UI, UX, graphics, and creative design courses",
+  },
+  {
+    id: "4",
+    name: "Business",
+    description: "Entrepreneurship, management, and business strategy",
+  },
+  {
+    id: "5",
+    name: "Marketing",
+    description: "Digital marketing, branding, and growth strategies",
+  },
+  {
+    id: "6",
+    name: "Personal Development",
+    description: "Self-improvement, productivity, and life skills",
+  },
+  {
+    id: "7",
+    name: "Photography",
+    description: "Photography techniques, editing, and visual storytelling",
+  },
+  {
+    id: "8",
+    name: "Health & Fitness",
+    description: "Wellness, fitness training, and healthy living",
+  },
 ];
 
 export default function GeneralDashboard() {

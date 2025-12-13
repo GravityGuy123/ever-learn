@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { StaticImport } from "next/dist/shared/lib/get-img-props";
 import { LucideIcon } from "lucide-react";
 
 export interface User {
@@ -164,7 +164,7 @@ export interface DashboardCourse {
   title: string;
   description: string;
   tutor: string;
-  level: string;
+  level: "Beginner" | "Advanced" | "Intermediate";
   duration: string;
   category_id: string | null;
   thumbnail_url: string | null;
@@ -181,7 +181,7 @@ export interface CourseCardProps {
   title: string;
   description?: string;
   tutor: string;
-  thumbnail?: string | ReactNode;
+  thumbnail?: string | StaticImport | null;
   category: string;
   level: "Beginner" | "Intermediate" | "Advanced";
   duration: string;

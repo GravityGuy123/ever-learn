@@ -1,139 +1,178 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { DashboardLayout } from "@/components/dashboard/shared/DashboardLayout";
+import DashboardLayout from "@/components/dashboard/shared/DashboardLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronRight, BookOpen } from "lucide-react";
-import { Category, DashboardCourse } from "@/lib/types";
 import { CourseCard } from "@/components/dashboard/general/CourseCard";
 import GeneralDashboardAnnouncements from "@/components/dashboard/general/GeneralDashboardAnnouncements";
 import GeneralDashboardPopularCertifications from "@/components/dashboard/general/GeneralDashboardPopularCertifications";
 import GeneralDashboardRoleApplication from "@/components/dashboard/general/GeneralDashboardRoleApplication";
-import { axiosInstance } from "@/lib/axios.config";
+import { Category, DashboardCourse } from "@/lib/types";
+
+
+// Manual course list
+const manualCourses: DashboardCourse[] = [
+  {
+    id: "1",
+    title: "Full Stack Web Development",
+    description: "Build complete web applications with Node.js, Express, and MongoDB",
+    tutor: "James Rodriguez",
+    level: "Advanced",
+    duration: "20 weeks",
+    price: 135000,
+    thumbnail_url: "/assets/full-stack-web-1.jpeg",
+  },
+  {
+    id: "2",
+    title: "Python for Data Science",
+    description: "Learn Python programming with focus on data analysis, visualization, and machine learning",
+    tutor: "Michael Chen",
+    level: "Beginner",
+    duration: "10 weeks",
+    price: 90000,
+    thumbnail_url: "/assets/python-data-science-1.jpeg",
+  },
+  {
+    id: "3",
+    title: "iOS App Development with Swift",
+    description: "Build professional iOS applications using Swift and SwiftUI",
+    tutor: "Emma Wilson",
+    level: "Intermediate",
+    duration: "14 weeks",
+    price: 120000,
+    thumbnail_url: "/assets/ios-app-dev-1.jpeg",
+  },
+  {
+    id: "4",
+    title: "UI/UX Design Fundamentals",
+    description: "Master the principles of user interface and user experience design",
+    tutor: "David Kim",
+    level: "Beginner",
+    duration: "8 weeks",
+    price: 60000,
+    thumbnail_url: "/assets/ui-ux-design-1.jpeg",
+  },
+  {
+    id: "5",
+    title: "Machine Learning A-Z",
+    description: "Comprehensive guide to machine learning algorithms and applications",
+    tutor: "Dr. Lisa Anderson",
+    level: "Advanced",
+    duration: "16 weeks",
+    price: 150000,
+    thumbnail_url: "/assets/machine-learning-1.jpeg",
+  },
+  {
+    id: "6",
+    title: "Complete React Development",
+    description: "Master React from basics to advanced concepts including hooks, context, and Redux",
+    tutor: "Sarah Johnson",
+    level: "Intermediate",
+    duration: "12 weeks",
+    price: 75000,
+    thumbnail_url: "/assets/complete-react-development-1.jpeg",
+  },
+];
+
+// Manual category list
+const manualCategories: Category[] = [
+  { id: "1", name: "Technology" },
+  { id: "2", name: "Data Science" },
+  { id: "3", name: "Design" },
+  { id: "4", name: "Business" },
+  { id: "5", name: "Marketing" },
+  { id: "6", name: "Personal Development" },
+  { id: "7", name: "Photography" },
+  { id: "8", name: "Health & Fitness" },
+];
 
 export default function GeneralDashboard() {
-  const [courses, setCourses] = useState<DashboardCourse[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [coursesRes, categoriesRes] = await Promise.all([
-          axiosInstance.get("/courses/?limit=6"),
-          axiosInstance.get("/categories/?limit=8"),
-        ]);
-
-        // Assuming your Django API returns data in "results" key
-        setCourses(coursesRes.data.results || []);
-        setCategories(categoriesRes.data.results || []);
-      } catch (error) {
-        console.error("Failed to fetch data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
-
   return (
-    <DashboardLayout currentRole="general">
-      <div className="space-y-8">
-        {/* Welcome Section */}
-        <div className="bg-gradient-to-r from-primary/20 via-primary/10 to-accent/10 rounded-2xl p-6 md:p-8 text-primary-foreground">
-          <h1 className="text-2xl md:text-3xl font-bold font-heading mb-2">Welcome to Learnix!</h1>
-          <p className="text-primary-foreground/80 max-w-2xl">
-            Discover thousands of courses from expert instructors. Start your learning journey today and unlock your potential.
-          </p>
-        </div>
-
-        {/* Announcements */}
-        <GeneralDashboardAnnouncements />
-
-        {/* Categories */}
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold font-heading">Browse Categories</h2>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/courses">
-                View all <ChevronRight className="h-4 w-4 ml-1" />
-              </Link>
-            </Button>
-          </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {loading
-              ? Array.from({ length: 8 }).map((_, i) => (
-                  <Card key={i} className="animate-pulse">
-                    <CardContent className="p-4 h-20" />
-                  </Card>
-                ))
-              : categories.map((c) => (
-                  <Card
-                    key={c.id}
-                    className="hover:shadow-md hover:border-primary/50 transition-all cursor-pointer group"
-                  >
-                    <CardContent className="p-4 flex items-center gap-3">
-                      <div className="p-2 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors">
-                        <BookOpen className="h-5 w-5 text-primary" />
-                      </div>
-                      <span className="font-medium">{c.name}</span>
-                    </CardContent>
-                  </Card>
-                ))}
-          </div>
-        </section>
-
-        {/* Featured Courses */}
-        <section>
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold font-heading">Featured Courses</h2>
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/courses">
-                View all <ChevronRight className="h-4 w-4 ml-1" />
-              </Link>
-            </Button>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {loading
-              ? Array.from({ length: 6 }).map((_, i) => (
-                  <Card key={i} className="animate-pulse">
-                    <div className="h-40 bg-muted relative w-full" />
-                    <CardContent className="p-4 space-y-3">
-                      <div className="h-4 bg-muted rounded w-1/2" />
-                      <div className="h-4 bg-muted rounded w-3/4" />
-                    </CardContent>
-                  </Card>
-                ))
-              : courses.map((course, index) => (
-                  <CourseCard
-                    key={course.id}
-                    title={course.title}
-                    description={course.description}
-                    tutor={course.tutor}
-                    thumbnail={course.thumbnail_url}
-                    category="Technology"
-                    level={course.level as "Beginner" | "Intermediate" | "Advanced"}
-                    duration={course.duration}
-                    price={course.price}
-                    featured={index === 0}
-                    studentCount={Math.floor(Math.random() * 5000) + 500}
-                    rating={4 + Math.random()}
-                    onEnroll={() => {}}
-                    onView={() => {}}
-                  />
-                ))}
-          </div>
-        </section>
-
-        {/* Popular Certifications */}
-        <GeneralDashboardPopularCertifications />
-
-        {/* Apply for Role Section */}
-        <GeneralDashboardRoleApplication />
+    <div className="space-y-10">
+      {/* Welcome Section */}
+      <div className="bg-gradient-to-r from-violet-50 via-indigo-50 to-indigo-100 dark:from-gray-900 dark:via-gray-950 dark:to-gray-900 rounded-2xl p-6 md:p-8 text-gray-900 dark:text-gray-100 shadow-sm">
+        <h1 className="text-2xl md:text-3xl font-bold font-heading mb-2">
+          Welcome to Ever-Learn!
+        </h1>
+        <p className="text-gray-700 dark:text-gray-300 max-w-2xl leading-relaxed">
+          Discover thousands of courses from expert instructors. Start your learning journey today and unlock your potential.
+        </p>
       </div>
-    </DashboardLayout>
+
+      {/* Announcements */}
+      <GeneralDashboardAnnouncements />
+
+      {/* Categories */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold font-heading text-gray-900 dark:text-gray-100">
+            Browse Categories
+          </h2>
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/courses" className="flex items-center gap-1 text-violet-600 dark:text-violet-400 hover:underline">
+              View all <ChevronRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {manualCategories.map((c) => (
+            <Card
+              key={c.id}
+              className="hover:shadow-lg hover:border-violet-300 dark:hover:border-violet-500 transition-all cursor-pointer group rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
+            >
+              <CardContent className="p-4 flex items-center gap-3 text-gray-900 dark:text-gray-100">
+                <div className="p-2 bg-violet-50 dark:bg-violet-900 rounded-lg group-hover:bg-violet-100 dark:group-hover:bg-violet-800 transition-colors">
+                  <BookOpen className="h-5 w-5 text-violet-600 dark:text-violet-300" />
+                </div>
+                <span>{c.name}</span>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Featured Courses */}
+      <section>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-bold font-heading text-gray-900 dark:text-gray-100">
+            Featured Courses
+          </h2>
+          <Button variant="ghost" size="sm" asChild>
+            <Link href="/courses" className="flex items-center gap-1 text-violet-600 dark:text-violet-400 hover:underline">
+              View all <ChevronRight className="h-4 w-4" />
+            </Link>
+          </Button>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {manualCourses.map((course, index) => (
+            <CourseCard
+              key={course.id}
+              title={course.title}
+              description={course.description}
+              tutor={course.tutor}
+              thumbnail={course.thumbnail_url}
+              category="Technology"
+              level={course.level}
+              duration={course.duration}
+              price={course.price}
+              featured={index === 0}
+              studentCount={Math.floor(Math.random() * 5000) + 500}
+              rating={4 + Math.random()}
+              onEnroll={() => {}}
+              onView={() => {}}
+            />
+          ))}
+        </div>
+      </section>
+
+      {/* Popular Certifications */}
+      <GeneralDashboardPopularCertifications />
+
+      {/* Apply for Role Section */}
+      <GeneralDashboardRoleApplication />
+    </div>
   );
 }

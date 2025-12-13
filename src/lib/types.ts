@@ -270,3 +270,15 @@ export type TutorDashboardCourse = {
   rating: number;
   revenue: number;
 };
+
+export type ToastPosition =
+  | "top-left"
+  | "top-right"
+  | "top-center"
+  | "bottom-left"
+  | "bottom-right"
+  | "bottom-center";
+
+export interface ToastOptions {
+  position?: ToastPosition;
+}

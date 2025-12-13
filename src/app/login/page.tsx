@@ -5,17 +5,21 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+// import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { LoginSchema } from "@/lib/schema";
 import { loginSchema } from "@/lib/schema";
 import { Spinner } from "@/components/ui/spinner";
+import { useTheme } from "next-themes";
+import { ErrorToast, SuccessToast } from "@/lib/toast";
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const { login, user } = useAuth();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   const {
     register,
@@ -42,7 +46,7 @@ export default function LoginPage() {
   const onSubmit = async (data: LoginSchema) => {
     try {
       await login(data);
-      toast.success("Login successful", { position: "top-right" });
+      SuccessToast("Login successful!", isDark, {position: "top-right"});
 
       const dest = user?.is_admin
         ? "/dashboard/admin"
@@ -56,7 +60,7 @@ export default function LoginPage() {
 
       router.push(dest);
     } catch {
-      toast.error("Login failed", { position: "top-center" });
+      ErrorToast("Login failed", isDark, {position: "top-center"});
     }
   };
 

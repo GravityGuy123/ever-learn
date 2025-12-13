@@ -11,6 +11,7 @@ import { AuthProvider } from "@/context/auth-context";
 import { Analytics } from '@vercel/analytics/react';
 import { Toaster } from "@/components/ui/sonner";
 import RightSidebar from "@/components/shared/RightSidebar";
+import AppToaster from "@/components/shared/AppToaster";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -133,7 +134,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     <div className="flex flex-col lg:flex-row flex-1 min-w-0">
                       <main className="flex-1 px-6 py-8 lg:pr-8">{children}</main>
                       {/* Only render sidebar if user is logged in */}
-                      <RightSidebar />
+                      {/* <RightSidebar /> */}
                     </div>
 
                     <footer className="w-full px-6">
@@ -141,35 +142,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     </footer>
                 </div>
               </div>
-              {/* <Toaster /> */}
-              <Toaster
-                richColors
-                toastOptions={{
-                  duration: 3000,
-                  className:
-                    "px-4 py-3 rounded-xl shadow-lg border border-white/20 dark:border-gray-700 font-medium",
-
-                  success: {
-                    className:
-                      "bg-gradient-to-r from-violet-600 to-indigo-600 text-white dark:from-violet-500 dark:to-indigo-500",
-                  },
-
-                  error: {
-                    className:
-                      "bg-red-600 dark:bg-red-500 text-white border-red-300/20 dark:border-red-400/20",
-                  },
-
-                  info: {
-                    className:
-                      "bg-blue-600 dark:bg-blue-500 text-white border-blue-300/20 dark:border-blue-400/20",
-                  },
-
-                  warning: {
-                    className:
-                      "bg-yellow-500 dark:bg-yellow-400 text-gray-900 dark:text-gray-900 border-yellow-300/20 dark:border-yellow-500/20",
-                  },
-                }}
-              />
+              <Toaster toastOptions={{ duration: 3000, }} />
+              {/* <AppToaster />  */}
               <Analytics />
             </SidebarProvider>
           </AuthProvider>

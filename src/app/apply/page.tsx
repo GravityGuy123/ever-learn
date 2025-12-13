@@ -63,6 +63,7 @@ export default function ApplyPage() {
         <label className="block mb-1">Role</label>
         <select aria-label="role" value={role} onChange={(e) => setRole(e.target.value)} className="w-full p-2 border rounded">
           <option value="tutor">Tutor</option>
+          <option value="admin">Moderator</option>
           <option value="admin">Admin</option>
         </select>
       </div>

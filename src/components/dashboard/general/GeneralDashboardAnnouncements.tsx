@@ -10,32 +10,49 @@ const mockAnnouncements = [
 ];
 
 export default function GeneralDashboardAnnouncements() {
-
-     return (
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="flex items-center gap-2">
-              <Megaphone className="h-5 w-5 text-primary" /> Platform Updates
-            </CardTitle>
-            <Button variant="ghost" size="sm">
-              View all <ChevronRight className="h-4 w-4 ml-1" />
-            </Button>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {mockAnnouncements.map(a => (
-                <div key={a.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg hover:bg-muted transition-colors">
-                  <div className="flex items-center gap-3">
-                    <Badge variant={a.type === "new" ? "default" : a.type === "promo" ? "secondary" : "outline"}>
-                      {a.type}
-                    </Badge>
-                    <span className="font-medium">{a.title}</span>
-                  </div>
-                  <span className="text-sm text-muted-foreground">{a.date}</span>
-                </div>
-              ))}
+  return (
+    <Card className="bg-white dark:bg-gray-900 shadow-lg dark:shadow-xl border border-gray-200 dark:border-gray-800 rounded-2xl">
+      <CardHeader className="flex items-center justify-between pb-2">
+        <CardTitle className="flex items-center gap-2 text-gray-900 dark:text-white text-lg md:text-xl">
+          <Megaphone className="h-5 w-5 text-violet-600 dark:text-violet-400" /> Platform Updates
+        </CardTitle>
+        <Button variant="ghost" size="sm" className="text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300">
+          View all <ChevronRight className="h-4 w-4 ml-1" />
+        </Button>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-3">
+          {mockAnnouncements.map((a) => (
+            <div
+              key={a.id}
+              className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg hover:bg-violet-50 dark:hover:bg-violet-900 transition-colors cursor-pointer"
+            >
+              <div className="flex items-center gap-3">
+                <Badge
+                  variant={
+                    a.type === "new"
+                      ? "default"
+                      : a.type === "promo"
+                      ? "secondary"
+                      : "outline"
+                  }
+                  className={`capitalize ${
+                    a.type === "new"
+                      ? "bg-violet-100 text-violet-700 dark:bg-violet-600 dark:text-white"
+                      : a.type === "promo"
+                      ? "bg-indigo-100 text-indigo-700 dark:bg-indigo-600 dark:text-white"
+                      : "bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-200"
+                  }`}
+                >
+                  {a.type}
+                </Badge>
+                <span className="font-medium text-gray-900 dark:text-gray-100">{a.title}</span>
+              </div>
+              <span className="text-sm text-gray-500 dark:text-gray-400">{a.date}</span>
             </div>
-          </CardContent>
-        </Card>
-     )
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
 }

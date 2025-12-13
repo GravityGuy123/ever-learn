@@ -12,9 +12,12 @@ import { Spinner } from "@/components/ui/spinner";
 import UserInfoFields from "@/components/auth/signup/UserInfoFields";
 import PasswordFields from "@/components/auth/signup/PasswordFields";
 import AvatarField from "@/components/auth/signup/AvatarField";
+import { useTheme } from "next-themes";
 
 export default function SignupPage() {
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   const { register, handleSubmit, formState: { errors, isSubmitting } } =
     useForm<RegisterSchema>({ resolver: zodResolver(registerFormSchema) });
@@ -39,11 +42,29 @@ export default function SignupPage() {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      toast.success("Registration successful! login", { position: "top-right" });
+      toast.success("Registration successful! Login", {
+        position: "top-right",
+        className:
+          "text-white bg-gradient-to-r from-violet-600 to-indigo-600 dark:from-violet-500 dark:to-indigo-500 px-4 py-3 rounded-xl shadow-lg border border-white/20 font-medium",
+        style: {
+          backgroundColor: isDark ? '#7c3aed' : "#8b5cf6",
+          color: "#fff",
+        }
+      });
+
 
       setTimeout(() => router.push("/login"), 2000);
     } catch (error) {
-      toast.error("Registration failed", { position: "top-center" });
+      toast.error("Registration failed", {
+        position: "top-center",
+        className:
+          "bg-red-600 dark:bg-red-500 text-white border-red-300/20 dark:border-red-400/20",
+        style: {
+          backgroundColor: isDark ? '#ef4444' : "#f87171",
+          color: "#fff",
+        }
+      });
+
     }
   }
 

@@ -16,8 +16,7 @@ export const registerFormSchema = z
     full_name: z
       .string()
       .min(3, "Full name must be at least 3 characters long")
-      .regex(/^[A-Za-z ]+$/, "Full name can only contain letters and spaces")
-      .regex(/^[A-Za-z]+ [A-Za-z]+$/, "Please enter your full name (first and last name)"),
+      .regex(/^[A-Za-z ]+$/, "Full name can only contain letters and spaces"),
 
     email: z
     .email("Please enter a valid email address")

@@ -3,6 +3,7 @@
 import { type LucideIcon, Settings, LogOut } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/context/auth-context";
+import { useTheme } from "next-themes";
 
 import {
   SidebarGroup,
@@ -14,6 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { ErrorToast, SuccessToast } from "@/lib/toast";
 
 type MenuItemType = {
   title: string;
@@ -36,17 +38,20 @@ const userItems: MenuItemType[] = [
 export default function Account() {
   const { isLoggedIn, logout } = useAuth();
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   if (!isLoggedIn) return null; // 🔥 Only show account items if logged in
 
   const handleLogout = async () => {
     try {
       await logout();
-      toast.success("You have logged out successfully", { position: "top-right"});
+      SuccessToast("You have logged out successfully", isDark, {position: "top-right"});
+      
       router.push("/");
     } catch (err) {
       console.error("Logout failed:", err);
-      toast.error("Logout failed. Please try again.", { position: "top-center" });
+      ErrorToast("Logout failed. Please try again.", isDark, {position: "top-center"});
     }
   };
 

@@ -18,7 +18,6 @@ import {
 } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/shared/StatsCard";
 import { DataTable } from "@/components/dashboard/shared/DataTable";
-import DashboardLayout from "@/components/dashboard/shared/DashboardLayout";
 
 // Mock Data
 const mockApplications = [
@@ -108,86 +107,84 @@ export default function ModeratorDashboard () {
   ];
 
   return (
-    <DashboardLayout currentRole="moderator">
-      <div className="space-y-6">
-        {/* Header */}
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold font-heading">Moderator Dashboard</h1>
-          <p className="text-muted-foreground">Monitor platform activity and manage content</p>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatsCard title="Total Students" value="12,450" icon={GraduationCap} trend={{ value: 8, isPositive: true }} />
-          <StatsCard title="Total Tutors" value="284" icon={Users} trend={{ value: 5, isPositive: true }} />
-          <StatsCard title="Active Courses" value="156" icon={BookOpen} trend={{ value: 12, isPositive: true }} />
-          <StatsCard title="Pending Reviews" value={pendingApplications + pendingFlags} icon={Flag} subtitle={`${pendingApplications} applications, ${pendingFlags} flags`} />
-        </div>
-
-        {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab}>
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="applications" className="gap-1">
-              Applications {pendingApplications > 0 && <Badge variant="secondary" className="ml-1 h-5 px-1.5">{pendingApplications}</Badge>}
-            </TabsTrigger>
-            <TabsTrigger value="flagged" className="gap-1">
-              Flagged Content {pendingFlags > 0 && <Badge variant="destructive" className="ml-1 h-5 px-1.5">{pendingFlags}</Badge>}
-            </TabsTrigger>
-            <TabsTrigger value="activity">Activity</TabsTrigger>
-          </TabsList>
-
-          {/* Overview */}
-          <TabsContent value="overview" className="space-y-6">
-            {/* Pending Applications & Flagged Content */}
-            {/* ... Keep same Cards with Tailwind applied (no img tags in this section, so nothing to replace) */}
-
-            {/* Activity Stats */}
-            {/* ... Same */}
-            
-            {/* Engagement Overview */}
-            {/* ... Same */}
-          </TabsContent>
-
-          {/* Applications Tab */}
-          <TabsContent value="applications">
-            <Card>
-              <CardHeader><CardTitle>Role Applications</CardTitle></CardHeader>
-              <CardContent>
-                <DataTable data={mockApplications} columns={applicationColumns} searchKey="name" searchPlaceholder="Search applications..." />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Flagged Content Tab */}
-          <TabsContent value="flagged">
-            <Card>
-              <CardHeader><CardTitle>Flagged Content Reports</CardTitle></CardHeader>
-              <CardContent>
-                <DataTable data={mockFlaggedContent} columns={flaggedContentColumns} searchKey="title" searchPlaceholder="Search flagged content..." />
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Activity Tab */}
-          <TabsContent value="activity">
-            <Card>
-              <CardHeader><CardTitle>Recent Platform Activity</CardTitle></CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {[{ action: "New tutor application", user: "Frank Lee", time: "2 minutes ago", icon: Users } /* etc */].map((activity, index) => (
-                    <div key={index} className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
-                      <div className="p-2 bg-primary/10 rounded-lg"><activity.icon className="h-4 w-4 text-primary" /></div>
-                      <div className="flex-1"><p className="font-medium text-sm">{activity.action}</p><p className="text-xs text-muted-foreground">by {activity.user}</p></div>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground"><Clock className="h-3 w-3" />{activity.time}</div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+    <div className="space-y-6">
+      {/* Header */}
+      <div>
+        <h1 className="text-2xl md:text-3xl font-bold font-heading">Moderator Dashboard</h1>
+        <p className="text-muted-foreground">Monitor platform activity and manage content</p>
       </div>
-    </DashboardLayout>
+
+      {/* Stats */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <StatsCard title="Total Students" value="12,450" icon={GraduationCap} trend={{ value: 8, isPositive: true }} />
+        <StatsCard title="Total Tutors" value="284" icon={Users} trend={{ value: 5, isPositive: true }} />
+        <StatsCard title="Active Courses" value="156" icon={BookOpen} trend={{ value: 12, isPositive: true }} />
+        <StatsCard title="Pending Reviews" value={pendingApplications + pendingFlags} icon={Flag} subtitle={`${pendingApplications} applications, ${pendingFlags} flags`} />
+      </div>
+
+      {/* Tabs */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList>
+          <TabsTrigger value="overview">Overview</TabsTrigger>
+          <TabsTrigger value="applications" className="gap-1">
+            Applications {pendingApplications > 0 && <Badge variant="secondary" className="ml-1 h-5 px-1.5">{pendingApplications}</Badge>}
+          </TabsTrigger>
+          <TabsTrigger value="flagged" className="gap-1">
+            Flagged Content {pendingFlags > 0 && <Badge variant="destructive" className="ml-1 h-5 px-1.5">{pendingFlags}</Badge>}
+          </TabsTrigger>
+          <TabsTrigger value="activity">Activity</TabsTrigger>
+        </TabsList>
+
+        {/* Overview */}
+        <TabsContent value="overview" className="space-y-6">
+          {/* Pending Applications & Flagged Content */}
+          {/* ... Keep same Cards with Tailwind applied (no img tags in this section, so nothing to replace) */}
+
+          {/* Activity Stats */}
+          {/* ... Same */}
+          
+          {/* Engagement Overview */}
+          {/* ... Same */}
+        </TabsContent>
+
+        {/* Applications Tab */}
+        <TabsContent value="applications">
+          <Card>
+            <CardHeader><CardTitle>Role Applications</CardTitle></CardHeader>
+            <CardContent>
+              <DataTable data={mockApplications} columns={applicationColumns} searchKey="name" searchPlaceholder="Search applications..." />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Flagged Content Tab */}
+        <TabsContent value="flagged">
+          <Card>
+            <CardHeader><CardTitle>Flagged Content Reports</CardTitle></CardHeader>
+            <CardContent>
+              <DataTable data={mockFlaggedContent} columns={flaggedContentColumns} searchKey="title" searchPlaceholder="Search flagged content..." />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Activity Tab */}
+        <TabsContent value="activity">
+          <Card>
+            <CardHeader><CardTitle>Recent Platform Activity</CardTitle></CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {[{ action: "New tutor application", user: "Frank Lee", time: "2 minutes ago", icon: Users } /* etc */].map((activity, index) => (
+                  <div key={index} className="flex items-center gap-4 p-3 bg-muted/50 rounded-lg">
+                    <div className="p-2 bg-primary/10 rounded-lg"><activity.icon className="h-4 w-4 text-primary" /></div>
+                    <div className="flex-1"><p className="font-medium text-sm">{activity.action}</p><p className="text-xs text-muted-foreground">by {activity.user}</p></div>
+                    <div className="flex items-center gap-1 text-xs text-muted-foreground"><Clock className="h-3 w-3" />{activity.time}</div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
   );
 };

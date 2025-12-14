@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { axiosInstance } from "@/lib/axios.config";
 import EmailVerificationForm from "@/components/auth/EmailVerificationForm";
 import { AuthContext } from "@/context/auth-context";
@@ -11,7 +11,13 @@ export default function ModeratorApplication() {
   const [bio, setBio] = useState("");
   const [status, setStatus] = useState<string | null>(null);
   const [charCount, setCharCount] = useState(0);
+  const [emailVerified, setEmailVerified] = useState(false);
   const auth = useContext(AuthContext);
+
+  // Initialize email verification status if already verified
+  useEffect(() => {
+    if (auth?.user?.is_email_verified) setEmailVerified(true);
+  }, [auth?.user]);
 
   const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
@@ -19,7 +25,30 @@ export default function ModeratorApplication() {
     setCharCount(value.length);
   };
 
+  const handleVerified = async () => {
+    if (auth && typeof auth.checkAuth === "function") {
+      try {
+        await auth.checkAuth();
+        setEmailVerified(true);
+        setStatus("Email verified — profile updated");
+      } catch {
+        setEmailVerified(true);
+        setStatus("Email verified");
+      }
+    }
+  };
+
   const submit = async () => {
+    if (!emailVerified) {
+      setStatus("You must verify your email before submitting your application.");
+      return;
+    }
+
+    if (!bio.trim()) {
+      setStatus("Please enter your bio before submitting.");
+      return;
+    }
+
     try {
       try {
         const c = await axiosInstance.get("/csrf/");
@@ -41,17 +70,6 @@ export default function ModeratorApplication() {
         if (typeof maybeMessage === "string") msg = maybeMessage;
       } else if (typeof err === "string") msg = err;
       setStatus(msg);
-    }
-  };
-
-  const handleVerified = async () => {
-    if (auth && typeof auth.checkAuth === "function") {
-      try {
-        await auth.checkAuth();
-        setStatus("Email verified — profile updated");
-      } catch {
-        setStatus("Email verified");
-      }
     }
   };
 
@@ -119,7 +137,7 @@ export default function ModeratorApplication() {
             <Button
               className="w-full py-3.5 bg-violet-600 hover:bg-violet-700 active:bg-violet-800 disabled:bg-violet-400 disabled:cursor-not-allowed text-white font-semibold rounded-xl shadow-lg shadow-violet-500/30 hover:shadow-xl hover:shadow-violet-500/40 transition-all duration-200 flex items-center justify-center gap-2"
               onClick={submit}
-              disabled={!bio.trim()}
+              disabled={!bio.trim() || !emailVerified} // disabled until email verified
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
@@ -188,7 +206,7 @@ export default function ModeratorApplication() {
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Questions about the moderator role?{" "}
-            <a href="#" className="text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-medium underline-offset-2 hover:underline">
+            <a href="/contact" className="text-violet-600 dark:text-violet-400 hover:text-violet-700 dark:hover:text-violet-300 font-medium underline-offset-2 hover:underline">
               Contact support
             </a>
           </p>

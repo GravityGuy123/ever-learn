@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import Image from "next/image";
 import {
   Table,
   TableBody,
@@ -12,7 +11,12 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Search, ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
+import {
+  Search,
+  ChevronUp,
+  ChevronDown,
+  ChevronsUpDown,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface Column<T extends object> {
@@ -94,10 +98,16 @@ export function DataTable<T extends object>({
 
   const getSortIcon = (key: keyof T | string) => {
     if (!isRealSortable(key)) return null;
-    if (sortColumn !== key) return <ChevronsUpDown className="h-4 w-4 text-gray-400" />;
-    return sortDirection === "asc"
-      ? <ChevronUp className="h-4 w-4 text-blue-600" />
-      : <ChevronDown className="h-4 w-4 text-blue-600" />;
+    if (sortColumn !== key)
+      return (
+        <ChevronsUpDown className="h-4 w-4 text-muted-foreground" />
+      );
+
+    return sortDirection === "asc" ? (
+      <ChevronUp className="h-4 w-4 text-primary" />
+    ) : (
+      <ChevronDown className="h-4 w-4 text-primary" />
+    );
   };
 
   const renderCell = (column: Column<T>, item: T) => {
@@ -110,7 +120,7 @@ export function DataTable<T extends object>({
     <div className={cn("space-y-4", className)}>
       {searchKey && (
         <div className="relative max-w-sm">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder={searchPlaceholder}
             value={searchQuery}
@@ -122,13 +132,17 @@ export function DataTable<T extends object>({
 
       <div className="rounded-lg border overflow-hidden">
         <Table>
+          {/* ================= HEADER ================= */}
           <TableHeader>
-            <TableRow className="bg-gray-100">
+            <TableRow className="bg-muted/60 dark:bg-gray-700">
               {columns.map((col) => (
-                <TableHead key={String(col.key)}>
+                <TableHead
+                  key={String(col.key)}
+                  className="text-xs font-semibold uppercase tracking-wide text-muted-foreground dark:text-gray-200"
+                >
                   {col.sortable && isRealSortable(col.key) ? (
                     <Button
-                      className="-ml-3 h-8"
+                      className="-ml-3 h-8 gap-1"
                       variant="ghost"
                       size="sm"
                       onClick={() => handleSort(col.key)}
@@ -144,16 +158,23 @@ export function DataTable<T extends object>({
             </TableRow>
           </TableHeader>
 
-          <TableBody>
+          {/* ================= BODY ================= */}
+          <TableBody className="divide-y divide-border dark:divide-gray-700">
             {filteredData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center py-8 text-gray-500">
+                <TableCell
+                  colSpan={columns.length}
+                  className="py-8 text-center text-sm text-muted-foreground"
+                >
                   {emptyMessage}
                 </TableCell>
               </TableRow>
             ) : (
               filteredData.map((item, idx) => (
-                <TableRow key={idx} className="hover:bg-gray-50">
+                <TableRow
+                  key={idx}
+                  className="transition-colors hover:bg-muted/50 dark:hover:bg-gray-700/50"
+                >
                   {columns.map((col) => (
                     <TableCell key={String(col.key)}>
                       {renderCell(col, item)}

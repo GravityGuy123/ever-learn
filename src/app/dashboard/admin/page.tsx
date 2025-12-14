@@ -1,172 +1,94 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { axiosInstance } from "@/lib/axios.config";
-import AnalyticsChart from '@/components/admin/AnalyticsChart';
-import { Application } from "@/lib/types";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import AdminOverviewTab from "@/components/dashboard/admin/AdminOverviewTab";
+import AdminApplicationsTab from "@/components/dashboard/admin/AdminApplicationsTab";
+import AdminUsersTab from "@/components/dashboard/admin/AdminUsersTab";
+import AdminCoursesTab from "@/components/dashboard/admin/AdminCoursesTab";
+import AdminAnalyticsTab from "@/components/dashboard/admin/AdminAnalyticsTab";
+import AdminSettingsTab from "@/components/dashboard/admin/AdminSettingsTab";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/context/auth-context";
+import { AdminApplication } from "@/lib/types";
+import { AnalyticsRow } from "@/components/dashboard/admin/AdminAnalyticsTab";
 
-// Add AnalyticsRow type
-type AnalyticsRow = {
+// ----- Typed Models -----
+interface User {
   id: string;
-  date: string;
-  new_users: number;
-  new_courses: number;
-  new_enrollments: number;
-};
-
-export default function AdminDashboard() {
-  const [apps, setApps] = useState<Application[]>([]);
-  const [rows, setRows] = useState<AnalyticsRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let mounted = true;
-    const fetch = async () => {
-      try {
-        // Try to fetch analytics (may return 403 for non-admins)
-        try {
-          const res = await axiosInstance.get<AnalyticsRow[]>("/admin/analytics/site");
-          if (res.status === 200) console.log("analytics", res.data);
-        } catch {
-          // ignore analytics failure for non-admin users
-        }
-
-        const a = await axiosInstance.get<Application[]>("/applications");
-        if (!mounted) return;
-        setApps(a.data || []);
-      } catch (e: unknown) {
-        console.error(e);
-        setError(getErrorMessage(e));
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    };
-    fetch();
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  function getErrorMessage(err: unknown): string {
-    if (!err) return 'Error';
-    if (typeof err === 'string') return err;
-    if (typeof err === 'object' && err !== null) {
-      const e = err as Record<string, unknown>;
-      const response = e['response'];
-      if (response && typeof response === 'object') {
-        const resp = response as Record<string, unknown>;
-        const data = resp['data'];
-        if (data && typeof data === 'object' && 'detail' in data) return String(data['detail']);
-      }
-      if ('message' in e) return String(e['message']);
-    }
-    return 'Error';
-  }
-
-  if (loading) return <div>Loading admin...</div>;
-  if (error) return <div>Error: {error}</div>;
-
-  return (
-    <div className="p-4">
-      <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow">
-        <h1 className="text-2xl font-bold mb-4 text-violet-600">Admin Dashboard</h1>
-        <section className="mb-6">
-          <h2 className="font-semibold text-gray-700 dark:text-gray-200">Applications</h2>
-          {apps.length === 0 ? (
-            <div className="mt-3 text-gray-600 dark:text-gray-300">No applications found.</div>
-          ) : (
-            <ul className="mt-3 space-y-3">
-              {apps.map((app) => (
-                <li key={app.id} className="p-4 bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-lg shadow-sm">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <div className="font-medium text-gray-900 dark:text-gray-100">{app.role} application</div>
-                      <div className="text-sm text-gray-500 dark:text-gray-400">
-                        {typeof app.applicant === "object" ? app.applicant.email : app.applicant || 'Unknown'}
-                      </div>
-                      <div className="text-sm text-gray-700 dark:text-gray-300 mt-2">{app.bio}</div>
-                    </div>
-                    <div className="space-y-2">
-                      <button
-                        className="px-3 py-1 bg-violet-600 hover:bg-violet-700 text-white rounded"
-                        onClick={async () => {
-                          try {
-                            await axiosInstance.post(`/applications/${app.id}/review`, { action: "approve" });
-                            setApps(prev => prev.map(p => p.id === app.id ? { ...p, status: 'approved' } : p));
-                            alert("Approved");
-                          } catch (err: unknown) {
-                            alert(getErrorMessage(err));
-                          }
-                        }}
-                      >
-                        Approve
-                      </button>
-                      <button
-                        className="px-3 py-1 bg-red-600 hover:bg-red-700 text-white rounded"
-                        onClick={async () => {
-                          try {
-                            await axiosInstance.post(`/applications/${app.id}/review`, { action: "reject" });
-                            setApps(prev => prev.map(p => p.id === app.id ? { ...p, status: 'rejected' } : p));
-                            alert("Rejected");
-                          } catch (err: unknown) {
-                            alert(getErrorMessage(err));
-                          }
-                        }}
-                      >
-                        Reject
-                      </button>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        <section className="mb-6">
-          <h2 className="font-semibold text-gray-700 dark:text-gray-200">Site analytics (last 30 days)</h2>
-          <AnalyticsList />
-        </section>
-      </div>
-    </div>
-  );
+  email: string;
+  username?: string;
+  fullName?: string;
+  isActive?: boolean;
 }
 
-function AnalyticsList() {
-  const [rows, setRows] = useState<AnalyticsRow[]>([]);
-  const [loading, setLoading] = useState(true);
+interface Course {
+  id: string;
+  title: string;
+  students: number;
+  completionRate: number;
+  revenue: number;
+  status: string;
+}
+
+type Tab = "overview" | "applications" | "users" | "courses" | "analytics" | "settings";
+
+export default function AdminDashboard() {
+  const router = useRouter();
+  const { isLoggedIn } = useAuth();
+
+  const [activeTab, setActiveTab] = useState<Tab>("overview");
+  const [analyticsRows, setAnalyticsRows] = useState<AnalyticsRow[]>([]);
 
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const res = await (await import('@/lib/axios.config')).axiosInstance.get<AnalyticsRow[]>('/admin/analytics/site');
-        if (!mounted) return;
-        setRows(res.data || []);
-      } catch {
-        // ignore
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    })();
-    return () => { mounted = false };
-  }, []);
+    if (!isLoggedIn) {
+      const timer = setTimeout(() => router.replace("/login"), 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [isLoggedIn, router]);
 
-  if (loading) return <div className="mt-3">Loading analytics...</div>;
-  if (rows.length === 0) return <div className="mt-3 text-sm text-gray-600">No analytics data</div>;
+  // ----- Not Logged In State -----
+  if (!isLoggedIn) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
+        <h2 className="text-xl font-semibold">Not logged in</h2>
+        <p className="text-muted-foreground">Please log in to access the admin dashboard.</p>
+        <Button onClick={() => router.push("/login")}>Go to Login</Button>
+        <p className="text-xs text-muted-foreground">Redirecting automatically…</p>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <AnalyticsChart rows={rows} />
-      <ul className="mt-3 space-y-2">
-        {rows.map((r) => (
-          <li key={r.id} className="p-3 border rounded bg-white dark:bg-gray-900">
-            <div className="text-sm text-gray-500">{r.date}</div>
-            <div className="font-medium">New users: {r.new_users} • New courses: {r.new_courses} • New enrollments: {r.new_enrollments}</div>
-          </li>
-        ))}
-      </ul>
+    <div className="space-y-6 p-6">
+      {/* Tabs Navigation */}
+      <div className="overflow-x-auto">
+        <div className="flex flex-nowrap gap-2 sm:gap-4 border-b border-gray-300 dark:border-gray-600 pb-2 w-max min-w-full">
+          {["overview", "applications", "users", "courses", "analytics", "settings"].map(tab => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab as Tab)}
+              className={`whitespace-nowrap px-4 py-2 rounded-t-lg font-medium transition-colors duration-150
+                ${activeTab === tab
+                  ? "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100"
+                  : "bg-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                }`}
+            >
+              {tab.charAt(0).toUpperCase() + tab.slice(1)}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Tabs Content */}
+      <div>
+        {activeTab === "overview" && <AdminOverviewTab analyticsRows={analyticsRows} />}
+        {activeTab === "applications" && <AdminApplicationsTab />}
+        {activeTab === "users" && <AdminUsersTab />}
+        {activeTab === "courses" && <AdminCoursesTab />}
+        {activeTab === "analytics" && <AdminAnalyticsTab />}
+        {activeTab === "settings" && <AdminSettingsTab />}
+      </div>
     </div>
   );
 }

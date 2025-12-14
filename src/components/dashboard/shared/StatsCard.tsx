@@ -8,7 +8,7 @@ import { StatsCardProps } from "@/lib/types";
 export const StatsCard = ({ title, value, subtitle, icon: Icon, trend, className, }: StatsCardProps) => {
 
   return (
-    <Card className={cn("hover:shadow-md transition-shadow", className)}>
+    <Card className={cn("hover:shadow-md transition-shadow dark:!bg-gray-800", className)}>
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="space-y-2">

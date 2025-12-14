@@ -43,7 +43,7 @@ export function TutorDashboardStudentsTab({ students }: { students: Student[] })
 
 
   return (
-    <Card>
+    <Card className="dark:bg-gray-800">
       <CardHeader>
         <CardTitle>Enrolled Students</CardTitle>
       </CardHeader>

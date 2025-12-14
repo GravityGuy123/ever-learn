@@ -9,6 +9,9 @@ import GeneralDashboardAnnouncements from "@/components/dashboard/general/Genera
 import GeneralDashboardPopularCertifications from "@/components/dashboard/general/GeneralDashboardPopularCertifications";
 import GeneralDashboardRoleApplication from "@/components/dashboard/general/GeneralDashboardRoleApplication";
 import { Category, DashboardCourse } from "@/lib/types";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/auth-context";
 
 
 // Manual course list
@@ -126,6 +129,37 @@ const manualCategories: Category[] = [
 ];
 
 export default function GeneralDashboard() {
+  const { isLoggedIn } = useAuth();
+  const router = useRouter();
+
+  /* ---------- AUTH GUARD ---------- */
+  useEffect(() => {
+    if (!isLoggedIn) {
+      const timer = setTimeout(() => {
+        router.replace("/login");
+      }, 2000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isLoggedIn, router]);
+
+  if (!isLoggedIn) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
+        <h2 className="text-xl font-semibold">Not logged in</h2>
+        <p className="text-muted-foreground">
+          Please log in to access the general dashboard.
+        </p>
+        <Button onClick={() => router.push("/login")}>
+          Go to Login
+        </Button>
+        <p className="text-xs text-muted-foreground">
+          Redirecting automatically…
+        </p>
+      </div>
+    );
+  }
+  
   return (
     <div className="space-y-10">
       {/* Welcome Section */}

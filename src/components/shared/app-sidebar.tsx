@@ -7,6 +7,7 @@ import Pages from "./Pages";
 import { Sidebar, SidebarContent } from "@/components/ui/sidebar";
 // import { useAuth } from "@/hooks/useAuth"; // ✅ added
 import ConditionalFriendsCard from "./ConditionalFriendsCard";
+import DashboardPages from "./DashboardPages";
 
 export function AppSidebar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -45,6 +46,7 @@ export function AppSidebar() {
           <SidebarContent className="dark:bg-gray-800">
             <LogoContent />
             <Pages />
+            <DashboardPages />
             <ConditionalFriendsCard />
             <Account />
           </SidebarContent>
@@ -79,8 +81,8 @@ export function AppSidebar() {
         <div className="flex flex-col min-h-full p-6 pt-20 space-y-6 overflow-y-auto w-full">
           <LogoContent /> {/* optional, safe */}
           <Pages onLinkClick={handleCloseMenu} />
+          <DashboardPages />
           <div className="mt-4 space-y-4">
-            {/* <Friends /> */}
             <ConditionalFriendsCard />
             <Account />
           </div>

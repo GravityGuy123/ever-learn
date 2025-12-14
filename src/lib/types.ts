@@ -282,3 +282,27 @@ export type ToastPosition =
 export interface ToastOptions {
   position?: ToastPosition;
 }
+
+export interface AdminSettingsTabProps {
+  settings: Record<string, string | number>;
+  handleSettingChange: (key: string, value: string) => void;
+}
+
+
+export interface AdminApplication {
+  id: string | number;
+  role: string;
+  status: "pending" | "approved" | "rejected";
+  applicant: { email: string } | string;
+  bio: string;
+}
+
+export interface AdminApplicationsTabProps {
+  apps: AdminApplication[];
+  searchTerm: string;
+  setSearchTerm: (term: string) => void;
+  filterStatus: "all" | "pending" | "approved" | "rejected";
+  setFilterStatus: (status: "all" | "pending" | "approved" | "rejected") => void;
+  handleApplicationAction: (id: string | number, action: "approve" | "reject") => void;
+  exportData: () => void;
+}

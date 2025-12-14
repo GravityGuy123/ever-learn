@@ -13,7 +13,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { ErrorToast, SuccessToast } from "@/lib/toast";
 
@@ -26,7 +25,7 @@ type MenuItemType = {
 const userItems: MenuItemType[] = [
   {
     title: "Settings",
-    url: "#",
+    url: "/user/settings",
     icon: Settings,
   },
   {

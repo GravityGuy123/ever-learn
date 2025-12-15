@@ -48,6 +48,7 @@ export default function UserAvatar({
     32: "w-8 h-8 text-sm",
     40: "w-10 h-10 text-base",
     48: "w-12 h-12 text-lg",
+    80: "w-20 h-20 text-2xl",
   };
 
   const sizeClasses = sizeClassMap[size];

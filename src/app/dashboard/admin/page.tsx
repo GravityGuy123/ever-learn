@@ -10,26 +10,8 @@ import AdminAnalyticsTab from "@/components/dashboard/admin/AdminAnalyticsTab";
 import AdminSettingsTab from "@/components/dashboard/admin/AdminSettingsTab";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth-context";
-import { AdminApplication } from "@/lib/types";
 import { AnalyticsRow } from "@/components/dashboard/admin/AdminAnalyticsTab";
 
-// ----- Typed Models -----
-interface User {
-  id: string;
-  email: string;
-  username?: string;
-  fullName?: string;
-  isActive?: boolean;
-}
-
-interface Course {
-  id: string;
-  title: string;
-  students: number;
-  completionRate: number;
-  revenue: number;
-  status: string;
-}
 
 type Tab = "overview" | "applications" | "users" | "courses" | "analytics" | "settings";
 

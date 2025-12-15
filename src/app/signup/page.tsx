@@ -19,8 +19,14 @@ export default function SignupPage() {
   const { theme } = useTheme();
   const isDark = theme === "dark";
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } =
-    useForm<RegisterSchema>({ resolver: zodResolver(registerFormSchema) });
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterSchema>({
+    resolver: zodResolver(registerFormSchema),
+  });
 
   async function onSubmit(data: RegisterSchema) {
     try {
@@ -47,24 +53,37 @@ export default function SignupPage() {
         className:
           "text-white bg-gradient-to-r from-violet-600 to-indigo-600 dark:from-violet-500 dark:to-indigo-500 px-4 py-3 rounded-xl shadow-lg border border-white/20 font-medium",
         style: {
-          backgroundColor: isDark ? '#7c3aed' : "#8b5cf6",
+          backgroundColor: isDark ? "#7c3aed" : "#8b5cf6",
           color: "#fff",
-        }
+        },
       });
-
 
       setTimeout(() => router.push("/login"), 2000);
-    } catch (error) {
-      toast.error("Registration failed", {
-        position: "top-center",
-        className:
-          "bg-red-600 dark:bg-red-500 text-white border-red-300/20 dark:border-red-400/20",
-        style: {
-          backgroundColor: isDark ? '#ef4444' : "#f87171",
-          color: "#fff",
-        }
-      });
-
+    } catch (err: unknown) {
+      // Handle server validation errors
+      if (err.response?.data) {
+        const data = err.response.data;
+        Object.keys(data).forEach((field) => {
+          if (field in data) {
+            setError(field as keyof RegisterSchema, {
+              type: "server",
+              message: Array.isArray(data[field])
+                ? data[field][0]
+                : data[field],
+            });
+          }
+        });
+      } else {
+        toast.error("Registration failed", {
+          position: "top-center",
+          className:
+            "bg-red-600 dark:bg-red-500 text-white border-red-300/20 dark:border-red-400/20",
+          style: {
+            backgroundColor: isDark ? "#ef4444" : "#f87171",
+            color: "#fff",
+          },
+        });
+      }
     }
   }
 
@@ -79,28 +98,43 @@ export default function SignupPage() {
           id="signup-form"
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-4"
-        > 
+        >
           {/* User Info Fields (Username, Full_name and Email) */}
-          <UserInfoFields register={register} errors={errors} isSubmitting={isSubmitting} />
+          <UserInfoFields
+            register={register}
+            errors={errors}
+            isSubmitting={isSubmitting}
+          />
 
           {/* Password Fields (Password and Confirm Password) */}
-          <PasswordFields register={register} errors={errors} isSubmitting={isSubmitting} />
+          <PasswordFields
+            register={register}
+            errors={errors}
+            isSubmitting={isSubmitting}
+          />
 
           {/* Avatar Field */}
-          <AvatarField register={register} errors={errors} isSubmitting={isSubmitting} />
+          <AvatarField
+            register={register}
+            errors={errors}
+            isSubmitting={isSubmitting}
+          />
 
           <button
             type="submit"
             className="w-full py-2 rounded-lg bg-violet-600 text-white font-medium hover:bg-violet-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 transition flex justify-center items-center"
+            disabled={isSubmitting}
           >
             {isSubmitting ? <Spinner /> : "Sign Up"}
           </button>
         </form>
 
         <div className="flex items-center my-6">
-          <hr className="flex-grow border-gray-300 dark:border-gray-600" />
-          <span className="px-2 text-gray-500 dark:text-gray-400 text-sm">or</span>
-          <hr className="flex-grow border-gray-300 dark:border-gray-600" />
+          <hr className="grow border-gray-300 dark:border-gray-600" />
+          <span className="px-2 text-gray-500 dark:text-gray-400 text-sm">
+            or
+          </span>
+          <hr className="grow border-gray-300 dark:border-gray-600" />
         </div>
 
         <button

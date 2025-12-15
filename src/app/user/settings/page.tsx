@@ -1,91 +1,94 @@
 "use client";
 
-import { useState, useEffect, ChangeEvent, FormEvent } from "react";
+import { useEffect, useState } from "react";
 import { useAuth, axiosInstance } from "@/context/auth-context";
 import { toast } from "sonner";
 import { isAxiosError } from "axios";
 import UserAvatar from "@/components/shared/UserAvatar";
 import Image from "next/image";
-
-interface FormData {
-  email: string;
-  username: string;
-  full_name: string;
-  password: string;
-  avatar: File | null;
-}
+import { userSettingsSchema, UserSettingsSchema } from "@/lib/schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
 export default function UserSettingsPage() {
   const { user, checkAuth, loading: authLoading } = useAuth();
-  const [editing, setEditing] = useState(false);
-  const [formData, setFormData] = useState<FormData>({
-    email: "",
-    username: "",
-    full_name: "",
-    password: "",
-    avatar: null,
-  });
-  const [loading, setLoading] = useState(true);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
 
-  // Initialize form when user loads
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<UserSettingsSchema>({
+    resolver: zodResolver(userSettingsSchema),
+    mode: "onChange",
+  });
+
+  // Populate form when user loads
   useEffect(() => {
-    if (user) {
-      setFormData({
-        email: user.email,
-        username: user.username,
-        full_name: user.full_name,
-        password: "",
-        avatar: null,
-      });
-
-      setAvatarPreview(user.avatar || null);
-      setLoading(false);
-    }
-  }, [user]);
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { name, value, files } = e.target;
-    if (name === "avatar" && files?.length) {
-      const file = files[0];
-      setFormData({ ...formData, avatar: file });
-      setAvatarPreview(URL.createObjectURL(file));
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
-
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
     if (!user) return;
 
-    const data = new FormData();
-    data.append("email", formData.email);
-    data.append("username", formData.username);
-    data.append("full_name", formData.full_name);
-    if (formData.password) data.append("password", formData.password);
-    if (formData.avatar) data.append("avatar", formData.avatar);
+    setValue("email", user.email);
+    setValue("username", user.username);
+    setValue("full_name", user.full_name);
+    setValue("password", "");
+
+    setAvatarPreview(user.avatar || null);
+  }, [user, setValue]);
+
+  const onSubmit = async (data: UserSettingsSchema) => {
+    if (!user) return;
+
+    const formData = new FormData();
+    formData.append("email", data.email);
+    formData.append("username", data.username);
+    formData.append("full_name", data.full_name);
+
+    if (data.password) {
+      formData.append("password", data.password);
+    }
+
+    if (data.avatar instanceof File) {
+      formData.append("avatar", data.avatar);
+    }
 
     try {
-      await axiosInstance.put(`/user/${user.id}/`, data, {
+      await axiosInstance.put("/users/me", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      toast.success("Profile updated successfully!");
-      setEditing(false);
+
+      toast.success("Profile updated successfully");
       await checkAuth();
-    } catch (err: unknown) {
-      console.error(err);
+    } catch (err) {
       if (isAxiosError(err)) {
-        toast.error(err.response?.data?.detail || "Failed to update profile");
+        const backendErrors = err.response?.data;
+
+        // Handle backend validation errors
+        if (backendErrors) {
+          // For example, DRF usually returns {"email": ["This field must be unique."]}
+          for (const key of Object.keys(backendErrors)) {
+            if (key in data) {
+              setError(key as keyof UserSettingsSchema, {
+                type: "backend",
+                message: backendErrors[key][0],
+              });
+            } else {
+              toast.error(backendErrors[key][0]);
+            }
+          }
+        } else {
+          toast.error(err.response?.data?.detail || "Update failed");
+        }
       } else {
-        toast.error("An unexpected error occurred");
+        toast.error("Something went wrong");
       }
     }
   };
 
-  if (authLoading || loading) {
+  if (authLoading) {
     return (
-      <div className="flex items-center justify-center h-[60vh] text-gray-500 dark:text-gray-400">
+      <div className="flex items-center justify-center h-[60vh] text-gray-500">
         Loading user data...
       </div>
     );
@@ -93,103 +96,123 @@ export default function UserSettingsPage() {
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center h-[60vh] text-gray-500 dark:text-gray-400">
-        Unable to load user profile.
+      <div className="flex items-center justify-center h-[60vh] text-gray-500">
+        Unable to load user profile
       </div>
     );
   }
 
   return (
     <div className="max-w-3xl mx-auto p-6 bg-white dark:bg-gray-800 shadow-lg rounded-xl mt-10">
-      <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100">User Settings</h1>
+      <h1 className="text-3xl font-bold mb-8 text-gray-800 dark:text-gray-100">
+        User Settings
+      </h1>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Avatar */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center gap-4">
           <div className="relative w-20 h-20">
             {avatarPreview ? (
               <Image
                 src={avatarPreview}
                 alt="avatar"
                 fill
-                className="object-cover rounded-full border-2 border-gray-300 dark:border-gray-600"
+                className="object-cover rounded-full border"
                 sizes="80px"
-                unoptimized />
+                unoptimized
+              />
             ) : (
               <UserAvatar user={user} size={80} />
             )}
           </div>
+
           <label className="cursor-pointer text-blue-600 dark:text-blue-400 hover:underline">
             Change Avatar
             <input
               type="file"
-              name="avatar"
-              className="hidden"
               accept="image/*"
-              onChange={handleChange}
+              className="hidden"
+              {...register("avatar")}
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  setValue("avatar", file, { shouldValidate: true });
+                  setAvatarPreview(URL.createObjectURL(file));
+                }
+              }}
             />
           </label>
         </div>
+        {errors.avatar && (
+          <p className="text-sm text-red-600">
+            {String(errors.avatar.message)}
+          </p>
+        )}
 
         {/* Full Name */}
         <div>
-          <label className="block font-medium mb-1 text-gray-700 dark:text-gray-200">Full Name</label>
+          <label className="block font-medium mb-1">Full Name</label>
           <input
-            aria-label="Full name"
             type="text"
-            name="full_name"
-            value={formData.full_name}
-            onChange={handleChange}
-            className="w-full border rounded-md p-3 focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+            disabled={isSubmitting}
+            {...register("full_name")}
+            className="w-full border rounded-md p-3 dark:bg-gray-700"
           />
+          {errors.full_name && (
+            <p className="text-sm text-red-600">{errors.full_name.message}</p>
+          )}
         </div>
 
         {/* Username */}
         <div>
-          <label className="block font-medium mb-1 text-gray-700 dark:text-gray-200">Username</label>
+          <label className="block font-medium mb-1">Username</label>
           <input
-            aria-label="Username"
             type="text"
-            name="username"
-            value={formData.username}
-            onChange={handleChange}
-            className="w-full border rounded-md p-3 focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+            disabled={isSubmitting}
+            {...register("username")}
+            className="w-full border rounded-md p-3 dark:bg-gray-700"
           />
+          {errors.username && (
+            <p className="text-sm text-red-600">{errors.username.message}</p>
+          )}
         </div>
 
         {/* Email */}
         <div>
-          <label className="block font-medium mb-1 text-gray-700 dark:text-gray-200">Email</label>
+          <label className="block font-medium mb-1">Email</label>
           <input
-            aria-label="Email address"
             type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            className="w-full border rounded-md p-3 focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+            disabled={isSubmitting}
+            {...register("email")}
+            className="w-full border rounded-md p-3 dark:bg-gray-700"
           />
+          {errors.email && (
+            <p className="text-sm text-red-600">{errors.email.message}</p>
+          )}
         </div>
 
         {/* Password */}
         <div>
-          <label className="block font-medium mb-1 text-gray-700 dark:text-gray-200">
+          <label className="block font-medium mb-1">
             New Password (optional)
           </label>
           <input
             type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Enter new password"
-            className="w-full border rounded-md p-3 focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600"
+            disabled={isSubmitting}
+            {...register("password")}
+            className="w-full border rounded-md p-3 dark:bg-gray-700"
           />
+          {errors.password && (
+            <p className="text-sm text-red-600">{errors.password.message}</p>
+          )}
         </div>
 
         <button
           type="submit"
-          className="w-full bg-violet-600 dark:bg-violet-700 text-white px-6 py-3 rounded-md hover:bg-violet-800 dark:hover:bg-violet-900 transition font-medium"
+          disabled={isSubmitting}
+          className="w-full bg-violet-600 text-white px-6 py-3 rounded-md hover:bg-violet-800 disabled:opacity-50"
         >
-          Save Changes
+          {isSubmitting ? "Saving..." : "Save Changes"}
         </button>
       </form>
     </div>

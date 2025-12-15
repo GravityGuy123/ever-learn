@@ -88,3 +88,83 @@ export const loginSchema = z.object({
 });
 
 export type LoginSchema = z.infer<typeof loginSchema>;
+
+
+export const userSettingsSchema = z
+  .object({
+    username: z
+      .string()
+      .trim()
+      .min(3, "Username must be at least 3 characters long")
+      .max(20, "Username must be at most 20 characters long")
+      .regex(
+        /^[a-zA-Z0-9_]+$/,
+        "Username can only contain letters, numbers, and underscores"
+      )
+      .regex(/^[A-Za-z_]/, "Username cannot start with a number"),
+
+    full_name: z
+      .string()
+      .min(3, "Full name must be at least 3 characters long")
+      .regex(/^[A-Za-z ]+$/, "Full name can only contain letters and spaces"),
+
+    email: z
+      .string()
+      .email("Please enter a valid email address")
+      .min(8, "Email is too short"),
+
+    /**
+     * Optional password
+     * BUT if provided → must meet full security rules
+     */
+    password: z
+      .string()
+      .optional()
+      .refine(
+        (val) => !val || val.length >= 8,
+        "Password must be at least 8 characters long"
+      )
+      .refine(
+        (val) => !val || /[A-Z]/.test(val),
+        "Password must contain at least one uppercase letter (A-Z)"
+      )
+      .refine(
+        (val) => !val || /[a-z]/.test(val),
+        "Password must contain at least one lowercase letter (a-z)"
+      )
+      .refine(
+        (val) => !val || /[0-9]/.test(val),
+        "Password must include at least one number (0-9)"
+      )
+      .refine(
+        (val) => !val || /[^A-Za-z0-9]/.test(val),
+        "Password must include at least one special character"
+      ),
+
+    avatar: z.any().optional(),
+  })
+  .superRefine((data, ctx) => {
+    const file = data.avatar;
+
+    if (file instanceof File) {
+      if (file.size > MAX_AVATAR_SIZE) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["avatar"],
+          message: `Avatar size must be less than ${
+            MAX_AVATAR_SIZE / 1024 / 1024
+          } MB`,
+        });
+      }
+
+      if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["avatar"],
+          message: "Invalid image type",
+        });
+      }
+    }
+  });
+
+export type UserSettingsSchema = z.infer<typeof userSettingsSchema>;

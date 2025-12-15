@@ -13,8 +13,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 
-
-// Manual course list
+/* ---------- MANUAL DATA ---------- */
 const manualCourses: DashboardCourse[] = [
   {
     id: "1",
@@ -25,7 +24,7 @@ const manualCourses: DashboardCourse[] = [
     duration: "20 weeks",
     price: 135000,
     thumbnail_url: "/assets/full-stack-web-1.jpeg",
-    category_id: "1", // Technology
+    category_id: "1",
   },
   {
     id: "2",
@@ -36,7 +35,7 @@ const manualCourses: DashboardCourse[] = [
     duration: "10 weeks",
     price: 90000,
     thumbnail_url: "/assets/python-data-science-1.jpeg",
-    category_id: "2", // Data Science
+    category_id: "2",
   },
   {
     id: "3",
@@ -58,7 +57,7 @@ const manualCourses: DashboardCourse[] = [
     duration: "8 weeks",
     price: 60000,
     thumbnail_url: "/assets/ui-ux-design-1.jpeg",
-    category_id: "3", // Design
+    category_id: "3",
   },
   {
     id: "5",
@@ -84,66 +83,44 @@ const manualCourses: DashboardCourse[] = [
   },
 ];
 
-// Manual category list
 const manualCategories: Category[] = [
-  {
-    id: "1",
-    name: "Technology",
-    description: "Programming, software development, and IT-related courses",
-  },
-  {
-    id: "2",
-    name: "Data Science",
-    description: "Data analysis, machine learning, and AI-focused courses",
-  },
-  {
-    id: "3",
-    name: "Design",
-    description: "UI, UX, graphics, and creative design courses",
-  },
-  {
-    id: "4",
-    name: "Business",
-    description: "Entrepreneurship, management, and business strategy",
-  },
-  {
-    id: "5",
-    name: "Marketing",
-    description: "Digital marketing, branding, and growth strategies",
-  },
-  {
-    id: "6",
-    name: "Personal Development",
-    description: "Self-improvement, productivity, and life skills",
-  },
-  {
-    id: "7",
-    name: "Photography",
-    description: "Photography techniques, editing, and visual storytelling",
-  },
-  {
-    id: "8",
-    name: "Health & Fitness",
-    description: "Wellness, fitness training, and healthy living",
-  },
+  { id: "1", name: "Technology", description: "Programming, software development, and IT-related courses" },
+  { id: "2", name: "Data Science", description: "Data analysis, machine learning, and AI-focused courses" },
+  { id: "3", name: "Design", description: "UI, UX, graphics, and creative design courses" },
+  { id: "4", name: "Business", description: "Entrepreneurship, management, and business strategy" },
+  { id: "5", name: "Marketing", description: "Digital marketing, branding, and growth strategies" },
+  { id: "6", name: "Personal Development", description: "Self-improvement, productivity, and life skills" },
+  { id: "7", name: "Photography", description: "Photography techniques, editing, and visual storytelling" },
+  { id: "8", name: "Health & Fitness", description: "Wellness, fitness training, and healthy living" },
 ];
 
 export default function GeneralDashboard() {
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user, loading: authLoading } = useAuth();
   const router = useRouter();
 
   /* ---------- AUTH GUARD ---------- */
   useEffect(() => {
-    if (!isLoggedIn) {
-      const timer = setTimeout(() => {
-        router.replace("/login");
-      }, 2000);
-
-      return () => clearTimeout(timer);
+    if (!authLoading && !user) {
+      router.replace("/login");
     }
-  }, [isLoggedIn, router]);
+  }, [authLoading, user, router]);
 
-  if (!isLoggedIn) {
+  /* ---------- LOADING STATE ---------- */
+  if (authLoading) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 text-center px-4">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+          Loading dashboard…
+        </h2>
+        <p className="text-gray-500 dark:text-gray-400">
+          Fetching your account data…
+        </p>
+      </div>
+    );
+  }
+
+  /* ---------- NOT LOGGED IN STATE ---------- */
+  if (!isLoggedIn || !user) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
         <h2 className="text-xl font-semibold">Not logged in</h2>
@@ -159,7 +136,8 @@ export default function GeneralDashboard() {
       </div>
     );
   }
-  
+
+  /* ---------- DASHBOARD UI ---------- */
   return (
     <div className="space-y-10">
       {/* Welcome Section */}
@@ -172,7 +150,6 @@ export default function GeneralDashboard() {
         </p>
       </div>
 
-      {/* Announcements */}
       <GeneralDashboardAnnouncements />
 
       {/* Categories */}
@@ -187,6 +164,7 @@ export default function GeneralDashboard() {
             </Link>
           </Button>
         </div>
+
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {manualCategories.map((c) => (
             <Card
@@ -216,6 +194,7 @@ export default function GeneralDashboard() {
             </Link>
           </Button>
         </div>
+
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {manualCourses.map((course, index) => (
             <CourseCard
@@ -238,10 +217,7 @@ export default function GeneralDashboard() {
         </div>
       </section>
 
-      {/* Popular Certifications */}
       <GeneralDashboardPopularCertifications />
-
-      {/* Apply for Role Section */}
       <GeneralDashboardRoleApplication />
     </div>
   );

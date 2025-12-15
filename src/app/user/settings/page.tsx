@@ -2,17 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { useAuth, axiosInstance } from "@/context/auth-context";
-import { toast } from "sonner";
 import { isAxiosError } from "axios";
 import UserAvatar from "@/components/shared/UserAvatar";
 import Image from "next/image";
 import { userSettingsSchema, UserSettingsSchema } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
+import { useTheme } from "next-themes";
+import { ErrorToast, SuccessToast } from "@/lib/toast";
 
 export default function UserSettingsPage() {
   const { user, checkAuth, loading: authLoading } = useAuth();
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   const {
     register,
@@ -24,6 +29,13 @@ export default function UserSettingsPage() {
     resolver: zodResolver(userSettingsSchema),
     mode: "onChange",
   });
+
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push("/login");
+    }
+  }, [authLoading, user, router]);
 
   // Populate form when user loads
   useEffect(() => {
@@ -45,28 +57,20 @@ export default function UserSettingsPage() {
     formData.append("username", data.username);
     formData.append("full_name", data.full_name);
 
-    if (data.password) {
-      formData.append("password", data.password);
-    }
-
-    if (data.avatar instanceof File) {
-      formData.append("avatar", data.avatar);
-    }
+    if (data.password) formData.append("password", data.password);
+    if (data.avatar instanceof File) formData.append("avatar", data.avatar);
 
     try {
       await axiosInstance.put("/users/me", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      toast.success("Profile updated successfully");
+      SuccessToast("Profile updated successfully", isDark);
       await checkAuth();
     } catch (err) {
       if (isAxiosError(err)) {
         const backendErrors = err.response?.data;
-
-        // Handle backend validation errors
         if (backendErrors) {
-          // For example, DRF usually returns {"email": ["This field must be unique."]}
           for (const key of Object.keys(backendErrors)) {
             if (key in data) {
               setError(key as keyof UserSettingsSchema, {
@@ -74,30 +78,22 @@ export default function UserSettingsPage() {
                 message: backendErrors[key][0],
               });
             } else {
-              toast.error(backendErrors[key][0]);
+              ErrorToast(backendErrors[key][0], isDark);
             }
           }
         } else {
-          toast.error(err.response?.data?.detail || "Update failed");
+          ErrorToast(err.response?.data?.detail || "Update failed", isDark);
         }
       } else {
-        toast.error("Something went wrong");
+        ErrorToast("Something went wrong", isDark);
       }
     }
   };
 
-  if (authLoading) {
+  if (authLoading || !user) {
     return (
       <div className="flex items-center justify-center h-[60vh] text-gray-500">
         Loading user data...
-      </div>
-    );
-  }
-
-  if (!user) {
-    return (
-      <div className="flex items-center justify-center h-[60vh] text-gray-500">
-        Unable to load user profile
       </div>
     );
   }
@@ -144,9 +140,7 @@ export default function UserSettingsPage() {
           </label>
         </div>
         {errors.avatar && (
-          <p className="text-sm text-red-600">
-            {String(errors.avatar.message)}
-          </p>
+          <p className="text-sm text-red-600">{String(errors.avatar.message)}</p>
         )}
 
         {/* Full Name */}
@@ -193,9 +187,7 @@ export default function UserSettingsPage() {
 
         {/* Password */}
         <div>
-          <label className="block font-medium mb-1">
-            New Password (optional)
-          </label>
+          <label className="block font-medium mb-1">New Password (optional)</label>
           <input
             type="password"
             disabled={isSubmitting}

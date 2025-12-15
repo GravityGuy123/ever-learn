@@ -2,24 +2,14 @@
 
 import React from "react";
 import { ModeToggle } from "@/components/others/ModeToggle";
-import Image from "next/image";
 import Link from "next/link";
 import { useSidebar } from "@/components/ui/sidebar";
 import { useAuth } from "@/context/auth-context";
+import UserAvatar from "@/components/shared/UserAvatar";
 
 export default function Header() {
   const { toggleSidebar } = useSidebar();
   const { isLoggedIn, user } = useAuth();
-
-  // Default fallback avatar
-  let avatarSrc = "/man1.jpg";
-
-  if (user?.avatar) {
-    // Use full URL if backend already returns it
-    avatarSrc = user.avatar.startsWith("http")
-      ? user.avatar
-      : `${process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "")}/${user.avatar.replace(/^\/?/, "")}`;
-  }
 
   return (
     <header className="flex flex-col sm:flex-row sm:items-center justify-between px-4 sm:px-6 py-4 bg-white dark:bg-gray-800 dark:border dark:border-gray-700 shadow rounded-xl mb-6 gap-4 sm:gap-0 w-full max-w-full overflow-x-auto">
@@ -52,21 +42,14 @@ export default function Header() {
       <div className="flex items-center gap-4 min-w-0">
         <ModeToggle />
 
-        {isLoggedIn ? (
+        {isLoggedIn && user ? (
           <div className="flex items-center gap-2">
-            <Image
-              src={avatarSrc}
-              alt="User Avatar"
-              width={48}
-              height={48}
-              className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover"
-              unoptimized
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src = "/man1.jpg";
-              }}
-            />
+            <UserAvatar
+              user={user}
+              size={48}
+              className="rounded-full shrink-0 w-12 h-12" />
             <span className="font-semibold text-gray-800 dark:text-gray-200 whitespace-nowrap">
-              {user?.username}
+              {user.username}
             </span>
           </div>
         ) : (
@@ -80,8 +63,7 @@ export default function Header() {
 
             <Link
               href="/signup"
-              className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 shadow-sm transition-all duration-300"
-            >
+              className="px-4 py-2 rounded-lg text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 shadow-sm transition-all duration-300" >
               Sign Up
             </Link>
           </div>

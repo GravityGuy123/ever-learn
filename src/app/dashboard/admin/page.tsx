@@ -8,41 +8,40 @@ import AdminUsersTab from "@/components/dashboard/admin/AdminUsersTab";
 import AdminCoursesTab from "@/components/dashboard/admin/AdminCoursesTab";
 import AdminAnalyticsTab from "@/components/dashboard/admin/AdminAnalyticsTab";
 import AdminSettingsTab from "@/components/dashboard/admin/AdminSettingsTab";
-import { Button } from "@/components/ui/button";
 import { useAuth } from "@/context/auth-context";
 import { AnalyticsRow } from "@/components/dashboard/admin/AdminAnalyticsTab";
-
 
 type Tab = "overview" | "applications" | "users" | "courses" | "analytics" | "settings";
 
 export default function AdminDashboard() {
   const router = useRouter();
-  const { isLoggedIn } = useAuth();
-
+  const { isLoggedIn, user, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const [analyticsRows, setAnalyticsRows] = useState<AnalyticsRow[]>([]);
 
+  // Redirect if not logged in
   useEffect(() => {
-    if (!isLoggedIn) {
-      const timer = setTimeout(() => router.replace("/login"), 2000);
-      return () => clearTimeout(timer);
+    if (!authLoading && !user) {
+      router.replace("/login");
     }
-  }, [isLoggedIn, router]);
+  }, [authLoading, user, router]);
 
-  // ----- Not Logged In State -----
-  if (!isLoggedIn) {
+  // Show loading while auth is being determined
+  if (authLoading || !user) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
-        <h2 className="text-xl font-semibold">Not logged in</h2>
-        <p className="text-muted-foreground">Please log in to access the admin dashboard.</p>
-        <Button onClick={() => router.push("/login")}>Go to Login</Button>
-        <p className="text-xs text-muted-foreground">Redirecting automatically…</p>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 text-center px-4">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+          Loading admin dashboard…
+        </h2>
+        <p className="text-gray-500 dark:text-gray-400">Fetching your user data…</p>
       </div>
     );
   }
 
+  if (!isLoggedIn) return null; // Redirect already triggered
+
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-4 sm:p-6">
       {/* Tabs Navigation */}
       <div className="overflow-x-auto">
         <div className="flex flex-nowrap gap-2 sm:gap-4 border-b border-gray-300 dark:border-gray-600 pb-2 w-max min-w-full">
@@ -63,7 +62,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tabs Content */}
-      <div>
+      <div className="space-y-6">
         {activeTab === "overview" && <AdminOverviewTab analyticsRows={analyticsRows} />}
         {activeTab === "applications" && <AdminApplicationsTab />}
         {activeTab === "users" && <AdminUsersTab />}

@@ -6,13 +6,14 @@ import { useRouter } from "next/navigation";
 import { axiosInstance } from "@/lib/axios.config";
 import { registerFormSchema, RegisterSchema } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import UserInfoFields from "@/components/auth/signup/UserInfoFields";
 import PasswordFields from "@/components/auth/signup/PasswordFields";
 import AvatarField from "@/components/auth/signup/AvatarField";
 import { useTheme } from "next-themes";
+import axios from "axios";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -22,15 +23,14 @@ export default function SignupPage() {
   const {
     register,
     handleSubmit,
-    setError,
     formState: { errors, isSubmitting },
+    setError,
   } = useForm<RegisterSchema>({
     resolver: zodResolver(registerFormSchema),
   });
 
-  async function onSubmit(data: RegisterSchema) {
+  const onSubmit: SubmitHandler<RegisterSchema> = async (data) => {
     try {
-      // Create FormData for file upload
       const formData = new FormData();
       formData.append("username", data.username);
       formData.append("full_name", data.full_name);
@@ -38,7 +38,6 @@ export default function SignupPage() {
       formData.append("password", data.password);
       formData.append("confirm_password", data.confirm_password);
 
-      // Append avatar file if selected
       const avatarInput = (document.querySelector(
         'input[name="avatar"]'
       ) as HTMLInputElement)?.files?.[0];
@@ -60,32 +59,32 @@ export default function SignupPage() {
 
       setTimeout(() => router.push("/login"), 2000);
     } catch (err: unknown) {
-      // Handle server validation errors
-      if (err.response?.data) {
-        const data = err.response.data;
-        Object.keys(data).forEach((field) => {
-          if (field in data) {
-            setError(field as keyof RegisterSchema, {
-              type: "server",
-              message: Array.isArray(data[field])
-                ? data[field][0]
-                : data[field],
-            });
-          }
-        });
-      } else {
-        toast.error("Registration failed", {
-          position: "top-center",
-          className:
-            "bg-red-600 dark:bg-red-500 text-white border-red-300/20 dark:border-red-400/20",
-          style: {
-            backgroundColor: isDark ? "#ef4444" : "#f87171",
-            color: "#fff",
-          },
-        });
+      // Proper type narrowing
+      if (axios.isAxiosError(err)) {
+        const responseData = err.response?.data as Record<string, string[] | string> | undefined;
+
+        if (responseData) {
+          // Map backend validation errors to form fields
+          (Object.keys(responseData) as Array<keyof RegisterSchema>).forEach(
+            (field) => {
+              const message = Array.isArray(responseData[field])
+                ? responseData[field][0]
+                : (responseData[field] as string);
+              setError(field, { type: "server", message });
+            }
+          );
+          return;
+        }
       }
+
+      toast.error("Registration failed", {
+        position: "top-center",
+        className:
+          "bg-red-600 dark:bg-red-500 text-white border-red-300/20 dark:border-red-400/20",
+        style: { backgroundColor: isDark ? "#ef4444" : "#f87171", color: "#fff" },
+      });
     }
-  }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -94,36 +93,14 @@ export default function SignupPage() {
           Sign Up
         </h2>
 
-        <form
-          id="signup-form"
-          onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4"
-        >
-          {/* User Info Fields (Username, Full_name and Email) */}
-          <UserInfoFields
-            register={register}
-            errors={errors}
-            isSubmitting={isSubmitting}
-          />
-
-          {/* Password Fields (Password and Confirm Password) */}
-          <PasswordFields
-            register={register}
-            errors={errors}
-            isSubmitting={isSubmitting}
-          />
-
-          {/* Avatar Field */}
-          <AvatarField
-            register={register}
-            errors={errors}
-            isSubmitting={isSubmitting}
-          />
+        <form id="signup-form" onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <UserInfoFields register={register} errors={errors} isSubmitting={isSubmitting} />
+          <PasswordFields register={register} errors={errors} isSubmitting={isSubmitting} />
+          <AvatarField register={register} errors={errors} isSubmitting={isSubmitting} />
 
           <button
             type="submit"
             className="w-full py-2 rounded-lg bg-violet-600 text-white font-medium hover:bg-violet-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 transition flex justify-center items-center"
-            disabled={isSubmitting}
           >
             {isSubmitting ? <Spinner /> : "Sign Up"}
           </button>
@@ -131,18 +108,13 @@ export default function SignupPage() {
 
         <div className="flex items-center my-6">
           <hr className="grow border-gray-300 dark:border-gray-600" />
-          <span className="px-2 text-gray-500 dark:text-gray-400 text-sm">
-            or
-          </span>
+          <span className="px-2 text-gray-500 dark:text-gray-400 text-sm">or</span>
           <hr className="grow border-gray-300 dark:border-gray-600" />
         </div>
 
         <button
           type="button"
-          className="w-full flex items-center justify-center gap-2 py-2 rounded-lg border 
-          border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 
-          text-gray-700 dark:text-gray-200 font-medium hover:bg-gray-100 
-          dark:hover:bg-gray-800 transition"
+          className="w-full flex items-center justify-center gap-2 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-200 font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition"
         >
           <FaGoogle className="text-red-500" size={18} />
           Sign up with Google

@@ -57,7 +57,7 @@ export default function Pages({ onLinkClick }: PagesProps) {
 
       <nav className="flex flex-col space-y-1 px-3">
         {navigation.map((item) => {
-          const isActive = pathname === item.url;
+          const isActive = pathname === item.url || pathname.startsWith(item.url + "/");
           return (
             <Link
               key={item.title}

@@ -14,13 +14,11 @@ import {
   CheckCircle,
   XCircle,
   Eye,
-  Clock,
 } from "lucide-react";
 import { StatsCard } from "@/components/dashboard/shared/StatsCard";
 import { DataTable } from "@/components/dashboard/shared/DataTable";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
-
 
 const mockApplications = [
   { id: 1, name: "Frank Lee", email: "frank@example.com", role: "Tutor", expertise: "Machine Learning", experience: "5 years", status: "pending", appliedDate: "Dec 1, 2025" },
@@ -37,39 +35,32 @@ const mockFlaggedContent = [
   { id: 4, type: "Course", title: "Crypto Trading Secrets", reporter: "lisa@example.com", reason: "Misleading content", status: "resolved", reportedDate: "Dec 1, 2025" },
 ];
 
-
 export default function ModeratorDashboard() {
   const [activeTab, setActiveTab] = useState("overview");
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, user, loading: authLoading } = useAuth();
   const router = useRouter();
 
   /* ---------- AUTH GUARD ---------- */
   useEffect(() => {
-    if (!isLoggedIn) {
-      const timer = setTimeout(() => {
-        router.replace("/login");
-      }, 2000);
-
-      return () => clearTimeout(timer);
+    if (!authLoading && !user) {
+      router.replace("/login");
     }
-  }, [isLoggedIn, router]);
+  }, [authLoading, user, router]);
 
-  if (!isLoggedIn) {
+  // Show loading while auth is being determined
+  if (authLoading || !user) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
-        <h2 className="text-xl font-semibold">Not logged in</h2>
-        <p className="text-muted-foreground">
-          Please log in to access the moderator dashboard.
-        </p>
-        <Button onClick={() => router.push("/login")}>
-          Go to Login
-        </Button>
-        <p className="text-xs text-muted-foreground">
-          Redirecting automatically…
-        </p>
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 text-center px-4">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+          Loading moderator dashboard…
+        </h2>
+        <p className="text-gray-500 dark:text-gray-400">Fetching your user data…</p>
       </div>
     );
   }
+
+  // Don't render dashboard if not logged in (redirect already triggered)
+  if (!isLoggedIn) return null;
 
   const pendingApplications = mockApplications.filter(a => a.status === "pending").length;
   const pendingFlags = mockFlaggedContent.filter(f => f.status === "pending").length;
@@ -150,7 +141,6 @@ export default function ModeratorDashboard() {
     },
     { key: "reportedDate", label: "Reported", sortable: true },
   ];
-
 
   return (
     <div className="space-y-6">

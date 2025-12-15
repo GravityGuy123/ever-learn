@@ -20,14 +20,13 @@ export default function UserAvatar({
   size = 24,
   className = "",
 }: UserAvatarProps) {
-  const getInitials = (fullName: string) => {
-    return fullName
+  const getInitials = (fullName: string) =>
+    fullName
       .split(" ")
       .map((n) => n[0])
       .slice(0, 2)
       .join("")
       .toUpperCase();
-  };
 
   const getColorClass = (name: string) => {
     const colors = [
@@ -58,29 +57,28 @@ export default function UserAvatar({
     user.avatar && user.avatar !== ""
       ? user.avatar.startsWith("http")
         ? user.avatar
-        : `${process.env.NEXT_PUBLIC_API_URL?.replace(
-            /\/api$/,
-            ""
-          )}/${user.avatar.replace(/^\/?/, "")}`
+        : `${process.env.NEXT_PUBLIC_API_URL?.replace(/\/api$/, "")}/${user.avatar.replace(/^\/?/, "")}`
       : null;
 
   if (avatarUrl) {
     return (
-      <Image
-        src={avatarUrl}
-        alt={user.username}
-        width={size}
-        height={size}
-        className={`rounded-full object-cover ${className}`}
-        unoptimized
-      />
+      <div className={`rounded-full overflow-hidden ${sizeClasses} ${className}`}>
+        <Image
+          src={avatarUrl}
+          alt={user.username}
+          width={size}
+          height={size}
+          className="object-cover w-full h-full"
+          unoptimized
+        />
+      </div>
     );
   }
 
   return (
     <div
       aria-label={user.full_name}
-      className={`${sizeClasses} rounded-full text-white font-semibold flex items-center justify-center ${getColorClass(
+      className={`rounded-full ${sizeClasses} text-white font-semibold flex items-center justify-center ${getColorClass(
         user.full_name
       )} ${className}`}
     >

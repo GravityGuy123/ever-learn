@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { mockCourses, mockStudents, mockApplications } from "./mockData";
 import { TutorDashboardHeader } from "@/components/dashboard/tutor/TutorDashboardHeader";
 import { TutorDashboardStats } from "@/components/dashboard/tutor/TutorDashboardStats";
@@ -9,46 +11,40 @@ import { TutorDashboardApplicationsTab } from "@/components/dashboard/tutor/Tuto
 import { TutorDashboardEarningsTab } from "@/components/dashboard/tutor/TutorDashboardEarningsTab";
 import { TutorDashboardStudentsTab } from "@/components/dashboard/tutor/TutorDashboardStudentsTab";
 import { TutorDashboardCoursesTab } from "@/components/dashboard/tutor/TutorDashboardCoursesTab";
-import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+
 import { useAuth } from "@/context/auth-context";
 
 export default function TutorDashboardPage() {
+  const router = useRouter();
+  const { isLoggedIn, user, loading: authLoading } = useAuth();
+
   const [activeTab, setActiveTab] = useState("courses");
 
-  const { isLoggedIn } = useAuth();
-    const router = useRouter();
-  
-    /* ---------- AUTH GUARD ---------- */
-    useEffect(() => {
-      if (!isLoggedIn) {
-        const timer = setTimeout(() => {
-          router.replace("/login");
-        }, 2000);
-  
-        return () => clearTimeout(timer);
-      }
-    }, [isLoggedIn, router]);
-  
-    if (!isLoggedIn) {
-      return (
-        <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 text-center">
-          <h2 className="text-xl font-semibold">Not logged in</h2>
-          <p className="text-muted-foreground">
-            Please log in to access the tutor dashboard.
-          </p>
-          <Button onClick={() => router.push("/login")}>
-            Go to Login
-          </Button>
-          <p className="text-xs text-muted-foreground">
-            Redirecting automatically…
-          </p>
-        </div>
-      );
+  /* ---------- AUTH GUARD (same pattern as AdminDashboard) ---------- */
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace("/login");
     }
+  }, [authLoading, user, router]);
+
+  /* ---------- LOADING STATE ---------- */
+  if (authLoading || !user) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 text-center px-4">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+          Loading tutor dashboard…
+        </h2>
+        <p className="text-gray-500 dark:text-gray-400">
+          Fetching your user data…
+        </p>
+      </div>
+    );
+  }
+
+  if (!isLoggedIn) return null; // redirect already triggered
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 p-4 sm:p-6">
       {/* Header */}
       <TutorDashboardHeader />
 

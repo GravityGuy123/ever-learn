@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/auth-context";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,7 +14,6 @@ import StudentDashboardCertificates from "@/components/dashboard/student/Student
 import StudentDashboardNotifications from "@/components/dashboard/student/StudentDashboardNotifications";
 import StudentDashboardSchedule from "@/components/dashboard/student/StudentDashboardSchedule";
 
-
 // --- Mock Data ---
 const mockEnrolledCourses = [
   { id: 1, title: "Complete React Masterclass", instructor: "John Smith", progress: 68, lessonsCompleted: 24, totalLessons: 35, duration: "12h 30m", category: "Web Development", thumbnail: null },
@@ -20,13 +21,37 @@ const mockEnrolledCourses = [
   { id: 3, title: "UI/UX Design Fundamentals", instructor: "Emily Brown", progress: 92, lessonsCompleted: 23, totalLessons: 25, duration: "8h 45m", category: "Design", thumbnail: null },
 ];
 
-
 export default function StudentDashboard() {
+  const router = useRouter();
+  const { user, isLoggedIn, loading: authLoading } = useAuth();
   const [activeTab, setActiveTab] = useState("in-progress");
-    
+
+  // Redirect if not logged in
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace("/login");
+    }
+  }, [authLoading, user, router]);
+
+  // Show loading while auth is being determined
+  if (authLoading || !user) {
+    return (
+      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 text-center px-4">
+        <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-100">
+          Loading student dashboard…
+        </h2>
+        <p className="text-gray-500 dark:text-gray-400">
+          Fetching your user data…
+        </p>
+      </div>
+    );
+  }
+
+  if (!isLoggedIn) return null; // Redirect already triggered
+
   return (
     <div className="space-y-6">
-      
+
       {/* Header */}
       <div>
         <h1 className="text-2xl md:text-3xl font-bold font-heading">Student Dashboard</h1>
@@ -42,7 +67,7 @@ export default function StudentDashboard() {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
-        
+
         {/* LEFT */}
         <div className="lg:col-span-2 space-y-6">
 
@@ -124,4 +149,4 @@ export default function StudentDashboard() {
       </div>
     </div>
   );
-};
+}

@@ -128,7 +128,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const checkAuth = useCallback(async () => {
     try {
       await getCsrfCookie();
-      const response = await axiosInstance.get("/user");
+      // const response = await axiosInstance.get("/user");
+      const response = await axiosInstance.get("/current-user");
       setUser(response.data);
     } catch {
       setUser(null);

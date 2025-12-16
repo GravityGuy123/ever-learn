@@ -82,7 +82,7 @@ export default function DashboardPages({ onLinkClick }: PagesProps) {
 
       <nav className="flex flex-col space-y-1 px-3">
         {visibleDashboards.map((item) => {
-          const isActive = pathname === item.url;
+          const isActive = pathname === item.url || pathname.startsWith(item.url + "/");
           const Icon = item.icon;
 
           return (

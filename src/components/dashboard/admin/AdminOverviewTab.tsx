@@ -16,7 +16,7 @@ export interface Stats {
 }
 
 interface AdminOverviewTabProps {
-  analyticsRows?: AnalyticsRow[]; // optional: parent can pass rows
+  analyticsRows?: AnalyticsRow[];
 }
 
 export default function AdminOverviewTab({ analyticsRows: parentRows }: AdminOverviewTabProps) {
@@ -38,7 +38,6 @@ export default function AdminOverviewTab({ analyticsRows: parentRows }: AdminOve
         const statsRes = await axiosInstance.get<Stats>("/admin/overview-stats");
         setStats(statsRes.data);
 
-        // Only fetch analytics if parent didn't provide
         if (!parentRows) {
           const analyticsRes = await axiosInstance.get<AnalyticsRow[]>("/admin/analytics/site");
           setAnalyticsRows(analyticsRes.data);
@@ -49,10 +48,13 @@ export default function AdminOverviewTab({ analyticsRows: parentRows }: AdminOve
         setLoading(false);
       }
     };
+
     fetchStatsAndAnalytics();
   }, [parentRows]);
 
-  if (loading) return <p className="text-gray-500 dark:text-gray-400">Loading overview...</p>;
+  if (loading) {
+    return <p className="text-gray-500 dark:text-gray-400">Loading overview...</p>;
+  }
 
   const safeStats: Stats = {
     totalUsers: stats?.totalUsers ?? 0,
@@ -62,6 +64,13 @@ export default function AdminOverviewTab({ analyticsRows: parentRows }: AdminOve
     activeUsers: stats?.activeUsers ?? 0,
     revenue: stats?.revenue ?? 0,
   };
+
+  const formatNaira = (amount: number) =>
+    new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+      minimumFractionDigits: 0,
+    }).format(amount);
 
   return (
     <div className="space-y-6">
@@ -78,12 +87,19 @@ export default function AdminOverviewTab({ analyticsRows: parentRows }: AdminOve
           urgent={safeStats.pendingApplications > 0}
         />
         <AdminStatCard title="Active Users (30d)" value={safeStats.activeUsers} icon={TrendingUp} color="indigo" />
-        <AdminStatCard title="Revenue" value={`$${safeStats.revenue.toLocaleString()}`} icon={TrendingUp} color="green" />
+        <AdminStatCard
+          title="Revenue"
+          value={formatNaira(safeStats.revenue)}
+          icon={TrendingUp}
+          color="green"
+        />
       </div>
 
       {/* Analytics Chart */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Recent Analytics</h2>
+        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+          Recent Analytics
+        </h2>
         {analyticsRows.length > 0 ? (
           <AdminAnalyticsChart rows={analyticsRows.slice(0, 7)} />
         ) : (

@@ -43,7 +43,7 @@ export default function SignupPage() {
       ) as HTMLInputElement)?.files?.[0];
       if (avatarInput) formData.append("avatar", avatarInput);
 
-      await axiosInstance.post("/users", formData, {
+      await axiosInstance.post("/register", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

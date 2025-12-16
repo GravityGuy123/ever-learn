@@ -1,6 +1,6 @@
 import z from "zod";
 
-const MAX_AVATAR_SIZE = 2 * 1024 * 1024; // 2MB
+const MAX_IMAGE_SIZE = 2 * 1024 * 1024; // 2MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/jpg"];
 
 export const registerFormSchema = z
@@ -32,6 +32,7 @@ export const registerFormSchema = z
 
     confirm_password: z.string(),
     avatar: z.any().optional(),
+    // avatar: z.instanceof(File).optional(),
   })
   .refine((data) => data.password === data.confirm_password, {
     message: "Password Mismatch",
@@ -43,12 +44,12 @@ export const registerFormSchema = z
   if (files && files.length > 0 && files instanceof FileList) {
     const file = files[0];
 
-    if (file.size > MAX_AVATAR_SIZE) {
+    if (file.size > MAX_IMAGE_SIZE) {
       ctx.addIssue({
         code: "custom",
         path: ["avatar"],
         message: `Avatar size must be less than ${
-          MAX_AVATAR_SIZE / 1024 / 1024
+          MAX_IMAGE_SIZE / 1024 / 1024
         } MB`,
       });
     }
@@ -147,12 +148,12 @@ export const userSettingsSchema = z
     const file = data.avatar;
 
     if (file instanceof File) {
-      if (file.size > MAX_AVATAR_SIZE) {
+      if (file.size > MAX_IMAGE_SIZE) {
         ctx.addIssue({
           code: "custom",
           path: ["avatar"],
           message: `Avatar size must be less than ${
-            MAX_AVATAR_SIZE / 1024 / 1024
+            MAX_IMAGE_SIZE / 1024 / 1024
           } MB`,
         });
       }
@@ -168,3 +169,43 @@ export const userSettingsSchema = z
   });
 
 export type UserSettingsSchema = z.infer<typeof userSettingsSchema>;
+
+
+export const createCourseSchema = z.object({
+  title: z.string().min(3).max(100),
+
+  description: z.string().min(10).max(1000),
+
+  category_id: z
+    .string()
+    .uuid("Invalid category selected")
+    .nonempty("Category is required"),
+
+  level: z.enum(["Beginner", "Intermediate", "Advanced"]),
+
+  duration: z
+    .string()
+    .optional()
+    .refine(
+      (v) => !v || /^[0-9]+\s?(weeks|week|months|month)$/i.test(v),
+      { message: "Duration must be like '12 weeks' or '3 months'" }
+    ),
+
+  price: z
+    .string()
+    .min(1, "Price is required")
+    .refine((v) => /^\d{1,9}$/.test(v.replace(/,/g, "")), {
+      message: "Invalid price format",
+    }),
+
+  image: z
+    .instanceof(File, { message: "Course image is required" })
+    .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
+      message: "Image must be JPEG, PNG, JPG or WEBP",
+    })
+    .refine((file) => file.size <= MAX_IMAGE_SIZE, {
+      message: "Image size must not exceed 2MB",
+    }),
+});
+
+export type CreateCourseInput = z.infer<typeof createCourseSchema>;

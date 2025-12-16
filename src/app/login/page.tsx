@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-// import { toast } from "sonner";
 import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { LoginSchema } from "@/lib/schema";
@@ -20,6 +19,7 @@ export default function LoginPage() {
   const { login, user } = useAuth();
   const { theme } = useTheme();
   const isDark = theme === "dark";
+  
 
   const {
     register,

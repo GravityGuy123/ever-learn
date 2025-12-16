@@ -306,3 +306,22 @@ export interface AdminApplicationsTabProps {
   handleApplicationAction: (id: string | number, action: "approve" | "reject") => void;
   exportData: () => void;
 }
+
+export interface CourseDetailsPageProps {
+  id: string;
+  title: string;
+  description: string;
+  image?: string;
+  price: number;
+  level: string;
+  duration?: string;
+}
+
+export interface AllCoursesPageProps {
+  id: string;
+  title: string;
+  description: string;
+  image?: string;
+  price: number;
+  level: string;
+}

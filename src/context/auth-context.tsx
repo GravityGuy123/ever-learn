@@ -33,33 +33,39 @@ export const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000
 
 export const axiosInstance = axios.create({
   baseURL: baseUrl,
-  withCredentials: true,
+  withCredentials: true, // HTTP-only cookies sent automatically
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Cookie helper
-function getCookie(name: string): string | null {
-  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
-  return match ? decodeURIComponent(match[2]) : null;
-}
+// ------------------- CSRF Handling -------------------
+let csrfToken: string | null = null;
 
-// CSRF Interceptor
+const fetchCsrfToken = async () => {
+  try {
+    const res = await axiosInstance.get("/csrf/");
+    csrfToken = res.data?.csrfToken || null;
+  } catch (err) {
+    console.warn("Failed to fetch CSRF token", err);
+  }
+};
+
+// Attach CSRF token to unsafe requests
 axiosInstance.interceptors.request.use((config) => {
-  const unsafe = ["post", "put", "patch", "delete"];
-  if (unsafe.includes(config.method?.toLowerCase() || "")) {
-    const csrfToken = getCookie("csrftoken");
-    if (csrfToken) config.headers["X-CSRFToken"] = csrfToken;
+  const unsafeMethods = ["post", "put", "patch", "delete"];
+  if (unsafeMethods.includes(config.method?.toLowerCase() || "") && csrfToken) {
+    config.headers["X-CSRFToken"] = csrfToken;
   }
   return config;
 });
 
-// Refresh queue
+// ------------------- Refresh queue -------------------
 interface FailedRequest {
   resolve: (value?: unknown) => void;
   reject: (reason?: unknown) => void;
 }
+
 let isRefreshing = false;
 let failedQueue: FailedRequest[] = [];
 
@@ -89,18 +95,15 @@ axiosInstance.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        await axiosInstance.post("/refresh");
+        await axiosInstance.post("/refresh"); // cookie sent automatically
+        await fetchCsrfToken(); // fetch fresh CSRF token after refresh
         isRefreshing = false;
         processQueue(null, "OK");
+
         return axiosInstance(originalRequest);
       } catch (err) {
         isRefreshing = false;
         processQueue(err as AxiosError, null);
-
-        // Logout on refresh failure
-        const authContext = useContext(AuthContext);
-        authContext?.logout?.();
-
         return Promise.reject(err);
       }
     }
@@ -114,21 +117,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const getCsrfCookie = async () => {
-    try {
-      const res = await axiosInstance.get("/csrf/");
-      if (res?.data?.csrfToken) {
-        axiosInstance.defaults.headers["X-CSRFToken"] = res.data.csrfToken;
-      }
-    } catch (e) {
-      console.warn("Failed to fetch CSRF token", e);
-    }
-  };
-
   const checkAuth = useCallback(async () => {
     try {
-      await getCsrfCookie();
-      // const response = await axiosInstance.get("/user");
+      if (!csrfToken) await fetchCsrfToken(); // fetch CSRF if not set
       const response = await axiosInstance.get("/current-user");
       setUser(response.data);
     } catch {
@@ -140,47 +131,36 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Initialize auth on mount
   useEffect(() => {
-    const initAuth = async () => {
-      setLoading(true);
-      await getCsrfCookie();
-      await checkAuth();
-    };
-    initAuth();
+    setLoading(true);
+    checkAuth();
   }, [checkAuth]);
 
-  // ------------------- Silent Refresh Poll -------------------
+  // --------------- Silent Refresh Poll Every 7 Minutes ---------------
   useEffect(() => {
     const interval = setInterval(async () => {
       try {
-        await axiosInstance.post("/refresh"); // silently refresh cookie
-        await checkAuth(); // optionally update user data
-      } catch (err) {
-        console.warn("Silent refresh failed", err);
+        await axiosInstance.post("/refresh"); // rotate JWT cookie
+        await fetchCsrfToken(); // fetch fresh CSRF token
+        await checkAuth(); // update user data
+      } catch {
         setUser(null); // force logout on failure
       }
-    }, 4 * 60 * 1000); // every 4 minutes
+    }, 7 * 60 * 1000); // every 4 minutes
 
     return () => clearInterval(interval);
   }, [checkAuth]);
 
   const login = async (data: LoginSchema) => {
-    try {
-      await getCsrfCookie();
-      await axiosInstance.post("/login", data);
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      await checkAuth();
-    } catch (err) {
-      throw err;
-    }
+    if (!csrfToken) await fetchCsrfToken();
+    await axiosInstance.post("/login", data);
+    await fetchCsrfToken(); // refresh CSRF after login
+    await checkAuth();
   };
 
   const logout = async () => {
-    try {
-      await getCsrfCookie();
-      await axiosInstance.post("/logout");
-    } finally {
-      setUser(null);
-    }
+    if (!csrfToken) await fetchCsrfToken();
+    await axiosInstance.post("/logout");
+    setUser(null);
   };
 
   const isLoggedIn = !!user;

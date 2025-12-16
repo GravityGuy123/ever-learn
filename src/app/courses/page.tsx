@@ -67,7 +67,7 @@ const courses = [
   },
 ];
 
-export default function CoursesPage() {
+export default function AllCoursesPage() {
   return (
     <div className="max-w-7xl mx-auto px-6 py-16">
       {/* Header */}

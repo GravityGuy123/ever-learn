@@ -181,8 +181,7 @@ export default function CreateCoursePage() {
           <label className="block mb-1 font-medium">Category *</label>
           <select
             {...register("category_id")}
-            className="w-full p-2 border rounded-md"
-          >
+            className="w-full p-3 border rounded-lg shadow-sm border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:ring-violet-400 dark:focus:border-violet-400 transition-colors duration-200" >
             <option value="" disabled>
               Select category
             </option>
@@ -204,8 +203,7 @@ export default function CreateCoursePage() {
           <label className="block mb-1 font-medium">Level *</label>
           <select
             {...register("level")}
-            className="w-full p-2 border rounded-md"
-          >
+            className="w-full p-3 border rounded-lg shadow-sm border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-100 dark:focus:ring-violet-400 dark:focus:border-violet-400 transition-colors duration-200" >
             <option value="">Select level</option>
             {LEVELS.map((level) => (
               <option key={level} value={level}>
@@ -249,10 +247,8 @@ export default function CreateCoursePage() {
           <label className="block mb-2 font-medium">Course Image *</label>
           <label
             htmlFor="course-image"
-            className="text-violet-600 cursor-pointer hover:underline"
-          >
-            Select Image
-          </label>
+            className="text-violet-600 cursor-pointer hover:underline" >
+            Select Image </label>
           <input
             id="course-image"
             type="file"

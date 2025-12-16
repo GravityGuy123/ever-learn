@@ -3,12 +3,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { axiosInstance } from "@/lib/axios.config";
+import { axiosInstance, baseUrl } from "@/lib/axios.config";
 import { Button } from "@/components/ui/button";
 import { AllCoursesPageProps } from "@/lib/types";
 
+const MEDIA_BASE = baseUrl.replace("/api", "");
 
-export default function AllCoursesPage() {
+export default function TutorCoursesPage() {
   const router = useRouter();
   const [courses, setCourses] = useState<AllCoursesPageProps[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,22 +36,65 @@ export default function AllCoursesPage() {
 
   return (
     <div className="max-w-5xl mx-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {courses.map((course) => (
-        <div key={course.id} className="border rounded p-4 shadow hover:shadow-lg transition cursor-pointer">
-          {course.image && (
-            <div className="relative h-40 w-full mb-3 rounded overflow-hidden">
-              <Image src={course.image} alt={course.title} fill className="object-cover" unoptimized />
+      {courses.map((course) => {
+        const imageUrl =
+          course.image?.startsWith("http")
+            ? course.image
+            : course.image
+            ? `${MEDIA_BASE}${course.image}`
+            : null;
+
+        return (
+          <div
+            key={course.id}
+            className="border rounded p-4 shadow hover:shadow-lg transition"
+          >
+            {imageUrl && (
+              <div className="relative h-40 w-full mb-3 rounded overflow-hidden">
+                <Image
+                  src={imageUrl}
+                  alt={course.title}
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+            )}
+
+            <h2 className="text-lg font-semibold mb-2">{course.title}</h2>
+
+            <p className="text-sm text-gray-600 mb-2">
+              {course.description.slice(0, 100)}...
+            </p>
+
+            <p className="text-sm font-medium mb-2">
+              Level: {course.level}
+            </p>
+
+            <p className="text-sm font-bold mb-4">
+              ₦{course.price}
+            </p>
+
+            {/* ✅ ACTION BUTTONS */}
+            <div className="flex gap-3">
+              <Button
+                onClick={() => router.push(`/courses/${course.id}`)}
+                className="flex-1 bg-violet-600 hover:bg-violet-700 text-white"
+              >
+                View Course
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={() => router.push(`/courses/${course.id}/enroll`)}
+                className="flex-1"
+              >
+                Enroll
+              </Button>
             </div>
-          )}
-          <h2 className="text-lg font-semibold mb-2">{course.title}</h2>
-          <p className="text-sm text-gray-600 mb-2">{course.description.slice(0, 100)}...</p>
-          <p className="text-sm font-medium mb-2">Level: {course.level}</p>
-          <p className="text-sm font-bold mb-4">₦{course.price}</p>
-          <Button onClick={() => router.push(`/courses/${course.id}`)}>
-            View Course
-          </Button>
-        </div>
-      ))}
+          </div>
+        );
+      })}
     </div>
   );
 }

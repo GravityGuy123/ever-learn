@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { FaBookOpen, FaCertificate, FaUsers, FaPlay } from "react-icons/fa";
+import { FaBookOpen, FaCertificate, FaUsers } from "react-icons/fa";
 import HomeHero from "@/components/home/HomeHero";
 
 export default function HomePage() {

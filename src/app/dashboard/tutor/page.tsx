@@ -13,6 +13,7 @@ import { TutorDashboardStudentsTab } from "@/components/dashboard/tutor/TutorDas
 import { TutorDashboardCoursesTab } from "@/components/dashboard/tutor/TutorDashboardCoursesTab";
 
 import { useAuth } from "@/context/auth-context";
+import GeneralDashboardRoleApplication from "@/components/dashboard/general/GeneralDashboardRoleApplication";
 
 export default function TutorDashboardPage() {
   const router = useRouter();
@@ -44,7 +45,7 @@ export default function TutorDashboardPage() {
   if (!isLoggedIn) return null; // redirect already triggered
 
   return (
-    <div className="space-y-6 p-4 sm:p-6">
+    <div className="pt-6 px-4 pb-2 sm:px-6 sm:pt-6 sm:pb-2 space-y-6">
       {/* Header */}
       <TutorDashboardHeader />
 
@@ -80,6 +81,8 @@ export default function TutorDashboardPage() {
           <TutorDashboardEarningsTab />
         </TabsContent>
       </Tabs>
+
+      <GeneralDashboardRoleApplication />
     </div>
   );
 }

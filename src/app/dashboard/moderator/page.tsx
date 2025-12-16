@@ -19,6 +19,7 @@ import { StatsCard } from "@/components/dashboard/shared/StatsCard";
 import { DataTable } from "@/components/dashboard/shared/DataTable";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
+import GeneralDashboardRoleApplication from "@/components/dashboard/general/GeneralDashboardRoleApplication";
 
 const mockApplications = [
   { id: 1, name: "Frank Lee", email: "frank@example.com", role: "Tutor", expertise: "Machine Learning", experience: "5 years", status: "pending", appliedDate: "Dec 1, 2025" },
@@ -218,6 +219,7 @@ export default function ModeratorDashboard() {
           </Card>
         </TabsContent>
       </Tabs>
+      <GeneralDashboardRoleApplication />
     </div>
   );
 }

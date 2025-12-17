@@ -30,6 +30,11 @@ export default function TutorCoursesPage() {
     fetchCourses();
   }, []);
 
+  const handleViewCourse = (courseId: string) => {
+    // Navigate using the course ID only
+    router.push(`/dashboard/tutor/courses/${courseId}`);
+  };
+
   if (loading) return <p className="text-center mt-10">Loading courses...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
   if (courses.length === 0) return <p className="text-center mt-10">No courses found.</p>;
@@ -75,10 +80,9 @@ export default function TutorCoursesPage() {
               ₦{course.price}
             </p>
 
-            {/* ✅ ACTION BUTTONS */}
             <div className="flex gap-3">
               <Button
-                onClick={() => router.push(`/courses/${course.id}`)}
+                onClick={() => handleViewCourse(course.id)}
                 className="flex-1 bg-violet-600 hover:bg-violet-700 text-white"
               >
                 View Course
@@ -86,7 +90,7 @@ export default function TutorCoursesPage() {
 
               <Button
                 variant="outline"
-                onClick={() => router.push(`/courses/${course.id}/enroll`)}
+                onClick={() => router.push(`/dashboard/tutor/courses/${course.id}/enroll`)}
                 className="flex-1"
               >
                 Enroll

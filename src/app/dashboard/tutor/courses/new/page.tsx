@@ -39,7 +39,7 @@ export default function CreateCoursePage() {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await axiosInstance.get("/tutor/courses/categories");
+        const res = await axiosInstance.get("/courses/categories");
         setCategories(res.data);
       } catch (error) {
         console.error("Failed to fetch categories:", error);

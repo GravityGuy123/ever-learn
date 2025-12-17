@@ -1,5 +1,5 @@
 import { ApiResponse, CoursePageIdProps, CoursePageDetails } from "@/lib/types";
-import { CourseComponent } from "./course";
+import { CourseComponent } from "../courses/course";
 import { axiosInstance } from "@/lib/axios.config";
 
 export async function GetCourseComponent({ id }: CoursePageIdProps) {

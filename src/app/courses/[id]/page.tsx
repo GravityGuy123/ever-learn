@@ -1,13 +1,13 @@
 import { Spinner } from "@/components/ui/spinner";
 import { Suspense } from "react";
 import { CoursePageProps } from "@/lib/types";
-import { GetCourseComponent } from "@/components/shared/GetCourceComponent";
+import { GetCourseComponent } from "@/components/courses/GetCourseComponent";
 
-
-export default async function PublicCourseDetailsPage({ params }: CoursePageProps) {
+export default async function PublicCourseDetailsPage({
+  params,
+}: CoursePageProps) {
   // Must use await even when u are told not to because the request needs to be waited for
   const { id } = await params;
-
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-10 px-4">

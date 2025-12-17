@@ -6,6 +6,7 @@ import Image from "next/image";
 import { axiosInstance, baseUrl } from "@/lib/axios.config";
 import { Button } from "@/components/ui/button";
 import { AllCoursesPageProps } from "@/lib/types";
+import { Clock, Users } from "lucide-react";
 
 const MEDIA_BASE = baseUrl.replace("/api", "");
 
@@ -31,7 +32,6 @@ export default function TutorCoursesPage() {
   }, []);
 
   const handleViewCourse = (courseId: string) => {
-    // Navigate using the course ID only
     router.push(`/dashboard/tutor/courses/${courseId}`);
   };
 
@@ -40,7 +40,7 @@ export default function TutorCoursesPage() {
   if (courses.length === 0) return <p className="text-center mt-10">No courses found.</p>;
 
   return (
-    <div className="max-w-5xl mx-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="max-w-6xl mx-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {courses.map((course) => {
         const imageUrl =
           course.image?.startsWith("http")
@@ -52,10 +52,11 @@ export default function TutorCoursesPage() {
         return (
           <div
             key={course.id}
-            className="border rounded p-4 shadow hover:shadow-lg transition"
+            className="border rounded-lg overflow-hidden shadow hover:shadow-lg transition relative"
           >
+            {/* IMAGE + CATEGORY BADGE */}
             {imageUrl && (
-              <div className="relative h-40 w-full mb-3 rounded overflow-hidden">
+              <div className="relative h-44 w-full">
                 <Image
                   src={imageUrl}
                   alt={course.title}
@@ -63,38 +64,82 @@ export default function TutorCoursesPage() {
                   className="object-cover"
                   unoptimized
                 />
+                {course.category && (
+                  <span className="absolute top-3 left-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-lg z-10">
+                    {course.category}
+                  </span>
+                )}
               </div>
             )}
 
-            <h2 className="text-lg font-semibold mb-2">{course.title}</h2>
+            <div className="p-4 space-y-2">
+              {/* LEVEL BADGE */}
+              {course.level && (
+                <span className="inline-block px-2 py-0.5 text-xs rounded-full bg-violet-100 text-violet-700 mb-1">
+                  {course.level}
+                </span>
+              )}
 
-            <p className="text-sm text-gray-600 mb-2">
-              {course.description.slice(0, 100)}...
-            </p>
+              <h2 className="text-lg font-semibold">{course.title}</h2>
 
-            <p className="text-sm font-medium mb-2">
-              Level: {course.level}
-            </p>
+              {/* TUTOR */}
+              {course.tutor && (
+                <p className="text-xs text-gray-500">
+                  By <span className="font-medium">{course.tutor.full_name}</span>
+                </p>
+              )}
 
-            <p className="text-sm font-bold mb-4">
-              ₦{course.price}
-            </p>
+              <p className="text-sm text-gray-600">
+                {course.description.slice(0, 100)}...
+              </p>
 
-            <div className="flex gap-3">
-              <Button
-                onClick={() => handleViewCourse(course.id)}
-                className="flex-1 bg-violet-600 hover:bg-violet-700 text-white"
-              >
-                View Course
-              </Button>
+              {/* DURATION + STUDENT COUNT + STATUS */}
+              <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-600">
+                {course.duration && (
+                  <div className="flex items-center gap-1">
+                    <Clock className="w-4 h-4" /> {course.duration}
+                  </div>
+                )}
+                {course.student_count !== undefined && (
+                  <div className="flex items-center gap-1">
+                    <Users className="w-4 h-4" /> {course.student_count}{" "}
+                    {course.student_count === 1 ? "student" : "students"}
+                  </div>
+                )}
+                {course.is_active !== undefined && (
+                  <span
+                    className={`px-2 py-0.5 text-xs rounded-full ${
+                      course.is_active ? "bg-green-200 text-green-800" : "bg-red-200 text-red-800"
+                    }`}
+                  >
+                    {course.is_active ? "Active" : "Inactive"}
+                  </span>
+                )}
+              </div>
 
-              <Button
-                variant="outline"
-                onClick={() => router.push(`/dashboard/tutor/courses/${course.id}/enroll`)}
-                className="flex-1"
-              >
-                Enroll
-              </Button>
+              <p className="text-sm font-bold mt-2">
+                ₦{Number(course.price).toLocaleString()}
+              </p>
+
+              {/* BUTTONS */}
+              <div className="flex gap-3 mt-3">
+                <Button
+                  onClick={() => handleViewCourse(course.id)}
+                  className="flex-1 bg-violet-600 hover:bg-violet-700 text-white"
+                >
+                  View Course
+                </Button>
+
+                <Button
+                  variant="outline"
+                  onClick={() =>
+                    router.push(`/dashboard/tutor/courses/${course.id}/enroll`)
+                  }
+                  className="flex-1"
+                >
+                  Enroll
+                </Button>
+              </div>
             </div>
           </div>
         );

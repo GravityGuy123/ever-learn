@@ -324,7 +324,15 @@ export interface AllCoursesPageProps {
   image?: string;
   price: number;
   level: string;
+  duration?: string;
+  student_count?: number;
+  is_active?: boolean;
+  tutor?: Tutor;
+  category: string;
+  is_published?: boolean;
+  created_at?: string;
 }
+
 
 export interface CoursePageProps {
   params: {
@@ -361,7 +369,8 @@ export interface CoursePageDetails {
   duration?: string;
   price: number;
   image?: string;
-  tutor?: Tutor;
+  tutor: Tutor;
+  category: string;
   lessons: CourseComponentLesson[];
 }
 

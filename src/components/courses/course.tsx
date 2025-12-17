@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { CoursePageDetails } from "@/lib/types";
 
 export interface CourseComponentProps {
-  course: CoursePageDetails;
+  course: CoursePageDetails & { student_count?: number }; // student count added
 }
 
 export const CourseComponent = ({ course }: CourseComponentProps) => {
@@ -40,6 +40,13 @@ export const CourseComponent = ({ course }: CourseComponentProps) => {
       <div className="grid md:grid-cols-2 gap-10 items-start">
         {course.image && (
           <div className="relative h-72 w-full rounded-xl overflow-hidden shadow-lg">
+            {/* CATEGORY BADGE */}
+            {course.category && (
+              <span className="absolute top-4 left-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold text-sm px-3 py-1 rounded-full shadow-lg z-10">
+                {course.category}
+              </span>
+            )}
+
             <Image
               src={course.image}
               alt={course.title}
@@ -51,7 +58,7 @@ export const CourseComponent = ({ course }: CourseComponentProps) => {
         )}
 
         <div className="space-y-5">
-          {/* TITLE + TUTOR */}
+          {/* TITLE + TUTOR + STUDENT COUNT */}
           <div className="space-y-1">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
               {course.title}
@@ -60,6 +67,12 @@ export const CourseComponent = ({ course }: CourseComponentProps) => {
             {course.tutor && (
               <p className="text-sm text-gray-500 dark:text-gray-400">
                 By <span className="font-medium">{course.tutor.full_name}</span>
+              </p>
+            )}
+
+            {course.student_count !== undefined && (
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                {course.student_count} {course.student_count === 1 ? "student" : "students"} enrolled
               </p>
             )}
           </div>

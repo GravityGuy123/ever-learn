@@ -8,7 +8,7 @@ import AdminStatusBadge from "./AdminStatusBadge";
 interface AdminCourse {
   id: string;
   title: string;
-  students: number;
+  student_count: number;
   is_active: boolean;
 }
 
@@ -59,7 +59,7 @@ export default function AdminCoursesTab() {
       ...courses.map((c) => [
         c.id,
         c.title,
-        String(c.students),
+        String(c.student_count),
         c.is_active ? "Active" : "Inactive",
       ]),
     ]
@@ -132,7 +132,7 @@ export default function AdminCoursesTab() {
                   {course.title}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-400">
-                  {course.students} students enrolled
+                  {course.student_count} {course.student_count < 2 ? "student" : "students"} enrolled
                 </p>
                 <AdminStatusBadge
                   status={course.is_active ? "active" : "inactive"}

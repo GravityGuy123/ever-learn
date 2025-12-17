@@ -5,14 +5,23 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { axiosInstance } from "@/lib/axios.config";
 import { Button } from "@/components/ui/button";
+import { Clock, Users } from "lucide-react";
 
 interface PublicCourse {
   id: string;
   title: string;
-  description: string;
+  description?: string;
   level: string;
   price: number;
-  image?: string;
+  duration?: string;
+  image?: string | null;
+  student_count?: number;
+  category: string;
+  tutor?: {
+    id: string;
+    full_name: string;
+    username: string;
+  };
 }
 
 export default function PublicCoursesPage() {
@@ -28,8 +37,7 @@ export default function PublicCoursesPage() {
         const res = await axiosInstance.get<PublicCourse[]>("/courses");
         setCourses(res.data);
         setError(null);
-      } catch (err) {
-        console.error("Failed to fetch public courses:", err);
+      } catch {
         setError("Failed to load courses.");
       } finally {
         setLoading(false);
@@ -44,14 +52,15 @@ export default function PublicCoursesPage() {
   if (courses.length === 0) return <p className="text-center mt-10">No courses found.</p>;
 
   return (
-    <div className="max-w-5xl mx-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="max-w-6xl mx-auto p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {courses.map((course) => (
         <div
           key={course.id}
-          className="border rounded p-4 shadow hover:shadow-lg transition"
+          className="border rounded-lg overflow-hidden shadow hover:shadow-lg transition"
         >
-          {course.image && (
-            <div className="relative h-40 w-full mb-3 rounded overflow-hidden">
+          {/* IMAGE */}
+          {/* {course.image && (
+            <div className="relative h-44 w-full">
               <Image
                 src={course.image}
                 alt={course.title}
@@ -60,38 +69,85 @@ export default function PublicCoursesPage() {
                 unoptimized
               />
             </div>
+          )} */}
+
+          {/* IMAGE + CATEGORY BADGE */}
+          {course.image && (
+            <div className="relative h-44 w-full">
+              <Image
+                src={course.image}
+                alt={course.title}
+                fill
+                className="object-cover"
+                unoptimized
+              />
+              {course.category && (
+                <span className="absolute top-3 left-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-lg z-10">
+                  {course.category}
+                </span>
+              )}
+            </div>
           )}
 
-          <h2 className="text-lg font-semibold mb-2">{course.title}</h2>
+          <div className="p-4 space-y-2">
+            {/* LEVEL */}
+            <span className="inline-block text-xs text-violet-700 bg-violet-100 px-2 py-0.5 rounded-full">
+              {course.level}
+            </span>
 
-          <p className="text-sm text-gray-600 mb-2">
-            {course.description.slice(0, 100)}...
-          </p>
+            <h2 className="text-lg font-semibold">{course.title}</h2>
 
-          <p className="text-sm font-medium mb-2">
-            Level: {course.level}
-          </p>
+            {/* TUTOR */}
+            {course.tutor && (
+              <p className="text-xs text-gray-500">
+                By <span className="font-medium">{course.tutor.full_name}</span>
+              </p>
+            )}
 
-          <p className="text-sm font-bold mb-4">
-            ₦ {course.price}
-          </p>
+            {/* DESCRIPTION */}
+            {course.description && (
+              <p className="text-sm text-gray-600">
+                {course.description.slice(0, 100)}...
+              </p>
+            )}
 
-          {/* ✅ ACTION BUTTONS */}
-          <div className="flex gap-3">
-            <Button
-              onClick={() => router.push(`/courses/${course.id}`)}
-              className="flex-1 bg-violet-600 hover:bg-violet-700 text-white"
-            >
-              View Course
-            </Button>
+            {/* META */}
+            <div className="flex items-center gap-4 text-sm text-gray-600 mt-2">
+              {course.duration && (
+                <div className="flex items-center gap-1">
+                  <Clock className="w-4 h-4" />
+                  {course.duration}
+                </div>
+              )}
+              {course.student_count !== undefined && (
+                <div className="flex items-center gap-1">
+                  <Users className="w-4 h-4" />{course.student_count}{" "}
+                  {course.student_count === 1 ? "student" : "students"}
+                </div>
+              )}
+            </div>
 
-            <Button
-              variant="outline"
-              onClick={() => router.push(`/courses/${course.id}/enroll`)}
-              className="flex-1"
-            >
-              Enroll
-            </Button>
+            <p className="text-sm font-bold mt-2">
+              ₦{Number(course.price).toLocaleString()}
+            </p>
+
+            {/* ACTIONS */}
+            <div className="flex gap-3 mt-3">
+              <Button
+                onClick={() => router.push(`/courses/${course.id}`)}
+                className="flex-1 bg-violet-600 hover:bg-violet-700 text-white"
+              >
+                View Course
+              </Button>
+
+              <Button
+                variant="outline"
+                onClick={() => router.push(`/courses/${course.id}/enroll`)}
+                className="flex-1"
+              >
+                Enroll
+              </Button>
+            </div>
           </div>
         </div>
       ))}

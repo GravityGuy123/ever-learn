@@ -325,3 +325,51 @@ export interface AllCoursesPageProps {
   price: number;
   level: string;
 }
+
+export interface CoursePageProps {
+  params: {
+    id: string;
+  };
+}
+
+export interface CoursePageIdProps {
+  id: string;
+}
+
+export interface Tutor {
+  id: string;
+  full_name: string;
+  username: string;
+}
+
+export type CourseComponentLesson = {
+  id: string;
+  title: string;
+  content: string;
+  video_url?: string | null;
+  created_at?: string;
+  updated_at?: string;
+  course?: string;
+  tutor?: string;
+};
+
+export interface CoursePageDetails {
+  id: string;
+  title: string;
+  description: string;
+  level: string;
+  duration?: string;
+  price: number;
+  image?: string;
+  tutor?: Tutor;
+  lessons: CourseComponentLesson[];
+}
+
+export interface ApiResponse {
+  data?: CoursePageDetails;
+  error?: string;
+}
+
+export interface CoursePageIdProps {
+  id: string;
+}

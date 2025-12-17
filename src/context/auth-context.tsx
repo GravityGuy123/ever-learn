@@ -145,7 +145,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } catch {
         setUser(null); // force logout on failure
       }
-    }, 7 * 60 * 1000); // every 4 minutes
+    }, 7 * 60 * 1000); // every 7 minutes
 
     return () => clearInterval(interval);
   }, [checkAuth]);

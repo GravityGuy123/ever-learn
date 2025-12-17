@@ -3,7 +3,7 @@ import { GraduationCap, Shield, ShieldCheck, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
-export default function GeneralDashboardRoleApplication() {
+export default function DashboardRoleApplication() {
   return (
     <Card className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl shadow-sm">
       <CardContent className="p-6 md:p-8">
@@ -34,12 +34,12 @@ export default function GeneralDashboardRoleApplication() {
                 Apply as Moderator
               </Link>
             </Button>
-            <Button variant="outline" className="gap-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
+            {/* <Button variant="outline" className="gap-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800">
               <ShieldCheck className="h-4 w-4" /> 
               <Link href="/apply/admin">
                 Admin Role
               </Link>
-            </Button>
+            </Button> */}
           </div>
         </div>
       </CardContent>

@@ -10,10 +10,11 @@ import { TutorDashboardStats } from "@/components/dashboard/tutor/TutorDashboard
 import { TutorDashboardApplicationsTab } from "@/components/dashboard/tutor/TutorDashboardApplicationsTab";
 import { TutorDashboardEarningsTab } from "@/components/dashboard/tutor/TutorDashboardEarningsTab";
 import { TutorDashboardStudentsTab } from "@/components/dashboard/tutor/TutorDashboardStudentsTab";
-import { TutorDashboardCoursesTab } from "@/components/dashboard/tutor/TutorDashboardCoursesTab";
+// import { TutorDashboardCoursesTab } from "@/components/dashboard/tutor/TutorDashboardCoursesTab";
 
 import { useAuth } from "@/context/auth-context";
-import GeneralDashboardRoleApplication from "@/components/dashboard/general/GeneralDashboardRoleApplication";
+import DashboardRoleApplication from "@/components/dashboard/shared/DashboardRoleApplication";
+import TutorDashboardCoursesTab from "@/components/dashboard/tutor/TutorDashboardCoursesTab";
 
 export default function TutorDashboardPage() {
   const router = useRouter();
@@ -21,14 +22,14 @@ export default function TutorDashboardPage() {
 
   const [activeTab, setActiveTab] = useState("courses");
 
-  /* ---------- AUTH GUARD (same pattern as AdminDashboard) ---------- */
+  /* ---------- AUTH GUARD ---------- */
   useEffect(() => {
     if (!authLoading && !user) {
       router.replace("/login");
     }
   }, [authLoading, user, router]);
 
-  /* ---------- LOADING STATE ---------- */
+
   if (authLoading || !user) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center gap-3 text-center px-4">
@@ -42,7 +43,7 @@ export default function TutorDashboardPage() {
     );
   }
 
-  if (!isLoggedIn) return null; // redirect already triggered
+  if (!isLoggedIn) return null;
 
   return (
     <div className="pt-6 px-4 pb-2 sm:px-6 sm:pt-6 sm:pb-2 space-y-6">
@@ -63,12 +64,12 @@ export default function TutorDashboardPage() {
 
         {/* Courses Tab */}
         <TabsContent value="courses">
-          <TutorDashboardCoursesTab courses={mockCourses} />
+          <TutorDashboardCoursesTab />
         </TabsContent>
 
         {/* Students Tab */}
         <TabsContent value="students">
-          <TutorDashboardStudentsTab students={mockStudents} />
+          <TutorDashboardStudentsTab />
         </TabsContent>
 
         {/* Applications Tab */}
@@ -82,7 +83,7 @@ export default function TutorDashboardPage() {
         </TabsContent>
       </Tabs>
 
-      <GeneralDashboardRoleApplication />
+      <DashboardRoleApplication />
     </div>
   );
 }

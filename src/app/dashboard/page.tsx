@@ -7,18 +7,19 @@ import { ChevronRight, BookOpen } from "lucide-react";
 import { CourseCard } from "@/components/dashboard/general/CourseCard";
 import GeneralDashboardAnnouncements from "@/components/dashboard/general/GeneralDashboardAnnouncements";
 import GeneralDashboardPopularCertifications from "@/components/dashboard/general/GeneralDashboardPopularCertifications";
-import GeneralDashboardRoleApplication from "@/components/dashboard/general/GeneralDashboardRoleApplication";
 import { Category, DashboardCourse } from "@/lib/types";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
+import DashboardRoleApplication from "@/components/dashboard/shared/DashboardRoleApplication";
 
 /* ---------- MANUAL DATA ---------- */
 const manualCourses: DashboardCourse[] = [
   {
     id: "1",
     title: "Full Stack Web Development",
-    description: "Build complete web applications with Node.js, Express, and MongoDB",
+    description:
+      "Build complete web applications with Node.js, Express, and MongoDB",
     tutor: "James Rodriguez",
     level: "Advanced",
     duration: "20 weeks",
@@ -29,7 +30,8 @@ const manualCourses: DashboardCourse[] = [
   {
     id: "2",
     title: "Python for Data Science",
-    description: "Learn Python programming with focus on data analysis, visualization, and machine learning",
+    description:
+      "Learn Python programming with focus on data analysis, visualization, and machine learning",
     tutor: "Michael Chen",
     level: "Beginner",
     duration: "10 weeks",
@@ -51,7 +53,8 @@ const manualCourses: DashboardCourse[] = [
   {
     id: "4",
     title: "UI/UX Design Fundamentals",
-    description: "Master the principles of user interface and user experience design",
+    description:
+      "Master the principles of user interface and user experience design",
     tutor: "David Kim",
     level: "Beginner",
     duration: "8 weeks",
@@ -62,7 +65,8 @@ const manualCourses: DashboardCourse[] = [
   {
     id: "5",
     title: "Machine Learning A-Z",
-    description: "Comprehensive guide to machine learning algorithms and applications",
+    description:
+      "Comprehensive guide to machine learning algorithms and applications",
     tutor: "Dr. Lisa Anderson",
     level: "Advanced",
     duration: "16 weeks",
@@ -73,7 +77,8 @@ const manualCourses: DashboardCourse[] = [
   {
     id: "6",
     title: "Complete React Development",
-    description: "Master React from basics to advanced concepts including hooks, context, and Redux",
+    description:
+      "Master React from basics to advanced concepts including hooks, context, and Redux",
     tutor: "Sarah Johnson",
     level: "Intermediate",
     duration: "12 weeks",
@@ -84,14 +89,46 @@ const manualCourses: DashboardCourse[] = [
 ];
 
 const manualCategories: Category[] = [
-  { id: "1", name: "Technology", description: "Programming, software development, and IT-related courses" },
-  { id: "2", name: "Data Science", description: "Data analysis, machine learning, and AI-focused courses" },
-  { id: "3", name: "Design", description: "UI, UX, graphics, and creative design courses" },
-  { id: "4", name: "Business", description: "Entrepreneurship, management, and business strategy" },
-  { id: "5", name: "Marketing", description: "Digital marketing, branding, and growth strategies" },
-  { id: "6", name: "Personal Development", description: "Self-improvement, productivity, and life skills" },
-  { id: "7", name: "Photography", description: "Photography techniques, editing, and visual storytelling" },
-  { id: "8", name: "Health & Fitness", description: "Wellness, fitness training, and healthy living" },
+  {
+    id: "1",
+    name: "Technology",
+    description: "Programming, software development, and IT-related courses",
+  },
+  {
+    id: "2",
+    name: "Data Science",
+    description: "Data analysis, machine learning, and AI-focused courses",
+  },
+  {
+    id: "3",
+    name: "Design",
+    description: "UI, UX, graphics, and creative design courses",
+  },
+  {
+    id: "4",
+    name: "Business",
+    description: "Entrepreneurship, management, and business strategy",
+  },
+  {
+    id: "5",
+    name: "Marketing",
+    description: "Digital marketing, branding, and growth strategies",
+  },
+  {
+    id: "6",
+    name: "Personal Development",
+    description: "Self-improvement, productivity, and life skills",
+  },
+  {
+    id: "7",
+    name: "Photography",
+    description: "Photography techniques, editing, and visual storytelling",
+  },
+  {
+    id: "8",
+    name: "Health & Fitness",
+    description: "Wellness, fitness training, and healthy living",
+  },
 ];
 
 export default function GeneralDashboard() {
@@ -127,9 +164,7 @@ export default function GeneralDashboard() {
         <p className="text-muted-foreground">
           Please log in to access the general dashboard.
         </p>
-        <Button onClick={() => router.push("/login")}>
-          Go to Login
-        </Button>
+        <Button onClick={() => router.push("/login")}>Go to Login</Button>
         <p className="text-xs text-muted-foreground">
           Redirecting automatically…
         </p>
@@ -146,7 +181,8 @@ export default function GeneralDashboard() {
           Welcome to Ever-Learn!
         </h1>
         <p className="text-gray-700 dark:text-gray-300 max-w-2xl leading-relaxed">
-          Discover thousands of courses from expert instructors. Start your learning journey today and unlock your potential.
+          Discover thousands of courses from expert instructors. Start your
+          learning journey today and unlock your potential.
         </p>
       </div>
 
@@ -159,7 +195,10 @@ export default function GeneralDashboard() {
             Browse Categories
           </h2>
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/courses" className="flex items-center gap-1 text-violet-600 dark:text-violet-400 hover:underline">
+            <Link
+              href="/courses"
+              className="flex items-center gap-1 text-violet-600 dark:text-violet-400 hover:underline"
+            >
               View all <ChevronRight className="h-4 w-4" />
             </Link>
           </Button>
@@ -189,7 +228,10 @@ export default function GeneralDashboard() {
             Featured Courses
           </h2>
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/courses" className="flex items-center gap-1 text-violet-600 dark:text-violet-400 hover:underline">
+            <Link
+              href="/courses"
+              className="flex items-center gap-1 text-violet-600 dark:text-violet-400 hover:underline"
+            >
               View all <ChevronRight className="h-4 w-4" />
             </Link>
           </Button>
@@ -218,7 +260,7 @@ export default function GeneralDashboard() {
       </section>
 
       <GeneralDashboardPopularCertifications />
-      <GeneralDashboardRoleApplication />
+      <DashboardRoleApplication />
     </div>
   );
 }

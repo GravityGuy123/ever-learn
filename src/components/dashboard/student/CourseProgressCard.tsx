@@ -8,56 +8,98 @@ import { Badge } from "@/components/ui/badge";
 import { Clock, PlayCircle, BookOpen } from "lucide-react";
 import { CourseProgressCardProps } from "@/lib/types";
 
-
-export const CourseProgressCard = ({ title, instructor, thumbnail, progress, lessonsCompleted, totalLessons, duration, category, onContinue, }: CourseProgressCardProps) => {
+export const CourseProgressCard = ({
+  title,
+  instructor,
+  thumbnail,
+  progress,
+  lessonsCompleted,
+  totalLessons,
+  duration,
+  category,
+  onContinue,
+}: CourseProgressCardProps) => {
   return (
-    <Card className="overflow-hidden hover:shadow-md transition-shadow">
-      <div className="relative h-32 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+    <Card
+      className="
+        group overflow-hidden border border-border/60
+        bg-background dark:bg-gray-900
+        transition-all duration-300
+        hover:-translate-y-1 hover:shadow-xl
+      "
+    >
+      {/* Thumbnail */}
+      <div className="relative h-36 sm:h-40 w-full overflow-hidden">
         {thumbnail ? (
           <Image
             src={thumbnail}
             alt={title}
             fill
-            className="object-cover"
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 768px) 100vw, 33vw"
           />
         ) : (
-          <div className="w-full h-full flex items-center justify-center">
-            <BookOpen className="h-12 w-12 text-primary-foreground/50" />
+          <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600">
+            <BookOpen className="h-12 w-12 text-white/70" />
           </div>
         )}
-        <Badge className="absolute top-2 left-2 bg-background/90 text-foreground">
+
+        {/* Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+
+        {/* Category */}
+        <Badge className="absolute top-3 left-3 bg-background/90 text-foreground text-xs">
           {category}
         </Badge>
       </div>
-      <CardContent className="p-4 space-y-4">
-        <div>
-          <h3 className="font-semibold line-clamp-1">{title}</h3>
-          <p className="text-sm text-gray-400">{instructor}</p>
+
+      <CardContent className="p-4 sm:p-5 space-y-4">
+        {/* Title */}
+        <div className="space-y-1">
+          <h3 className="font-semibold text-sm sm:text-base leading-tight line-clamp-1">
+            {title}
+          </h3>
+          <p className="text-xs sm:text-sm text-muted-foreground line-clamp-1">
+            {instructor}
+          </p>
         </div>
 
+        {/* Progress */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-gray-400">Progress</span>
+          <div className="flex items-center justify-between text-xs sm:text-sm">
+            <span className="text-muted-foreground">Progress</span>
             <span className="font-medium">{progress}%</span>
           </div>
           <Progress value={progress} className="h-2" />
         </div>
 
-        <div className="flex items-center justify-between text-xs text-gray-400">
-          <div className="flex items-center gap-1">
-            <PlayCircle className="h-3 w-3" />
+        {/* Meta */}
+        <div className="flex items-center justify-between text-xs text-muted-foreground">
+          <div className="flex items-center gap-1.5">
+            <PlayCircle className="h-4 w-4" />
             <span>
               {lessonsCompleted}/{totalLessons} lessons
             </span>
           </div>
-          <div className="flex items-center gap-1">
-            <Clock className="h-3 w-3" />
+
+          <div className="flex items-center gap-1.5">
+            <Clock className="h-4 w-4" />
             <span>{duration}</span>
           </div>
         </div>
 
-        <Button onClick={onContinue} className="w-full" size="sm">
+        {/* CTA */}
+        <Button
+          onClick={onContinue}
+          size="sm"
+          className="
+            w-full font-medium
+            bg-gradient-to-r from-violet-600 to-indigo-600
+            hover:from-violet-700 hover:to-indigo-700
+            shadow-md hover:shadow-lg
+            transition-all duration-300
+          "
+        >
           Continue Learning
         </Button>
       </CardContent>

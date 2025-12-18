@@ -9,7 +9,6 @@ import { Edit, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/auth-context";
 
-
 export interface CourseComponentProps {
   course: CoursePageDetails & { student_count?: number };
 }
@@ -19,8 +18,10 @@ export const CourseComponent = ({ course }: CourseComponentProps) => {
   const router = useRouter();
   const { user } = useAuth();
 
-  // const isOwner = user?.id === course.tutor?.id;
-  const isOwner = user?.id !== undefined && course.tutor?.id !== undefined && String(user.id) === String(course.tutor.id);
+  const isOwner =
+    user?.id !== undefined &&
+    course.tutor?.id !== undefined &&
+    String(user.id) === String(course.tutor.id);
 
   const enroll = async () => {
     try {
@@ -28,31 +29,27 @@ export const CourseComponent = ({ course }: CourseComponentProps) => {
       setMsg("Enrolled successfully");
     } catch (error: unknown) {
       let message = "Enroll failed";
+
       if (typeof error === "object" && error !== null) {
         const axiosError = error as {
           response?: { data?: { detail?: string } };
           message?: string;
         };
+
         if (axiosError.response?.data?.detail) {
           message = axiosError.response.data.detail;
         } else if (axiosError.message) {
           message = axiosError.message;
         }
       }
+
       setMsg(message);
     }
   };
 
-  const handleDelete = async () => {
-    const confirmed = window.confirm("Are you sure you want to delete this course?");
-    if (!confirmed) return;
-
-    try {
-      await axiosInstance.delete(`/tutor/course/${course.id}/delete/`);
-      router.push("/tutor/courses");
-    } catch {
-      setMsg("Failed to delete course");
-    }
+  /* ✅ Redirect only — no alert, no delete here */
+  const handleDeleteRedirect = () => {
+    router.push(`/dashboard/tutor/courses/${course.id}/delete`);
   };
 
   return (
@@ -89,16 +86,20 @@ export const CourseComponent = ({ course }: CourseComponentProps) => {
                 {/* EDIT */}
                 <button
                   aria-label="Edit course"
-                  onClick={() => router.push(`/dashboard/tutor/courses/${course.id}/update`)}
+                  onClick={() =>
+                    router.push(
+                      `/dashboard/tutor/courses/${course.id}/update`
+                    )
+                  }
                   className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 transition"
                 >
                   <Edit className="w-5 h-5 text-gray-600 dark:text-gray-300" />
                 </button>
 
-                {/* DELETE */}
+                {/* DELETE → CONFIRMATION PAGE */}
                 <button
                   aria-label="Delete course"
-                  onClick={handleDelete}
+                  onClick={handleDeleteRedirect}
                   className="p-2 rounded-full hover:bg-red-100 dark:hover:bg-red-900 transition"
                 >
                   <Trash2 className="w-5 h-5 text-red-600" />
@@ -116,7 +117,7 @@ export const CourseComponent = ({ course }: CourseComponentProps) => {
           {course.student_count !== undefined && (
             <p className="text-sm text-gray-500 dark:text-gray-400">
               {course.student_count}{" "}
-              {course.student_count === 1 ? "student" : "students"} enrolled
+              {course.student_count < 2 ? "student" : "students"} enrolled
             </p>
           )}
 
@@ -149,7 +150,9 @@ export const CourseComponent = ({ course }: CourseComponentProps) => {
               Enroll Now
             </Button>
 
-            {msg && <p className="text-sm text-center text-gray-600">{msg}</p>}
+            {msg && (
+              <p className="text-sm text-center text-gray-600">{msg}</p>
+            )}
           </div>
         </div>
       </div>

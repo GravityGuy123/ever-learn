@@ -330,6 +330,7 @@ export interface AllCoursesPageProps {
   tutor?: Tutor;
   category: string;
   is_published?: boolean;
+  is_deleted?: boolean;
   created_at?: string;
 }
 

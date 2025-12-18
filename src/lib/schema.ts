@@ -172,16 +172,26 @@ export type UserSettingsSchema = z.infer<typeof userSettingsSchema>;
 
 
 export const createCourseSchema = z.object({
-  title: z.string().min(3).max(100),
+  title: z
+    .string()
+    .min(3, "Title must be at least 3 characters long")
+    .max(100, "Title must not exceed 100 characters"),
 
-  description: z.string().min(10).max(1000),
+  description: z
+    .string()
+    .min(10, "Description must be at least 10 characters long")
+    .max(1000, "Description must not exceed 1000 characters"),
 
   category_id: z
     .string()
-    .uuid("Invalid category selected")
-    .nonempty("Category is required"),
+    .nonempty("Category is required")
+    .uuid("Invalid category selected"),
 
-  level: z.enum(["Beginner", "Intermediate", "Advanced"]),
+  level: z
+    .enum(["Beginner", "Intermediate", "Advanced"])
+    .refine((val) => val !== undefined, {
+      message: "Please select a course level",
+  }),
 
   duration: z
     .string()
@@ -195,13 +205,17 @@ export const createCourseSchema = z.object({
     .string()
     .min(1, "Price is required")
     .refine((v) => /^\d{1,9}$/.test(v.replace(/,/g, "")), {
-      message: "Invalid price format",
+      message:
+        "Enter a valid price (numbers only, up to 9 digits)",
     }),
 
   image: z
-    .instanceof(File, { message: "Course image is required" })
+    .instanceof(File, {
+      message: "Please upload a course image",
+    })
     .refine((file) => ACCEPTED_IMAGE_TYPES.includes(file.type), {
-      message: "Image must be JPEG, PNG, JPG or WEBP",
+      message:
+        "Image format must be JPEG, JPG, PNG, or WEBP",
     })
     .refine((file) => file.size <= MAX_IMAGE_SIZE, {
       message: "Image size must not exceed 2MB",

@@ -8,7 +8,7 @@ const courses = [
   {
     title: "UI/UX Design Essentials",
     desc: "Master design tools and principles for user-friendly apps.",
-    img: "/assets/UI_UX_Design1.jpg",
+    img: "/assets/UI_UX_Design1.jpeg",
   },
   {
     title: "JavaScript for Beginners",

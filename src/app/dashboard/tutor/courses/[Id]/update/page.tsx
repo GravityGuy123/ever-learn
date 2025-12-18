@@ -9,38 +9,52 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { CoursePageDetails } from "@/lib/types";
 import { useAuth } from "@/context/auth-context";
-import axios from "axios";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { createCourseSchema } from "@/lib/schema";
+import z from "zod";
+import { SuccessToast } from "@/lib/toast";
+import { useTheme } from "next-themes";
 
 const LEVELS = ["Beginner", "Intermediate", "Advanced"] as const;
+type Level = (typeof LEVELS)[number];
 
-interface EditCoursePayload {
-  title: string;
-  description: string;
-  category_id: string;
-  level: string;
-  duration: string;
-  price: number;
-}
+/* ✅ TYPE GUARD */
+const isValidLevel = (value: string): value is Level =>
+  LEVELS.includes(value as Level);
+
+const updateCourseSchema = createCourseSchema.partial({
+  image: true,
+});
+
+type UpdateCourseInput = z.infer<typeof updateCourseSchema>;
 
 export default function UpdateCoursePage() {
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
   const params = useParams<{ id: string }>();
   const { user } = useAuth();
 
   const [course, setCourse] = useState<CoursePageDetails | null>(null);
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-  const [form, setForm] = useState<EditCoursePayload>({
-    title: "",
-    description: "",
-    category_id: "",
-    level: "Beginner",
-    duration: "",
-    price: 0,
+  const [preview, setPreview] = useState<string | null>(null);
+  const [formError, setFormError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    setError,
+    watch,
+    formState: { errors, isSubmitting },
+  } = useForm<UpdateCourseInput>({
+    resolver: zodResolver(updateCourseSchema),
+    mode: "onChange",
   });
+
+  const watchedPrice = watch("price") ?? "";
 
   /* ---------------- FETCH DATA ---------------- */
   useEffect(() => {
@@ -48,7 +62,7 @@ export default function UpdateCoursePage() {
       try {
         const [courseRes, categoryRes] = await Promise.all([
           axiosInstance.get<CoursePageDetails>(`/courses/${params.id}`),
-          axiosInstance.get("/courses/categories"),
+          axiosInstance.get<{ id: string; name: string }[]>("/courses/categories"),
         ]);
 
         if (!user || String(user.id) !== String(courseRes.data.tutor?.id)) {
@@ -56,27 +70,26 @@ export default function UpdateCoursePage() {
           return;
         }
 
-        const fetchedCategories = categoryRes.data;
-        const matchedCategory = fetchedCategories.find(
-          (c: { id: string; name: string }) => c.name === courseRes.data.category
+        const matchedCategory = categoryRes.data.find(
+          (c) => c.name === courseRes.data.category
         );
 
         setCourse(courseRes.data);
-        setCategories(fetchedCategories);
+        setCategories(categoryRes.data);
 
-        setForm({
-          title: courseRes.data.title,
-          description: courseRes.data.description,
-          category_id: matchedCategory?.id ?? "",
-          level: courseRes.data.level,
-          duration: courseRes.data.duration || "",
-          price: Number(courseRes.data.price),
-        });
-      } catch (err) {
-        if (axios.isAxiosError(err)) {
-          setError(err.response?.data?.detail || err.response?.data?.error || "Failed to load course data");
-        } else {
-          setError("Failed to load course data");
+        setValue("title", courseRes.data.title);
+        setValue("description", courseRes.data.description);
+        setValue("category_id", matchedCategory?.id ?? "");
+
+        if (isValidLevel(courseRes.data.level)) {
+          setValue("level", courseRes.data.level);
+        }
+
+        setValue("duration", courseRes.data.duration || "");
+        setValue("price", String(courseRes.data.price));
+
+        if (courseRes.data.image) {
+          setPreview(courseRes.data.image);
         }
       } finally {
         setLoading(false);
@@ -84,46 +97,89 @@ export default function UpdateCoursePage() {
     };
 
     fetchData();
-  }, [params.id, router, user]);
+  }, [params.id, router, user, setValue]);
 
-  /* ---------------- HANDLERS ---------------- */
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: name === "price" ? Number(value) : value,
-    }));
+  /* ---------------- PRICE FORMAT ---------------- */
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const input = e.target;
+    const selectionStart = input.selectionStart ?? 0;
+
+    let value = input.value.replace(/[^0-9]/g, "");
+    value = value.replace(/^0+/, "");
+    if (value.length > 9) value = value.slice(0, 9);
+
+    const formatted = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    const commasBefore =
+      formatted.slice(0, selectionStart).match(/,/g)?.length ?? 0;
+
+    setValue("price", formatted, { shouldValidate: true });
+
+    requestAnimationFrame(() => {
+      const pos = selectionStart + commasBefore;
+      input.setSelectionRange(pos, pos);
+    });
   };
 
-  const handleSubmit = async () => {
-    setSaving(true);
-    setError("");
-
-    // ✅ Validate using createCourseSchema
-    const payload = { ...form, price: form.price.toString() }; // price must be string for schema
-    const parseResult = createCourseSchema.omit({ image: true }).safeParse(payload);
-    if (!parseResult.success) {
-      const firstError = Object.values(parseResult.error.flatten().fieldErrors)
-        .flat()
-        .find(Boolean);
-      setError(firstError || "Please fix the form errors");
-      setSaving(false);
-      return;
-    }
-
+  /* ---------------- SUBMIT ---------------- */
+  const onSubmit = async (data: UpdateCourseInput) => {
     try {
-      await axiosInstance.patch(`/tutor/course/${params.id}/update/`, form);
-      router.push(`/dashboard/tutor/courses/${params.id}`);
-    } catch (err) {
-      if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.detail || err.response?.data?.error || "Failed to update course");
-      } else {
-        setError("Failed to update course");
+      setFormError(null);
+
+      const formData = new FormData();
+      formData.append("title", data.title);
+      formData.append("description", data.description);
+      formData.append("category_id", data.category_id);
+      formData.append("level", data.level);
+
+      if (data.duration) {
+        formData.append("duration", data.duration);
       }
-    } finally {
-      setSaving(false);
+
+      const numericPrice = Number(data.price.replace(/,/g, ""));
+      formData.append("price", String(numericPrice));
+
+      if (data.image) {
+        formData.append("image", data.image);
+      }
+
+      await axiosInstance.patch(
+        `/tutor/course/${params.id}/update/`,
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      SuccessToast("Course updated successfully 🎉", isDark, {position: "top-right"})
+
+      // optional slight delay so toast is visible
+      setTimeout(() => {
+        router.push(`/dashboard/tutor/courses/${params.id}`);
+      }, 800);
+    } catch (error) {
+      if (
+        typeof error === "object" &&
+        error !== null &&
+        "response" in error
+      ) {
+        const response = (error as { response?: { data?: Record<string, unknown> } }).response;
+
+        if (response?.data) {
+          setFormError("Failed to update course. Check highlighted fields.");
+
+          Object.entries(response.data).forEach(([key, value]) => {
+            if (typeof value === "string") {
+              setError(key as keyof UpdateCourseInput, {
+                type: "manual",
+                message: value,
+              });
+            } else if (Array.isArray(value) && typeof value[0] === "string") {
+              setError(key as keyof UpdateCourseInput, {
+                type: "manual",
+                message: value[0],
+              });
+            }
+          });
+        }
+      }
     }
   };
 
@@ -137,111 +193,118 @@ export default function UpdateCoursePage() {
   }
 
   if (!course) {
-    return (
-      <p className="text-center text-red-500 mt-10">Course not found</p>
-    );
+    return <p className="text-center text-red-500 mt-10">Course not found</p>;
   }
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
-      {/* HEADER */}
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Edit Course</h1>
-        <Button
-          variant="outline"
-          onClick={() => router.push(`/dashboard/tutor/courses/${course.id}`)}
-        >
+        <Button variant="outline" onClick={() => router.back()}>
           Cancel
         </Button>
       </div>
 
-      {/* IMAGE PREVIEW */}
-      {course.image && (
-        <div className="relative w-full max-h-[320px] aspect-video bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden">
-          <Image src={course.image} alt={course.title} fill className="object-contain" unoptimized />
+      {/* IMAGE */}
+      <div>
+        <div className="flex justify-between">
+          <label className="block mb-2 font-medium">Course Image</label>
+          <label htmlFor="course-image" className="text-indigo-500 cursor-pointer hover:underline">Change Image</label>
         </div>
-      )}
 
-      {/* META */}
-      <div className="text-sm text-gray-500 flex gap-4">
-        {course.tutor && <span>By {course.tutor.full_name}</span>}
-        {course.student_count !== undefined && (
-          <span>{course.student_count} students enrolled</span>
+        <input
+          id="course-image"
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const file = e.target.files?.[0];
+            if (file) {
+              setValue("image", file, { shouldValidate: true });
+              setPreview(URL.createObjectURL(file));
+            }
+          }}
+        />
+
+        {errors.image && (
+          <p className="text-sm text-red-500">{errors.image.message}</p>
+        )}
+
+        {preview && (
+          <div className="relative h-48 w-full mt-3">
+            <Image src={preview} alt="Preview" fill className="object-contain" unoptimized />
+          </div>
         )}
       </div>
 
       {/* FORM */}
-      <div className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {/* Title */}
         <div>
           <label className="block mb-1 font-medium">Title *</label>
-          <Input name="title" className="dark:bg-gray-800" value={form.title} onChange={handleChange} />
+          <Input {...register("title")} />
+          {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
         </div>
 
         {/* Description */}
         <div>
           <label className="block mb-1 font-medium">Description *</label>
-          <textarea
-            aria-label="description"
-            name="description"
-            rows={7}
-            value={form.description}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-md bg-gray-800 resize-none"
-          />
+          <textarea {...register("description")} rows={7} className="w-full p-3 border rounded-md" />
+          {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
         </div>
 
         {/* Category */}
         <div>
           <label className="block mb-1 font-medium">Category *</label>
           <select
-            aria-label="category"
-            name="category_id"
-            value={form.category_id}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-lg shadow-sm bg-gray-800"
-          >
+            {...register("category_id")}
+            className="w-full rounded-lg border px-3 py-2 text-sm bg-white text-gray-900 border-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700 dark:focus:ring-violet-400 dark:focus:border-violet-400 transition-colors">
             <option value="" disabled>Select category</option>
             {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
           </select>
+          {errors.category_id && <p className="text-sm text-red-500">{errors.category_id.message}</p>}
         </div>
 
         {/* Level */}
         <div>
           <label className="block mb-1 font-medium">Level *</label>
           <select
-            aria-label="level"
-            name="level"
-            value={form.level}
-            onChange={handleChange}
-            className="w-full p-3 border rounded-lg dark:bg-gray-800"
-          >
-            {LEVELS.map((level) => <option key={level} value={level}>{level}</option>)}
+            {...register("level")}
+            className="w-full rounded-lg border px-3 py-2 text-sm bg-white text-gray-900 border-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700 dark:focus:ring-violet-400 dark:focus:border-violet-400 transition-colors">
+            {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
           </select>
+          {errors.level && <p className="text-sm text-red-500">{errors.level.message}</p>}
         </div>
 
         {/* Duration */}
         <div>
           <label className="block mb-1 font-medium">Duration</label>
-          <Input name="duration" className="dark:bg-gray-800" value={form.duration} onChange={handleChange} placeholder="e.g. 12 weeks" />
+          <Input {...register("duration")} placeholder="e.g. 12 weeks" />
+          {errors.duration && <p className="text-sm text-red-500">{errors.duration.message}</p>}
         </div>
 
         {/* Price */}
         <div>
           <label className="block mb-1 font-medium">Price (₦) *</label>
-          <Input type="number" name="price" className="dark:bg-gray-800" value={form.price} onChange={handleChange} />
+          <Input
+            type="text"
+            {...register("price")}
+            value={watchedPrice}
+            onChange={handlePriceChange}
+          />
+          {errors.price && <p className="text-sm text-red-500">{errors.price.message}</p>}
         </div>
 
-        {error && <p className="text-sm text-red-500">{error}</p>}
+        {formError && <p className="text-sm text-red-600">{formError}</p>}
 
         <Button
-          onClick={handleSubmit}
-          disabled={saving}
+          type="submit"
+          disabled={isSubmitting}
           className="w-full text-white bg-violet-600 hover:bg-violet-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 shadow-sm transition-all duration-300"
         >
-          {saving ? "Saving..." : "Save Changes"}
+          {isSubmitting ? "Saving..." : "Save Changes"}
         </Button>
-      </div>
+      </form>
     </div>
   );
 }

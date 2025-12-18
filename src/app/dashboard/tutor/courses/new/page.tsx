@@ -7,15 +7,16 @@ import { axiosInstance } from "@/lib/axios.config";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  createCourseSchema,
-  CreateCourseInput,
-} from "@/lib/schema";
+import { createCourseSchema, CreateCourseInput } from "@/lib/schema";
+import { SuccessToast } from "@/lib/toast";
+import { useTheme } from "next-themes";
 
 const LEVELS = ["Beginner", "Intermediate", "Advanced"] as const;
 
 export default function CreateCoursePage() {
   const router = useRouter();
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
   const [preview, setPreview] = useState<string | null>(null);
@@ -101,8 +102,16 @@ export default function CreateCoursePage() {
 
       const courseId = res.data?.id as string | undefined;
       if (courseId) {
-        router.push(`/dashboard/tutor/courses/${courseId}`);
+        // router.push(`/dashboard/tutor/courses/${courseId}`);
+        SuccessToast("Course created successfully 🎉", isDark, {position: "top-right"})
+      
+        // optional slight delay so toast is visible
+        setTimeout(() => {
+          router.push(`/dashboard/tutor/courses/${courseId}`);
+        }, 800);
       }
+
+          
     } catch (error) {
       if (
         typeof error === "object" &&
@@ -244,11 +253,12 @@ export default function CreateCoursePage() {
 
         {/* Image */}
         <div>
-          <label className="block mb-2 font-medium">Course Image *</label>
-          <label
-            htmlFor="course-image"
-            className="text-violet-600 cursor-pointer hover:underline" >
-            Select Image </label>
+          <div className="flex justify-between">
+            <label className="block mb-2 font-medium">Course Image *</label>
+            <label
+              htmlFor="course-image"
+              className="text-violet-600 dark:text-indigo-500 cursor-pointer hover:underline"> Select Image </label>
+          </div>
           <input
             id="course-image"
             type="file"
@@ -278,7 +288,7 @@ export default function CreateCoursePage() {
           )}
         </div>
 
-        <Button type="submit" disabled={isSubmitting} className="w-full">
+        <Button type="submit" disabled={isSubmitting} className="w-full text-white bg-violet-600 hover:bg-violet-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 shadow-sm transition-all duration-300">
           {isSubmitting ? "Creating..." : "Create Course"}
         </Button>
       </form>

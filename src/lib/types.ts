@@ -371,6 +371,8 @@ export interface CoursePageDetails {
   image?: string;
   tutor: Tutor;
   category: string;
+  category_id: string;
+  student_count?: number;
   lessons: CourseComponentLesson[];
 }
 

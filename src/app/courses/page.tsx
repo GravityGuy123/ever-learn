@@ -56,21 +56,7 @@ export default function PublicCoursesPage() {
       {courses.map((course) => (
         <div
           key={course.id}
-          className="border rounded-lg overflow-hidden shadow hover:shadow-lg transition"
-        >
-          {/* IMAGE */}
-          {/* {course.image && (
-            <div className="relative h-44 w-full">
-              <Image
-                src={course.image}
-                alt={course.title}
-                fill
-                className="object-cover"
-                unoptimized
-              />
-            </div>
-          )} */}
-
+          className="border rounded-lg overflow-hidden shadow hover:shadow-lg transition" >
           {/* IMAGE + CATEGORY BADGE */}
           {course.image && (
             <div className="relative h-44 w-full">

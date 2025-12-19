@@ -8,22 +8,37 @@ import { AlertTriangle } from "lucide-react";
 
 export default function DeleteCoursePage() {
   const router = useRouter();
-  const params = useParams<{ id: string }>();
+
+  /* ✅ SAFE PARAM HANDLING */
+  const params = useParams();
+  const courseId =
+    typeof params?.id === "string" ? params.id : null;
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const handleDelete = async () => {
+    if (!courseId) {
+      setError("Invalid course ID.");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
     try {
-      await axiosInstance.delete(`/tutor/course/${params.id}/delete/`);
+      await axiosInstance.delete(
+        `/tutor/course/${courseId}/delete/`
+      );
+
       router.push("/dashboard/tutor/courses");
     } catch {
       setError("Unable to delete this course. Please try again.");
       setLoading(false);
     }
   };
+
+  /* ---------------- UI ---------------- */
 
   return (
     <div className="max-w-xl mx-auto mt-28 px-4">
@@ -70,7 +85,7 @@ export default function DeleteCoursePage() {
           <Button
             type="button"
             onClick={handleDelete}
-            disabled={loading}
+            disabled={loading || !courseId}
             className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white dark:bg-red-500 dark:hover:bg-red-600 transition"
           >
             {loading ? "Deleting course..." : "Yes, delete course"}

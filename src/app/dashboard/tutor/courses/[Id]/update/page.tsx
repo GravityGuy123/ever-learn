@@ -16,10 +16,11 @@ import z from "zod";
 import { SuccessToast } from "@/lib/toast";
 import { useTheme } from "next-themes";
 
+/* ---------------- CONSTANTS ---------------- */
+
 const LEVELS = ["Beginner", "Intermediate", "Advanced"] as const;
 type Level = (typeof LEVELS)[number];
 
-/* ✅ TYPE GUARD */
 const isValidLevel = (value: string): value is Level =>
   LEVELS.includes(value as Level);
 
@@ -29,15 +30,23 @@ const updateCourseSchema = createCourseSchema.partial({
 
 type UpdateCourseInput = z.infer<typeof updateCourseSchema>;
 
+/* ---------------- PAGE ---------------- */
+
 export default function UpdateCoursePage() {
   const router = useRouter();
   const { theme } = useTheme();
   const isDark = theme === "dark";
-  const params = useParams<{ id: string }>();
   const { user } = useAuth();
 
+  /* ✅ SAFE PARAM HANDLING */
+  const params = useParams();
+  const courseId =
+    typeof params?.id === "string" ? params.id : null;
+
   const [course, setCourse] = useState<CoursePageDetails | null>(null);
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>([]);
+  const [categories, setCategories] = useState<
+    { id: string; name: string }[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [preview, setPreview] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
@@ -57,15 +66,23 @@ export default function UpdateCoursePage() {
   const watchedPrice = watch("price") ?? "";
 
   /* ---------------- FETCH DATA ---------------- */
+
   useEffect(() => {
+    if (!courseId || !user) return;
+
     const fetchData = async () => {
       try {
         const [courseRes, categoryRes] = await Promise.all([
-          axiosInstance.get<CoursePageDetails>(`/courses/${params.id}`),
-          axiosInstance.get<{ id: string; name: string }[]>("/courses/categories"),
+          axiosInstance.get<CoursePageDetails>(`/courses/${courseId}`),
+          axiosInstance.get<{ id: string; name: string }[]>(
+            "/courses/categories"
+          ),
         ]);
 
-        if (!user || String(user.id) !== String(courseRes.data.tutor?.id)) {
+        if (
+          String(user.id) !==
+          String(courseRes.data.tutor?.id)
+        ) {
           router.replace("/403");
           return;
         }
@@ -97,9 +114,10 @@ export default function UpdateCoursePage() {
     };
 
     fetchData();
-  }, [params.id, router, user, setValue]);
+  }, [courseId, user, router, setValue]);
 
   /* ---------------- PRICE FORMAT ---------------- */
+
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target;
     const selectionStart = input.selectionStart ?? 0;
@@ -121,7 +139,10 @@ export default function UpdateCoursePage() {
   };
 
   /* ---------------- SUBMIT ---------------- */
+
   const onSubmit = async (data: UpdateCourseInput) => {
+    if (!courseId) return;
+
     try {
       setFormError(null);
 
@@ -143,16 +164,19 @@ export default function UpdateCoursePage() {
       }
 
       await axiosInstance.patch(
-        `/tutor/course/${params.id}/update/`,
+        `/tutor/course/${courseId}/update/`,
         formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
       );
 
-      SuccessToast("Course updated successfully 🎉", isDark, {position: "top-right"})
+      SuccessToast("Course updated successfully 🎉", isDark, {
+        position: "top-right",
+      });
 
-      // optional slight delay so toast is visible
       setTimeout(() => {
-        router.push(`/dashboard/tutor/courses/${params.id}`);
+        router.push(`/dashboard/tutor/courses/${courseId}`);
       }, 800);
     } catch (error) {
       if (
@@ -160,30 +184,42 @@ export default function UpdateCoursePage() {
         error !== null &&
         "response" in error
       ) {
-        const response = (error as { response?: { data?: Record<string, unknown> } }).response;
+        const response = (
+          error as {
+            response?: { data?: Record<string, unknown> };
+          }
+        ).response;
 
         if (response?.data) {
-          setFormError("Failed to update course. Check highlighted fields.");
+          setFormError(
+            "Failed to update course. Check highlighted fields."
+          );
 
-          Object.entries(response.data).forEach(([key, value]) => {
-            if (typeof value === "string") {
-              setError(key as keyof UpdateCourseInput, {
-                type: "manual",
-                message: value,
-              });
-            } else if (Array.isArray(value) && typeof value[0] === "string") {
-              setError(key as keyof UpdateCourseInput, {
-                type: "manual",
-                message: value[0],
-              });
+          Object.entries(response.data).forEach(
+            ([key, value]) => {
+              if (typeof value === "string") {
+                setError(key as keyof UpdateCourseInput, {
+                  type: "manual",
+                  message: value,
+                });
+              } else if (
+                Array.isArray(value) &&
+                typeof value[0] === "string"
+              ) {
+                setError(key as keyof UpdateCourseInput, {
+                  type: "manual",
+                  message: value[0],
+                });
+              }
             }
-          });
+          );
         }
       }
     }
   };
 
-  /* ---------------- UI ---------------- */
+  /* ---------------- UI STATES ---------------- */
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-96">
@@ -193,8 +229,14 @@ export default function UpdateCoursePage() {
   }
 
   if (!course) {
-    return <p className="text-center text-red-500 mt-10">Course not found</p>;
+    return (
+      <p className="text-center text-red-500 mt-10">
+        Course not found
+      </p>
+    );
   }
+
+  /* ---------------- UI ---------------- */
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
@@ -208,8 +250,15 @@ export default function UpdateCoursePage() {
       {/* IMAGE */}
       <div>
         <div className="flex justify-between">
-          <label className="block mb-2 font-medium">Course Image</label>
-          <label htmlFor="course-image" className="text-indigo-500 cursor-pointer hover:underline">Change Image</label>
+          <label className="block mb-2 font-medium">
+            Course Image
+          </label>
+          <label
+            htmlFor="course-image"
+            className="text-indigo-500 cursor-pointer hover:underline"
+          >
+            Change Image
+          </label>
         </div>
 
         <input
@@ -227,80 +276,142 @@ export default function UpdateCoursePage() {
         />
 
         {errors.image && (
-          <p className="text-sm text-red-500">{errors.image.message}</p>
+          <p className="text-sm text-red-500">
+            {errors.image.message}
+          </p>
         )}
 
         {preview && (
           <div className="relative h-48 w-full mt-3">
-            <Image src={preview} alt="Preview" fill className="object-contain" unoptimized />
+            <Image
+              src={preview}
+              alt="Preview"
+              fill
+              className="object-contain"
+              unoptimized
+            />
           </div>
         )}
       </div>
 
       {/* FORM */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-6"
+      >
         {/* Title */}
         <div>
-          <label className="block mb-1 font-medium">Title *</label>
+          <label className="block mb-1 font-medium">
+            Title *
+          </label>
           <Input {...register("title")} />
-          {errors.title && <p className="text-sm text-red-500">{errors.title.message}</p>}
+          {errors.title && (
+            <p className="text-sm text-red-500">
+              {errors.title.message}
+            </p>
+          )}
         </div>
 
         {/* Description */}
         <div>
-          <label className="block mb-1 font-medium">Description *</label>
-          <textarea {...register("description")} rows={7} className="w-full p-3 border rounded-md" />
-          {errors.description && <p className="text-sm text-red-500">{errors.description.message}</p>}
+          <label className="block mb-1 font-medium">
+            Description *
+          </label>
+          <textarea
+            {...register("description")}
+            rows={7}
+            className="w-full p-3 border rounded-md"
+          />
+          {errors.description && (
+            <p className="text-sm text-red-500">
+              {errors.description.message}
+            </p>
+          )}
         </div>
 
         {/* Category */}
         <div>
-          <label className="block mb-1 font-medium">Category *</label>
+          <label className="block mb-1 font-medium">
+            Category *
+          </label>
           <select
             {...register("category_id")}
-            className="w-full rounded-lg border px-3 py-2 text-sm bg-white text-gray-900 border-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700 dark:focus:ring-violet-400 dark:focus:border-violet-400 transition-colors">
-            <option value="" disabled>Select category</option>
-            {categories.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
+            className="w-full rounded-lg border px-3 py-2 text-sm"
+          >
+            <option value="" disabled>
+              Select category
+            </option>
+            {categories.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
           </select>
-          {errors.category_id && <p className="text-sm text-red-500">{errors.category_id.message}</p>}
+          {errors.category_id && (
+            <p className="text-sm text-red-500">
+              {errors.category_id.message}
+            </p>
+          )}
         </div>
 
         {/* Level */}
         <div>
-          <label className="block mb-1 font-medium">Level *</label>
+          <label className="block mb-1 font-medium">
+            Level *
+          </label>
           <select
             {...register("level")}
-            className="w-full rounded-lg border px-3 py-2 text-sm bg-white text-gray-900 border-gray-300 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-violet-500 dark:bg-gray-900 dark:text-gray-100 dark:border-gray-700 dark:focus:ring-violet-400 dark:focus:border-violet-400 transition-colors">
-            {LEVELS.map((l) => <option key={l} value={l}>{l}</option>)}
+            className="w-full rounded-lg border px-3 py-2 text-sm"
+          >
+            {LEVELS.map((l) => (
+              <option key={l} value={l}>
+                {l}
+              </option>
+            ))}
           </select>
-          {errors.level && <p className="text-sm text-red-500">{errors.level.message}</p>}
+          {errors.level && (
+            <p className="text-sm text-red-500">
+              {errors.level.message}
+            </p>
+          )}
         </div>
 
         {/* Duration */}
         <div>
-          <label className="block mb-1 font-medium">Duration</label>
-          <Input {...register("duration")} placeholder="e.g. 12 weeks" />
-          {errors.duration && <p className="text-sm text-red-500">{errors.duration.message}</p>}
+          <label className="block mb-1 font-medium">
+            Duration
+          </label>
+          <Input
+            {...register("duration")}
+            placeholder="e.g. 12 weeks"
+          />
         </div>
 
         {/* Price */}
         <div>
-          <label className="block mb-1 font-medium">Price (₦) *</label>
+          <label className="block mb-1 font-medium">
+            Price (₦) *
+          </label>
           <Input
             type="text"
-            {...register("price")}
             value={watchedPrice}
             onChange={handlePriceChange}
           />
-          {errors.price && <p className="text-sm text-red-500">{errors.price.message}</p>}
+          {errors.price && (
+            <p className="text-sm text-red-500">
+              {errors.price.message}
+            </p>
+          )}
         </div>
 
-        {formError && <p className="text-sm text-red-600">{formError}</p>}
+        {formError && (
+          <p className="text-sm text-red-600">{formError}</p>
+        )}
 
         <Button
           type="submit"
           disabled={isSubmitting}
-          className="w-full text-white bg-violet-600 hover:bg-violet-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 shadow-sm transition-all duration-300"
+          className="w-full"
         >
           {isSubmitting ? "Saving..." : "Save Changes"}
         </Button>

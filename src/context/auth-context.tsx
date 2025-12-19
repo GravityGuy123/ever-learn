@@ -3,6 +3,7 @@
 import React, { createContext, useState, useCallback, useEffect, useContext } from "react";
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { LoginSchema } from "@/lib/schema";
+import { baseUrl } from "@/lib/axios.config";
 
 interface User {
   id: number;
@@ -29,7 +30,7 @@ interface AuthContextType {
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // ------------------- Axios Instance -------------------
-export const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+// export const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
 
 export const axiosInstance = axios.create({
   baseURL: baseUrl,

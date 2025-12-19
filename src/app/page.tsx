@@ -21,12 +21,12 @@ export default function HomePage() {
             {
               title: "UI/UX Design Essentials",
               desc: "Master design tools and principles for user-friendly apps.",
-              img: "/assets/UI_UX_Design1.jpg",
+              img: "/assets/UI_UX_Design1.jpeg",
             },
             {
               title: "JavaScript for Beginners",
               desc: "Learn the fundamentals of modern JavaScript step by step.",
-              img: "/assets/react2.jpg",
+              img: "/assets/react2.jpeg",
             },
             {
               title: "Backend with Node.js",

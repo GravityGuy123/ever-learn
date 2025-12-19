@@ -9,8 +9,8 @@ export default function LogoContent() {
   const [mounted, setMounted] = useState(false);
 
   // Light & Dark logos
-  const lightLogoSrc = "/Logo_1.png"; // your light-mode logo
-  const darkLogoSrc = "/Logo_2.png";  // your dark-mode logo
+  const lightLogoSrc = "/Logo_1.PNG"; // your light-mode logo
+  const darkLogoSrc = "/Logo_2.PNG";  // your dark-mode logo
 
   // Only switch logo after mount to avoid hydration mismatch
   useEffect(() => {

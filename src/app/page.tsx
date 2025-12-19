@@ -1,11 +1,40 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { FaBookOpen, FaCertificate, FaUsers } from "react-icons/fa";
 import HomeHero from "@/components/home/HomeHero";
+import { axiosInstance, baseUrl } from "@/lib/axios.config";
+import { FaBookOpen, FaCertificate, FaUsers } from "react-icons/fa";
+
+interface Course {
+  id: string;
+  title: string;
+  description: string;
+  image?: string | null;
+}
 
 export default function HomePage() {
+  const [courses, setCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const MEDIA_BASE = baseUrl.replace("/api", "");
+
+  useEffect(() => {
+    const fetchFeaturedCourses = async () => {
+      try {
+        const res = await axiosInstance.get<Course[]>("/courses/featured/");
+        setCourses(res.data);
+      } catch (error) {
+        console.error("Failed to fetch featured courses", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedCourses();
+  }, []);
+
   return (
     <div>
       {/* Hero Section */}
@@ -16,50 +45,57 @@ export default function HomePage() {
         <h2 className="text-2xl md:text-3xl font-bold text-center text-violet-600 dark:text-indigo-300 mb-12">
           Featured Courses
         </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {[
-            {
-              title: "UI/UX Design Essentials",
-              desc: "Master design tools and principles for user-friendly apps.",
-              img: "/assets/UI_UX_Design1.jpeg",
-            },
-            {
-              title: "JavaScript for Beginners",
-              desc: "Learn the fundamentals of modern JavaScript step by step.",
-              img: "/assets/react2.jpeg",
-            },
-            {
-              title: "Backend with Node.js",
-              desc: "Build powerful APIs and scale apps with Node.js.",
-              img: "/assets/react1.jpg",
-            },
-          ].map((course) => (
-            <div
-              key={course.title}
-              className="bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col"
-            >
-              <Image
-                src={course.img}
-                alt={course.title}
-                width={400}
-                height={200}
-                className="h-40 w-full object-cover"
-              />
-              <div className="p-6 flex-1 flex flex-col">
-                <h3 className="font-semibold text-lg text-violet-600 dark:text-indigo-300 mb-2">
-                  {course.title}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300 flex-1">{course.desc}</p>
-                <Link
-                  href="/courses"
-                  className="mt-4 inline-block text-sm font-medium text-violet-700 dark:text-indigo-300 hover:underline"
+
+        {loading ? (
+          <p className="text-center text-gray-500">Loading courses...</p>
+        ) : courses.length === 0 ? (
+          <p className="text-center text-gray-500">No featured courses available.</p>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {courses.map((course) => {
+              const imageUrl =
+                course.image?.startsWith("http")
+                  ? course.image
+                  : course.image
+                  ? `${MEDIA_BASE}${course.image}`
+                  : "/assets/course-placeholder.jpg";
+
+              return (
+                <div
+                  key={course.id}
+                  className="bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-lg transition overflow-hidden flex flex-col"
                 >
-                  Learn More →
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
+                  <div className="relative h-40 w-full">
+                    <Image
+                      src={imageUrl}
+                      alt={course.title}
+                      fill
+                      className="object-cover"
+                      unoptimized
+                    />
+                  </div>
+
+                  <div className="p-6 flex-1 flex flex-col">
+                    <h3 className="font-semibold text-lg text-violet-600 dark:text-indigo-300 mb-2">
+                      {course.title}
+                    </h3>
+
+                    <p className="text-gray-600 dark:text-gray-300 flex-1">
+                      {course.description}
+                    </p>
+
+                    <Link
+                      href={`/courses/${course.id}`}
+                      className="mt-4 inline-block text-sm font-medium text-violet-700 dark:text-indigo-300 hover:underline"
+                    >
+                      Learn More →
+                    </Link>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
       {/* Certifications */}
@@ -68,9 +104,11 @@ export default function HomePage() {
           <h2 className="text-2xl md:text-3xl font-bold text-violet-600 dark:text-indigo-300 mb-6">
             Earn Recognized Certifications
           </h2>
+
           <p className="text-gray-600 dark:text-gray-300 mb-10">
-            Stand out from the crowd with globally recognized certificates that showcase your skills.
+            Stand out from the crowd with globally recognized certificates.
           </p>
+
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               { icon: <FaCertificate className="w-8 h-8" />, title: "Professional Certificates" },
@@ -81,7 +119,9 @@ export default function HomePage() {
                 key={cert.title}
                 className="bg-white dark:bg-gray-800 rounded-xl shadow hover:shadow-lg p-6 flex flex-col items-center"
               >
-                <div className="text-violet-600 dark:text-indigo-300 mb-4">{cert.icon}</div>
+                <div className="text-violet-600 dark:text-indigo-300 mb-4">
+                  {cert.icon}
+                </div>
                 <h3 className="font-medium text-lg">{cert.title}</h3>
               </div>
             ))}
@@ -89,7 +129,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Call to Action */}
+      {/* CTA */}
       <section className="bg-gradient-to-r from-violet-500 to-indigo-600 dark:from-violet-700 dark:to-indigo-900 text-white py-20 px-6 text-center">
         <h2 className="text-2xl md:text-4xl font-bold mb-6">
           Ready to Start Learning?

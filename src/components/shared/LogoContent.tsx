@@ -8,20 +8,14 @@ export default function LogoContent() {
   const { theme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // Light & Dark logos
-  const lightLogoSrc = "/Logo_1.PNG"; // your light-mode logo
-  const darkLogoSrc = "/Logo_2.PNG";  // your dark-mode logo
+  useEffect(() => setMounted(true), []);
 
-  // Only switch logo after mount to avoid hydration mismatch
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const lightLogoSrc = "/logo_1.png";
+  const darkLogoSrc = "/logo_2.png";
 
-  const logoSrc = mounted
-    ? theme === "dark"
-      ? darkLogoSrc
-      : lightLogoSrc
-    : lightLogoSrc; // default for SSR
+  if (!mounted) return null; // prevent SSR mismatch
+
+  const logoSrc = theme === "dark" ? darkLogoSrc : lightLogoSrc;
 
   return (
     <section className="flex items-center gap-2 mt-4 mb-6 px-3">

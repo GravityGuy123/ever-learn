@@ -377,9 +377,14 @@ export interface CoursePageDetails {
   lessons: CourseComponentLesson[];
 }
 
-export interface ApiResponse {
-  data?: CoursePageDetails;
-  error?: string;
+// export interface ApiResponse {
+//   data?: CoursePageDetails;
+//   error?: string;
+// }
+
+export interface ApiResponse<T = unknown> {
+  data?: T;
+  error: string;
 }
 
 export interface CoursePageIdProps {

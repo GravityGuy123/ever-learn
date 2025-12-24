@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { Spinner } from "@/components/ui/spinner";
-import { CourseComponent } from "@/components/courses/course";
+import { CourseComponent } from "@/components/courses/CourseComponent";
 import { axiosInstance } from "@/lib/axios.config";
 import { CoursePageDetails } from "@/lib/types";
 
@@ -22,7 +22,9 @@ export default function TutorCourseDetailsPage() {
       setError(null);
 
       try {
-        const res = await axiosInstance.get<CoursePageDetails>(`/courses/${id}`);
+        const res = await axiosInstance.get<CoursePageDetails>(
+          `/courses/${id}`
+        );
         setCourse(res.data);
       } catch (err: unknown) {
         let message = "An unexpected error occurred.";
@@ -63,16 +65,12 @@ export default function TutorCourseDetailsPage() {
   }
 
   if (error) {
-    return (
-      <div className="text-center text-red-500 mt-10">{error}</div>
-    );
+    return <div className="text-center text-red-500 mt-10">{error}</div>;
   }
 
   if (!course) {
     return (
-      <div className="text-center text-gray-500 mt-10">
-        Course not found.
-      </div>
+      <div className="text-center text-gray-500 mt-10">Course not found.</div>
     );
   }
 

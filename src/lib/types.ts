@@ -330,8 +330,9 @@ export interface AllCoursesPageProps {
   tutor?: Tutor;
   category: string;
   is_published?: boolean;
-  is_deleted?: boolean;
   created_at?: string;
+  is_deleted?: boolean;
+  deleted_at?: string;
 }
 
 
@@ -375,6 +376,7 @@ export interface CoursePageDetails {
   category_id: string;
   student_count?: number;
   lessons: CourseComponentLesson[];
+  modules: CourseModule[];
 }
 
 // export interface ApiResponse {
@@ -389,4 +391,12 @@ export interface ApiResponse<T = unknown> {
 
 export interface CoursePageIdProps {
   id: string;
+}
+
+export interface CourseModule {
+  id: string;
+  title: string;
+  description: string;
+  order: number;
+  is_published: boolean;
 }

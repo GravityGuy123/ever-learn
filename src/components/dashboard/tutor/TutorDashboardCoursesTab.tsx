@@ -10,10 +10,19 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { BookOpen, Users, BarChart3, MoreHorizontal, Eye, Edit } from "lucide-react";
+import {
+  BookOpen,
+  Users,
+  BarChart3,
+  MoreHorizontal,
+  Eye,
+  Edit,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { axiosInstance, baseUrl } from "@/lib/axios.config";
+
+/* ---------------- TYPES ---------------- */
 
 interface TutorDashboardCourse {
   id: string;
@@ -47,11 +56,36 @@ export default function TutorDashboardCoursesTab() {
       minimumFractionDigits: 0,
     });
 
+  const getStatusBadgeClasses = (isPublished?: boolean) => {
+    if (isPublished) {
+      return `
+        bg-gradient-to-r from-indigo-500 to-violet-600
+        text-white
+        border border-indigo-400/40
+        shadow-sm shadow-indigo-500/20
+        dark:from-indigo-600 dark:to-violet-700
+      `;
+    }
+
+    return `
+      bg-muted
+      text-muted-foreground
+      border border-dashed border-border
+      dark:bg-gray-700/40
+      dark:text-gray-300
+    `;
+  };
+
+
+  /* ---------------- FETCH COURSES ---------------- */
+
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
-        const res = await axiosInstance.get<TutorDashboardCourse[]>("/tutor/courses");
+        const res = await axiosInstance.get<TutorDashboardCourse[]>(
+          "/tutor/courses"
+        );
         setCourses(res.data);
       } catch (err) {
         console.error("Failed to fetch tutor courses:", err);
@@ -65,112 +99,180 @@ export default function TutorDashboardCoursesTab() {
   }, []);
 
   if (loading) return <p className="text-center mt-10">Loading courses...</p>;
-  if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
-  if (courses.length === 0) return <p className="text-center mt-10">No courses found.</p>;
+  if (error)
+    return (
+      <p className="text-center mt-10 text-red-500">{error}</p>
+    );
+  if (courses.length === 0)
+    return <p className="text-center mt-10">No courses found.</p>;
 
   return (
-    <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-      {courses.map((course) => {
-        const studentCount = course.student_count ?? 0;
-        const revenue = course.revenue ?? course.price ?? 0;
-        const completionRate = course.completionRate ?? 0;
+    <>
+      {/* ---------- SECTION HEADER ---------- */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold">Your Courses</h2>
 
-        const imageUrl =
-          course.image?.startsWith("http") ? course.image : course.image ? `${MEDIA_BASE}${course.image}` : null;
+        <Button
+          variant="ghost"
+          className="text-sm gap-1 hover:bg-violet-600 hover:text-white dark:hover:bg-indigo-500"
+          onClick={() => router.push("/dashboard/tutor/courses")}
+        >
+          View all <span aria-hidden>→</span>
+        </Button>
+      </div>
 
-        return (
-          <Card
-            key={course.id}
-            className="dark:bg-gray-800 hover:shadow-lg transition-shadow flex flex-col w-full overflow-hidden"
-          >
-            {imageUrl && (
-              <div className="relative w-full h-40 sm:h-36 md:h-44">
-                <Image
-                  src={imageUrl}
-                  alt={course.title}
-                  fill
-                  className="object-cover"
-                  unoptimized
-                />
-                {course.category && (
-                  <span className="absolute top-2 left-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-lg z-10">
-                    {course.category}
-                  </span>
-                )}
-              </div>
-            )}
+      {/* ---------- COURSES GRID ---------- */}
+      <div className="grid gap-4 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        {courses.map((course) => {
+          const studentCount = course.student_count ?? 0;
+          const revenue = course.revenue ?? course.price ?? 0;
+          const completionRate = course.completionRate ?? 0;
 
-            <CardContent className="flex flex-col gap-2 p-4">
-              {/* Title + Status */}
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-                <h3 className="font-semibold text-sm sm:text-base truncate">{course.title}</h3>
-                <Badge
-                  variant={course.is_published ? "default" : "secondary"}
-                  className="uppercase text-xs sm:text-sm self-start"
-                >
-                  {course.is_published ? "Published" : "Draft"}
-                </Badge>
-              </div>
+          const imageUrl =
+            course.image?.startsWith("http")
+              ? course.image
+              : course.image
+              ? `${MEDIA_BASE}${course.image}`
+              : null;
 
-              {course.level && <p className="text-xs text-muted-foreground">Level: {course.level}</p>}
-              {course.tutor && (
-                <p className="text-xs text-muted-foreground">
-                  By <span className="font-medium">{course.tutor.full_name}</span>
-                </p>
+          return (
+            <Card
+              key={course.id}
+              className="dark:bg-gray-800 hover:shadow-lg transition-shadow flex flex-col overflow-hidden"
+            >
+              {/* ---------- IMAGE ---------- */}
+              {imageUrl && (
+                <div className="relative w-full h-40">
+                  <Image
+                    src={imageUrl}
+                    alt={course.title}
+                    fill
+                    className="object-cover"
+                    unoptimized
+                  />
+
+                  {course.category && (
+                    <span className="absolute top-2 left-2 bg-linear-to-r from-purple-500 to-pink-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow z-10">
+                      {course.category}
+                    </span>
+                  )}
+                </div>
               )}
 
-              <p className="text-sm text-gray-600 dark:text-gray-300 truncate">{course.description ?? ""}</p>
+              <CardContent className="flex flex-col gap-2 p-4">
+                {/* ---------- TITLE & STATUS ---------- */}
+                <div className="flex items-start justify-between gap-2">
+                  <h3 className="font-semibold text-sm truncate">
+                    {course.title}
+                  </h3>
 
-              {/* Stats */}
-              <div className="flex flex-wrap items-center gap-3 mt-2 text-xs sm:text-sm">
-                <div className="flex items-center gap-1">
-                  <Users className="h-4 w-4" /> {studentCount} {studentCount === 1 ? "student" : "students"}
+                  <Badge
+                    className={`relative flex items-center gap-1 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wide rounded-full ${getStatusBadgeClasses(
+                      course.is_published
+                    )}`}
+                  >
+                    {course.is_published && (
+                      <span className="relative flex h-2 w-2">
+                        <span className="absolute inline-flex h-full w-full rounded-full bg-white opacity-75 animate-ping" />
+                        <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+                      </span>
+                    )}
+
+                    {course.is_published ? "Published" : "Draft"}
+                  </Badge>
+
                 </div>
 
-                <div className="flex items-center gap-1 text-primary font-medium">
-                  <BookOpen className="h-4 w-4" /> {formatCurrency(revenue)}
+                {course.level && (
+                  <p className="text-xs text-muted-foreground">
+                    Level: {course.level}
+                  </p>
+                )}
+
+                {course.tutor && (
+                  <p className="text-xs text-muted-foreground">
+                    By{" "}
+                    <span className="font-medium">
+                      {course.tutor.full_name}
+                    </span>
+                  </p>
+                )}
+
+                <p className="text-sm text-gray-600 dark:text-gray-300 truncate">
+                  {course.description ?? ""}
+                </p>
+
+                {/* ---------- STATS + ACTIONS ---------- */}
+                <div className="flex items-center justify-between mt-2 text-xs">
+                  <div className="flex flex-wrap gap-3">
+                    <span className="flex items-center gap-1">
+                      <Users className="h-4 w-4" />
+                      {studentCount}
+                    </span>
+
+                    <span className="flex items-center gap-1 text-primary font-medium">
+                      <BookOpen className="h-4 w-4" />
+                      {formatCurrency(revenue)}
+                    </span>
+
+                    <span className="flex items-center gap-1 text-amber-500 font-medium">
+                      <BarChart3 className="h-4 w-4" />
+                      {completionRate}%
+                    </span>
+                  </div>
+
+                  {/* ---------- DROPDOWN (ITEM-SPECIFIC ONLY) ---------- */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="hover:bg-violet-600 hover:text-white hover:dark:bg-indigo-500">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+
+                    <DropdownMenuContent align="end" className="min-w-[140px]">
+                      <DropdownMenuItem
+                        className="gap-2 cursor-pointer"
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/tutor/courses/${course.id}`
+                          )
+                        }
+                      >
+                        <Eye className="h-4 w-4" /> View
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem
+                        className="gap-2 cursor-pointer"
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/tutor/courses/${course.id}/update`
+                          )
+                        }
+                      >
+                        <Edit className="h-4 w-4" /> Edit
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem
+                        className="gap-2 cursor-pointer"
+                        onClick={() =>
+                          router.push(
+                            `/dashboard/tutor/courses/${course.id}/analytics`
+                          )
+                        }
+                      >
+                        <BarChart3 className="h-4 w-4" /> Analytics
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-
-                <div className="flex items-center gap-1 text-amber-500 font-medium">
-                  <BarChart3 className="h-4 w-4" /> {completionRate}%
-                </div>
-
-                {/* Dropdown */}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-
-                  <DropdownMenuContent align="end" className="bg-popover dark:bg-gray-800 min-w-[130px]">
-                    <DropdownMenuItem
-                      className="gap-2 cursor-pointer"
-                      onClick={() => router.push(`/dashboard/courses/${course.id}`)}
-                    >
-                      <Eye className="h-4 w-4" /> View
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem
-                      className="gap-2 cursor-pointer"
-                      onClick={() => router.push(`/dashboard/courses/${course.id}/edit`)}
-                    >
-                      <Edit className="h-4 w-4" /> Edit
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem
-                      className="gap-2 cursor-pointer"
-                      onClick={() => router.push(`/dashboard/courses/${course.id}/analytics`)}
-                    >
-                      <BarChart3 className="h-4 w-4" /> Analytics
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
-    </div>
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
+    </>
   );
 }

@@ -20,7 +20,7 @@ export default function Footer() {
         {/* BRAND */}
         <div className="space-y-4">
           <div className="flex items-center space-x-3">
-            <div className="bg-gradient-to-tr from-violet-600 to-indigo-600 p-2 rounded-lg">
+            <div className="bg-linear-to-tr from-violet-600 to-indigo-600 p-2 rounded-lg">
               <GraduationCap className="h-6 w-6 text-white" />
             </div>
             <span className="font-heading font-bold text-2xl text-gray-900 dark:text-white">
@@ -38,6 +38,7 @@ export default function Footer() {
               <a
                 key={i}
                 href={href}
+                aria-label="Social icons"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`
@@ -107,14 +108,14 @@ export default function Footer() {
           </h3>
 
           <p className="text-gray-600 dark:text-gray-400 text-sm mb-4">
-            Have questions? We’re here to support your learning journey.
+            {`Have questions? We’re here to support your learning journey`}.
           </p>
 
           <div className="flex items-center gap-3 mb-3 group">
             <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-lg group-hover:bg-violet-600 transition group-hover:text-white">
               <FaEnvelope className="h-5 w-5" />
             </div>
-            <Link href="mailto:info@ever-learn.com" className="hover:text-violet-600 dark:hover:text-violet-400 transition">
+            <Link href="mailto:simmyifeanyi@gmail.com" className="hover:text-violet-600 dark:hover:text-violet-400 transition">
               info@ever-learn.com
             </Link>
           </div>

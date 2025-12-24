@@ -13,7 +13,7 @@ export function TutorDashboardHeader() {
       </div>
       <Button className="bg-violet-600 hover:bg-violet-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 dark:text-white shadow-sm transition-all duration-300 gap-2">
         <PlusCircle className="h-4 w-4" />
-        <Link href="/dashboard/tutor/courses/new" >
+        <Link href="/dashboard/tutor/courses/create" >
           Create New Course
         </Link>
       </Button>

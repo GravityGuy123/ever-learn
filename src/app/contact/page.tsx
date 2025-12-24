@@ -7,7 +7,7 @@ import Link from "next/link";
 
 export default function ContactPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100">
       {/* Header */}
       <section className="bg-gradient-to-r from-violet-400 to-purple-400 dark:from-violet-800 dark:to-purple-900 py-20">
         <div className="max-w-5xl mx-auto px-6 text-center">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { CourseComponent } from "./course";
+import { CourseComponent } from "./CourseComponent";
 import { CoursePageDetails } from "@/lib/types";
 import { Spinner } from "@/components/ui/spinner";
 import { getCourseById } from "@/lib/getCourseById";
@@ -27,13 +27,11 @@ export function GetCourseComponent({ id }: Props) {
 
   if (loading) return <Spinner className="w-12 h-12 text-violet-600" />;
 
-  if (error) return <div className="text-red-500 text-center mt-6">{error}</div>;
+  if (error)
+    return <div className="text-red-500 text-center mt-6">{error}</div>;
 
   return <CourseComponent course={course!} />;
 }
-
-
-
 
 // import { ApiResponse, CoursePageIdProps, CoursePageDetails } from "@/lib/types";
 // import { CourseComponent } from "../courses/course";

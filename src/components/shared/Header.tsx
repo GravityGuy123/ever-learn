@@ -44,10 +44,15 @@ export default function Header() {
 
         {isLoggedIn && user ? (
           <div className="flex items-center gap-2">
-            <UserAvatar
-              user={user}
-              size={48}
-              className="rounded-full shrink-0 w-12 h-12" />
+            <Link
+              href="/user/settings"
+              aria-label="Go to settings"
+              className="group relative rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-violet-500 dark:focus-visible:ring-indigo-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-offset-gray-800">
+              <UserAvatar
+                user={user}
+                size={48}
+                className="rounded-full shrink-0 w-12 h-12 cursor-pointer transition-all duration-200 ease-out group-hover:scale-[1.05] group-hover:ring-2 group-hover:ring-violet-400/60 dark:group-hover:ring-indigo-300/60" />
+            </Link>
             <span className="font-semibold text-gray-800 dark:text-gray-200 whitespace-nowrap">
               {user.username}
             </span>

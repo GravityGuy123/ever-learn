@@ -6,48 +6,58 @@ import Image from "next/image";
 import { axiosInstance, baseUrl } from "@/lib/axios.config";
 import { Button } from "@/components/ui/button";
 import { AllCoursesPageProps } from "@/lib/types";
-import { Clock, Users } from "lucide-react";
+import { Clock, Users, Trash2 } from "lucide-react";
 
 const MEDIA_BASE = baseUrl.replace("/api", "");
+const DELETE_WINDOW_DAYS = 30;
 
-export default function TutorCoursesPage() {
+// Calculate days remaining until permanent deletion
+function getDaysRemaining(deletedAt: string) {
+  const deletedTime = new Date(deletedAt).getTime();
+  const expiryTime = deletedTime + DELETE_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+  const diff = expiryTime - Date.now();
+  return Math.max(Math.ceil(diff / (1000 * 60 * 60 * 24)), 0);
+}
+
+export default function DeletedCoursesPage() {
   const router = useRouter();
-  const [courses, setCourses] = useState<AllCoursesPageProps[]>([]);
+  const [deletedCourses, setDeletedCourses] = useState<AllCoursesPageProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchCourses = async () => {
+    const fetchDeletedCourses = async () => {
       try {
         setLoading(true);
-        const res = await axiosInstance.get("/tutor/courses");
-        // Only include non-deleted courses
-        setCourses(res.data.filter((c: AllCoursesPageProps) => !c.is_deleted));
+        const res = await axiosInstance.get("/tutor/courses/deleted");
+        setDeletedCourses(res.data);
       } catch {
-        setError("Failed to load courses.");
+        setError("Failed to load deleted courses.");
       } finally {
         setLoading(false);
       }
     };
-    fetchCourses();
+    fetchDeletedCourses();
   }, []);
 
   const handleViewCourse = (courseId: string) => {
     router.push(`/dashboard/tutor/courses/${courseId}`);
   };
 
-  if (loading) return <p className="text-center mt-10">Loading courses...</p>;
+  if (loading) return <p className="text-center mt-10">Loading deleted courses...</p>;
   if (error) return <p className="text-center mt-10 text-red-500">{error}</p>;
-  if (courses.length === 0)
-    return <p className="text-center mt-10">No courses found.</p>;
+  if (deletedCourses.length === 0)
+    return <p className="text-center mt-10">No deleted courses found.</p>;
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Your Courses</h1>
+      <h1 className="text-2xl font-bold mb-6 flex items-center justify-center gap-2">
+        <Trash2 className="w-6 h-6 text-pink-500" /> Deleted Courses
+      </h1>
 
       {/* COURSES GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {courses.map((course) => {
+        {deletedCourses.map((course) => {
           const imageUrl =
             course.image?.startsWith("http")
               ? course.image
@@ -55,10 +65,12 @@ export default function TutorCoursesPage() {
               ? `${MEDIA_BASE}${course.image}`
               : null;
 
+          const daysRemaining = course.deleted_at ? getDaysRemaining(course.deleted_at) : 0;
+
           return (
             <div
               key={course.id}
-              className="border rounded-lg overflow-hidden shadow hover:shadow-lg transition relative"
+              className="border rounded-lg overflow-hidden shadow hover:shadow-lg transition relative opacity-70"
             >
               {/* IMAGE + CATEGORY BADGE */}
               {imageUrl && (
@@ -99,7 +111,7 @@ export default function TutorCoursesPage() {
                   {course.description.slice(0, 100)}...
                 </p>
 
-                {/* DURATION + STUDENT COUNT + STATUS */}
+                {/* DURATION + STUDENT COUNT + DAYS REMAINING */}
                 <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-600">
                   {course.duration && (
                     <div className="flex items-center gap-1">
@@ -113,68 +125,28 @@ export default function TutorCoursesPage() {
                     </div>
                   )}
 
-                  {/* {course.is_active !== undefined && (
-                    <span
-                      className={`px-2 py-0.5 text-xs rounded-full ${
-                        course.is_active
-                          ? "bg-green-200 text-green-800"
-                          : "bg-red-200 text-red-800"
-                      }`}
-                    >
-                      {course.is_active ? "Active" : "Inactive"}
-                    </span>
-                  )} */}
-
-                  {course.student_count !== undefined && (
-                    <span
-                      className={`px-2 py-0.5 text-xs rounded-full ${
-                        course.student_count
-                          ? "bg-green-200 text-green-800"
-                          : "bg-red-200 text-red-800"}`}
-                      >
-                      {course.student_count < 1 ? "Inactive" : "Active"}
-                    </span>
-                  )}
-                  
+                  <span className="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-700 font-semibold">
+                    Deletes in {daysRemaining} day{daysRemaining !== 1 ? "s" : ""}
+                  </span>
                 </div>
 
                 <p className="text-sm font-bold mt-2">
                   ₦{Number(course.price).toLocaleString()}
                 </p>
 
-                {/* BUTTONS */}
+                {/* VIEW BUTTON */}
                 <div className="flex gap-3 mt-3">
                   <Button
                     onClick={() => handleViewCourse(course.id)}
-                    className="flex-1 bg-violet-600 hover:bg-violet-700 text-white"
+                    className="flex-1 bg-purple-500 hover:bg-pink-500 text-white"
                   >
                     View Course
-                  </Button>
-
-                  <Button
-                    variant="outline"
-                    onClick={() =>
-                      router.push(`/dashboard/tutor/courses/${course.id}/enroll`)
-                    }
-                    className="flex-1"
-                  >
-                    Enroll
                   </Button>
                 </div>
               </div>
             </div>
           );
         })}
-      </div>
-
-      {/* LINK TO DELETED COURSES PAGE */}
-      <div className="mt-8 text-center">
-        <Button
-          variant="outline"
-          onClick={() => router.push("/dashboard/tutor/courses/deleted-courses")}
-        >
-          View Deleted Courses
-        </Button>
       </div>
     </div>
   );

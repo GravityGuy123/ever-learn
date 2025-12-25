@@ -1,29 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { axiosInstance, baseUrl } from "@/lib/axios.config";
 import { Button } from "@/components/ui/button";
 import { AllCoursesPageProps } from "@/lib/types";
-import { Clock, Users, Trash2 } from "lucide-react";
+import { Trash2, Clock, Users, RotateCw } from "lucide-react";
+import Image from "next/image";
+import { ErrorToast, SuccessToast } from "@/lib/toast";
+import { useTheme } from "next-themes";
+import { AxiosError } from "axios";
 
 const MEDIA_BASE = baseUrl.replace("/api", "");
-const DELETE_WINDOW_DAYS = 30;
-
-// Calculate days remaining until permanent deletion
-function getDaysRemaining(deletedAt: string) {
-  const deletedTime = new Date(deletedAt).getTime();
-  const expiryTime = deletedTime + DELETE_WINDOW_DAYS * 24 * 60 * 60 * 1000;
-  const diff = expiryTime - Date.now();
-  return Math.max(Math.ceil(diff / (1000 * 60 * 60 * 24)), 0);
-}
 
 export default function DeletedCoursesPage() {
-  const router = useRouter();
   const [deletedCourses, setDeletedCourses] = useState<AllCoursesPageProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  const { theme } = useTheme();
+  const isDark = theme === "dark";
 
   useEffect(() => {
     const fetchDeletedCourses = async () => {
@@ -40,8 +35,21 @@ export default function DeletedCoursesPage() {
     fetchDeletedCourses();
   }, []);
 
-  const handleViewCourse = (courseId: string) => {
-    router.push(`/dashboard/tutor/courses/${courseId}`);
+  const handleRestoreCourse = async (courseId: string) => {
+    try {
+      await axiosInstance.patch(`/tutor/courses/${courseId}/restore`);
+      setDeletedCourses((prev) => prev.filter((c) => c.id !== courseId));
+      SuccessToast("Course restored successfully.", isDark, { position: "top-center" });
+    } catch (err) {
+      const error = err as AxiosError;
+      if (error.response?.status === 403) {
+        ErrorToast("Permission denied. You cannot restore this course.", isDark, { position: "top-center" });
+      } else if (error.response?.status === 410) {
+        ErrorToast("Restore window expired. Course permanently deleted.", isDark, { position: "top-center" });
+      } else {
+        ErrorToast("Failed to restore course. Try again.", isDark, { position: "top-center" });
+      }
+    }
   };
 
   if (loading) return <p className="text-center mt-10">Loading deleted courses...</p>;
@@ -55,7 +63,6 @@ export default function DeletedCoursesPage() {
         <Trash2 className="w-6 h-6 text-pink-500" /> Deleted Courses
       </h1>
 
-      {/* COURSES GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {deletedCourses.map((course) => {
           const imageUrl =
@@ -65,14 +72,13 @@ export default function DeletedCoursesPage() {
               ? `${MEDIA_BASE}${course.image}`
               : null;
 
-          const daysRemaining = course.deleted_at ? getDaysRemaining(course.deleted_at) : 0;
+          const daysRemaining = course.days_remaining ?? 0;
 
           return (
             <div
               key={course.id}
               className="border rounded-lg overflow-hidden shadow hover:shadow-lg transition relative opacity-70"
             >
-              {/* IMAGE + CATEGORY BADGE */}
               {imageUrl && (
                 <div className="relative h-44 w-full">
                   <Image
@@ -83,7 +89,7 @@ export default function DeletedCoursesPage() {
                     unoptimized
                   />
                   {course.category && (
-                    <span className="absolute top-3 left-3 bg-linear-to-r from-purple-500 to-pink-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-lg z-10">
+                    <span className="absolute top-3 left-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-semibold px-2 py-1 rounded-full shadow-lg z-10">
                       {course.category}
                     </span>
                   )}
@@ -91,7 +97,6 @@ export default function DeletedCoursesPage() {
               )}
 
               <div className="p-4 space-y-2">
-                {/* LEVEL BADGE */}
                 {course.level && (
                   <span className="inline-block px-2 py-0.5 text-xs rounded-full bg-violet-100 text-violet-700 mb-1">
                     {course.level}
@@ -100,7 +105,6 @@ export default function DeletedCoursesPage() {
 
                 <h2 className="text-lg font-semibold">{course.title}</h2>
 
-                {/* TUTOR */}
                 {course.tutor && (
                   <p className="text-xs text-gray-500">
                     By <span className="font-medium">{course.tutor.full_name}</span>
@@ -111,7 +115,6 @@ export default function DeletedCoursesPage() {
                   {course.description.slice(0, 100)}...
                 </p>
 
-                {/* DURATION + STUDENT COUNT + DAYS REMAINING */}
                 <div className="flex flex-wrap items-center gap-4 mt-2 text-sm text-gray-600">
                   {course.duration && (
                     <div className="flex items-center gap-1">
@@ -121,7 +124,7 @@ export default function DeletedCoursesPage() {
                   {course.student_count !== undefined && (
                     <div className="flex items-center gap-1">
                       <Users className="w-4 h-4" /> {course.student_count}{" "}
-                      {course.student_count < 2 ? "student" : "students"}
+                      {course.student_count === 1 ? "student" : "students"}
                     </div>
                   )}
 
@@ -134,13 +137,12 @@ export default function DeletedCoursesPage() {
                   ₦{Number(course.price).toLocaleString()}
                 </p>
 
-                {/* VIEW BUTTON */}
                 <div className="flex gap-3 mt-3">
                   <Button
-                    onClick={() => handleViewCourse(course.id)}
-                    className="flex-1 bg-purple-500 hover:bg-pink-500 text-white"
+                    onClick={() => handleRestoreCourse(course.id)}
+                    className="flex-1 bg-green-500 hover:bg-green-600 text-white flex items-center justify-center gap-2"
                   >
-                    View Course
+                    <RotateCw className="w-4 h-4" /> Restore
                   </Button>
                 </div>
               </div>

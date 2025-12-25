@@ -333,6 +333,7 @@ export interface AllCoursesPageProps {
   created_at?: string;
   is_deleted?: boolean;
   deleted_at?: string;
+  days_remaining?: number;
 }
 
 

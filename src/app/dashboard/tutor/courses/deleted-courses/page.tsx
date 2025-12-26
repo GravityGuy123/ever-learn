@@ -9,6 +9,7 @@ import Image from "next/image";
 import { ErrorToast, SuccessToast } from "@/lib/toast";
 import { useTheme } from "next-themes";
 import { AxiosError } from "axios";
+import { useRouter } from "next/navigation";
 
 const MEDIA_BASE = baseUrl.replace("/api", "");
 
@@ -16,9 +17,11 @@ export default function DeletedCoursesPage() {
   const [deletedCourses, setDeletedCourses] = useState<AllCoursesPageProps[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const { theme } = useTheme();
   const isDark = theme === "dark";
+
+  const router = useRouter();
 
   useEffect(() => {
     const fetchDeletedCourses = async () => {
@@ -32,22 +35,45 @@ export default function DeletedCoursesPage() {
         setLoading(false);
       }
     };
+
     fetchDeletedCourses();
   }, []);
 
   const handleRestoreCourse = async (courseId: string) => {
     try {
       await axiosInstance.patch(`/tutor/courses/${courseId}/restore`);
+
+      // Remove restored course from UI list
       setDeletedCourses((prev) => prev.filter((c) => c.id !== courseId));
-      SuccessToast("Course restored successfully.", isDark, { position: "top-center" });
+
+      SuccessToast("Course restored successfully.", isDark, {
+        position: "top-center",
+      });
+
+      // 🔥 Redirect to tutor course details page
+      router.push(`/dashboard/tutor/courses/${courseId}`);
+
     } catch (err) {
       const error = err as AxiosError;
+
       if (error.response?.status === 403) {
-        ErrorToast("Permission denied. You cannot restore this course.", isDark, { position: "top-center" });
+        ErrorToast(
+          "Permission denied. You cannot restore this course.",
+          isDark,
+          { position: "top-center" }
+        );
       } else if (error.response?.status === 410) {
-        ErrorToast("Restore window expired. Course permanently deleted.", isDark, { position: "top-center" });
+        ErrorToast(
+          "Restore window expired. Course permanently deleted.",
+          isDark,
+          { position: "top-center" }
+        );
       } else {
-        ErrorToast("Failed to restore course. Try again.", isDark, { position: "top-center" });
+        ErrorToast(
+          "Failed to restore course. Try again.",
+          isDark,
+          { position: "top-center" }
+        );
       }
     }
   };
@@ -121,6 +147,7 @@ export default function DeletedCoursesPage() {
                       <Clock className="w-4 h-4" /> {course.duration}
                     </div>
                   )}
+
                   {course.student_count !== undefined && (
                     <div className="flex items-center gap-1">
                       <Users className="w-4 h-4" /> {course.student_count}{" "}

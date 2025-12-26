@@ -43,7 +43,14 @@ export default function TutorCoursesPage() {
 
   return (
     <div className="max-w-6xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Your Courses</h1>
+      {/* CATCHY TITLE WITH INLINE COURSE COUNT */}
+      <h1 className="text-2xl font-bold mb-6 flex items-center gap-3">
+        You’re teaching{" "}
+        <span className="inline-block px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full font-semibold shadow-lg">
+          {courses.length}
+        </span>
+         {courses.length === 1 ? "Awesome Course!" : "Awesome Courses!"}
+      </h1>
 
       {/* COURSES GRID */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -113,29 +120,17 @@ export default function TutorCoursesPage() {
                     </div>
                   )}
 
-                  {/* {course.is_active !== undefined && (
-                    <span
-                      className={`px-2 py-0.5 text-xs rounded-full ${
-                        course.is_active
-                          ? "bg-green-200 text-green-800"
-                          : "bg-red-200 text-red-800"
-                      }`}
-                    >
-                      {course.is_active ? "Active" : "Inactive"}
-                    </span>
-                  )} */}
-
                   {course.student_count !== undefined && (
                     <span
                       className={`px-2 py-0.5 text-xs rounded-full ${
                         course.student_count
                           ? "bg-green-200 text-green-800"
-                          : "bg-red-200 text-red-800"}`}
-                      >
+                          : "bg-red-200 text-red-800"
+                      }`}
+                    >
                       {course.student_count < 1 ? "Inactive" : "Active"}
                     </span>
                   )}
-                  
                 </div>
 
                 <p className="text-sm font-bold mt-2">
